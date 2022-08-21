@@ -77,16 +77,16 @@ class pitagoras(Scene):
 
 
         """ Sum of squares scene """
-        squarea=catetogrande.copy()
-        squareb=catetochico.copy()
+        squarea=catetochico.copy()
+        squareb=catetogrande.copy()
         squarec=hypothenuse.copy()
 
         squarea.move_to(LEFT*3.5)
         squareb.move_to(LEFT)
         squarec.move_to(RIGHT*2.5)
 
-        suma=Tex("+").move_to(LEFT*2).set_color(BLACK)
-        igual=Tex("=").set_color(BLACK).move_to(RIGHT*0.2)
+        suma=Tex("+").move_to(LEFT*2.5).set_color(BLACK)
+        igual=Tex("=").set_color(BLACK).move_to(RIGHT*0.5)
 
 
 
@@ -127,8 +127,8 @@ class pitagoras(Scene):
         frameboxb=SurroundingRectangle(ecuacion[2],color=GOLD,buff=0.1)
         frameboxc=SurroundingRectangle(ecuacion[4],color=GOLD,buff=0.1)
 
-        framebox_cuadro_a=SurroundingRectangle(squarea,color=GOLD,buff=0.3)
-        framebox_cuadro_b=SurroundingRectangle(squareb,color=GOLD,buff=0.5)
+        framebox_cuadro_a=SurroundingRectangle(squarea,color=GOLD,buff=0.2)
+        framebox_cuadro_b=SurroundingRectangle(squareb,color=GOLD,buff=0.2)
         framebox_cuadro_c=SurroundingRectangle(squarec,color=GOLD,buff=0.1)
 
         """ Final Scene """
