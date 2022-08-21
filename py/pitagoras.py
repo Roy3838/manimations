@@ -34,7 +34,7 @@ class pitagoras(Scene):
             return square
 
 
-
+        """ General build struff """
         #be careful with the order of the triangle, start with square angle, go clockwise o idk ahi veo
 
         pos1=np.array([-1,-1, 0])
@@ -56,6 +56,24 @@ class pitagoras(Scene):
         catetogrande=makesquare(pos1,pos2)
         hypothenuse=makesquare(pos2,pos3,RED)
         catetochico=makesquare(pos3,pos1)
+
+        """ Intro Scene"""
+        a=MathTex("a",color=BLACK).move_to([-1.3,-0.5,0])
+        b=MathTex("b",color=BLACK).move_to([0,-1.3,0])
+        c=MathTex("c",color=BLACK).move_to([0,-0.15,0])
+
+        a1=a.copy()
+        a2=a.copy()
+        a3=a.copy()
+        b1=b.copy()
+        b2=b.copy()
+        b3=b.copy()
+        c1=c.copy()
+        c2=c.copy()
+        c3=c.copy()
+        asquared=MathTex("a^2",color=BLACK).move_to(catetochico.get_center())
+        bsquared=MathTex("b^2",color=BLACK).move_to(catetogrande.get_center())
+        csquared=MathTex("c^2",color=BLACK).move_to(hypothenuse.get_center())
 
 
         """ Sum of squares scene """
@@ -81,13 +99,17 @@ class pitagoras(Scene):
         #trapezoid shift 1
         areasquare=Polygon([-1,1,0],[1,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
         areatrapezoind=Polygon([0,1,0],[2,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
-        triangleoffset=Polygon([1,1,0],[1,-1,0],[2,1,0],color=GOLD)
-        triangleoffset2=Polygon([-1,1,0],[-1,-1,0],[0,1,0],color=GOLD)
+        triangleoffset=Polygon([1,1,0],[1,-1,0],[2,1,0],color=BLACK)
+        triangleoffset2=Polygon([-1,1,0],[-1,-1,0],[0,1,0],color=BLACK)
 
         #trapezoid shift 2
         areatrapezoind2=Polygon([1,1,0],[3,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
-        triangleoffset3=Polygon([1,1,0],[1,-1,0],[3,1,0],color=GOLD)
-        triangleoffset4=Polygon([-1,1,0],[-1,-1,0],[1,1,0],color=GOLD)
+        triangleoffset3=Polygon([1,1,0],[1,-1,0],[3,1,0],color=BLACK)
+        triangleoffset4=Polygon([-1,1,0],[-1,-1,0],[1,1,0],color=BLACK)
+
+        #original square
+        ogsquare=Polygon([-1,1,0],[1,1,0],[1,-1,0],[-1,-1,0],color=GOLD)
+        ogsquare2=Polygon([-1,1,0],[1,1,0],[1,-1,0],[-1,-1,0],color=GOLD)
 
 
 
@@ -99,7 +121,7 @@ class pitagoras(Scene):
 
         #equation=Tex(r"\a^{2}", r"+", " b ", r"=",r"\c^{2}").move_to(UP*3+RIGHT*3).set_color(BLACK)
 
-        ecuacion=MathTex(r"a^{2}","+",r"b^{2}","=" ,r"c^{2}").set_color(BLACK).move_to(2*DOWN)
+        ecuacion=MathTex(r"a^{2}","+",r"b^{2}","=" ,r"c^{2}").set_color(BLACK).move_to(3*UP)
 
         frameboxa=SurroundingRectangle(ecuacion[0],color=GOLD,buff=0.1)
         frameboxb=SurroundingRectangle(ecuacion[2],color=GOLD,buff=0.1)
@@ -109,7 +131,7 @@ class pitagoras(Scene):
         framebox_cuadro_b=SurroundingRectangle(squareb,color=GOLD,buff=0.5)
         framebox_cuadro_c=SurroundingRectangle(squarec,color=GOLD,buff=0.1)
 
-
+        """ Final Scene """
         #lines that mark the cathetus vector
         vector = pos1_2d + -np.dot(rotation_matrix,(pos1_2d-pos2_2d)) + np.dot(rotation_matrix,(pos1_2d-pos3_2d))
         
@@ -155,6 +177,10 @@ class pitagoras(Scene):
         pol1final=Polygon(pos3,point,pointdivisor,puntoesquinaizquierda,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
         pol2final=Polygon(point,pos2,puntoesquinadercha,pointdivisor,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
 
+        #escena final
+        catetochicofinal=catetochico.copy()
+        catetograndefinal=catetogrande.copy()
+        hypothenusefinal=hypothenuse.copy()
 
 
         def debugging(tamanyo=0.3,color=RED):
@@ -176,77 +202,192 @@ class pitagoras(Scene):
 
             dots=VGroup(d1,d2,d3,dt,dotinterseccion,dotpol1,dotpol2)
             return dots
-            
-        debug=False
-        if debug:
-            dots=debugging(0.6)
-            self.add(dots)
-        
-        ecuacion.move_to(ORIGIN)
-        self.play(Create(ecuacion))
-
-        self.play(ecuacion.animate.move_to(2*DOWN))
-
-        self.play(Create(squarea),Create(squareb),Create(squarec),Create(suma),Create(igual))
-
-        self.wait()
-
-        self.play(
-            Create(frameboxa),
-            Create(framebox_cuadro_a)
-        )
-
-        self.play(
-            ReplacementTransform(frameboxa,frameboxb),
-            ReplacementTransform(framebox_cuadro_a,framebox_cuadro_b)
-        )
-
-        self.play(
-            ReplacementTransform(frameboxb,frameboxc),
-            ReplacementTransform(framebox_cuadro_b,framebox_cuadro_c)
-        )
 
         
-        self.play(FadeOut(frameboxc),FadeOut(framebox_cuadro_c))
-        self.play(FadeOut(squarea),FadeOut(squareb),FadeOut(squarec),FadeOut(suma),FadeOut(igual),FadeOut(ecuacion))
-
-        self.play(Create(areasquare))
-        self.play(ReplacementTransform(areasquare,areatrapezoind))
-
-        self.wait()
-
-        self.play(Create(triangleoffset))
-        self.play(ReplacementTransform(triangleoffset,triangleoffset2))
-
-        self.wait()
-
-        self.play(FadeOut(triangleoffset2))
-
-        self.play(ReplacementTransform(areatrapezoind,areatrapezoind2))
-
-        self.play(Create(triangleoffset3))
-        self.play(ReplacementTransform(triangleoffset3,triangleoffset4))
-        self.wait()
-
-        self.play(FadeOut(triangleoffset4))
-
-        self.play(FadeOut(areatrapezoind2))
+        """####################### ANIMATIONS START HERE #######################"""
 
 
-        #self.play(Write(atext),Write(btext)
-        #,Write(ctext),Write(equation)
-        #)
+        def Intro():
+            #Introduction
+            self.play(Write(triangle))
+            self.play(
+                Create(a),
+                Create(b),
+                Create(c)
+            )
+            self.play(Write(ecuacion.move_to(UP*3)))
 
-        self.play(Write(triangle))
-        self.wait()
-        self.play(Write(catetogrande),Write(hypothenuse),Write(catetochico))
-        self.wait()
-        self.play(Write(vector1),Write(vector2))
+            self.wait()
+            self.play(
+                Write(catetogrande),
+                Write(hypothenuse),
+                Write(catetochico),
+                )
+            self.play(
+                #move a's
+                a1.animate.shift(LEFT*0.2,UP*0.7),
+                a2.animate.shift(LEFT),
+                a3.animate.shift(DOWN*0.7,LEFT*0.2),
+                a.animate.shift(RIGHT*0.5),
 
-        self.play(Write(division))
-        self.wait()
-        self.play(ReplacementTransform(catetochico,pol1),ReplacementTransform(catetogrande,pol2),FadeOut(vector1),FadeOut(vector2))
-        self.wait()
-        self.play(ReplacementTransform(pol1,pol1final),ReplacementTransform(pol2,pol2final),FadeOut(division))
+                #move b's
+                b1.animate.shift(DOWN*2),
+                b2.animate.shift(DOWN*0.7,LEFT*1.3),
+                b3.animate.shift(DOWN*0.7,RIGHT*1.3),
+                b.animate.shift(UP*0.6),
 
-        self.wait()
+                #move c's
+                c1.animate.shift(UP*1.85 + RIGHT*1.2),
+                c2.animate.shift(UP*1.4+ LEFT*0.7),
+                c3.animate.shift(RIGHT*1.75 + UP*0.2),
+                c.animate.shift(DOWN*0.4 + LEFT*0.4),
+            )
+            self.wait()
+            las_as=VGroup(a,a1,a2,a3)
+            las_bs=VGroup(b,b1,b2,b3)
+            las_cs=VGroup(c,c1,c2,c3)
+
+            self.play(
+                ReplacementTransform(las_as,asquared),
+                ReplacementTransform(las_bs,bsquared),
+                ReplacementTransform(las_cs,csquared),
+            )
+            self.wait()  
+
+            self.play(
+                FadeOut(triangle),
+                FadeOut(asquared),
+                FadeOut(bsquared),
+                FadeOut(csquared)
+            )
+           
+        def Equation():
+        
+            #Equation and squares scene
+            ecuacion.move_to(UP*3)
+
+            self.play(
+                ReplacementTransform(catetochico,squarea),
+                ReplacementTransform(catetogrande,squareb),
+                ReplacementTransform(hypothenuse,squarec)
+                )
+
+            self.play(
+                Create(suma),
+                Create(igual)
+            )
+
+            self.wait()
+
+            self.play(
+                Create(frameboxa),
+                Create(framebox_cuadro_a)
+            )
+
+            self.play(
+                ReplacementTransform(frameboxa,frameboxb),
+                ReplacementTransform(framebox_cuadro_a,framebox_cuadro_b)
+            )
+
+            self.play(
+                ReplacementTransform(frameboxb,frameboxc),
+                ReplacementTransform(framebox_cuadro_b,framebox_cuadro_c)
+            )
+
+            #Fade Out of Scene
+            self.play(
+                FadeOut(frameboxc),
+                FadeOut(framebox_cuadro_c))
+            self.play(
+                FadeOut(squarea),
+                FadeOut(squareb),
+                FadeOut(squarec),
+                FadeOut(suma),
+                FadeOut(igual),
+                FadeOut(ecuacion))
+        
+        def SameAreaScene():
+            #Same Area Scene
+            #make copies before ReplacementTransform to avoid the original object being modified
+            areasquareog=areasquare.copy()
+            areatrapezoindog=areatrapezoind.copy()
+
+            #same area trapezoids
+            self.play(Create(areasquare))
+            #shift square
+            self.play(ReplacementTransform(areasquare,areatrapezoind))
+
+            self.wait()
+
+            #show the area is the same 1
+            self.play(Create(triangleoffset))
+            self.play(ReplacementTransform(triangleoffset,triangleoffset2))
+            self.wait()
+            self.play(Create(ogsquare))
+            self.wait()
+            self.play(Uncreate(ogsquare))
+            self.play(FadeOut(triangleoffset2))
+
+            #show the area is the same 2
+            self.play(ReplacementTransform(areatrapezoind,areatrapezoind2))
+            self.play(Create(triangleoffset3))
+            self.play(ReplacementTransform(triangleoffset3,triangleoffset4))
+            self.play(Create(ogsquare2))
+            self.play(Uncreate(ogsquare2))
+            self.wait()
+            self.play(FadeOut(triangleoffset4))
+
+            #equalsigns
+            equalsign=MathTex("=").move_to(LEFT*1.5).set_color(BLACK)
+            equalsign2=MathTex("=").move_to(RIGHT*1.5).set_color(BLACK)
+
+            #show all Polygons
+            self.play(
+                Create(areasquareog.move_to(LEFT*4)),
+                Create(areatrapezoindog.move_to(RIGHT*4)),
+                areatrapezoind2.animate.shift(LEFT),
+                Create(equalsign),
+                Create(equalsign2)
+                )
+
+            self.wait()
+            #Fade Out of Scene
+            self.play(
+                FadeOut(areasquareog),
+                FadeOut(areatrapezoindog),
+                FadeOut(areatrapezoind2),
+                FadeOut(equalsign),
+                FadeOut(equalsign2)
+            )
+        
+        def FinalScene():
+            #Show the final animation
+            self.play(Write(triangle))
+            self.wait()
+            self.play(
+                Write(catetograndefinal),
+                Write(hypothenusefinal),
+                Write(catetochicofinal))
+            self.wait()
+            self.play(Write(vector1),Write(vector2))
+
+            self.play(Write(division))
+            self.wait()
+            self.play(
+                ReplacementTransform(catetochicofinal,pol1),
+                ReplacementTransform(catetograndefinal,pol2),
+                FadeOut(vector1),
+                FadeOut(vector2))
+            self.wait()
+            self.play(
+                ReplacementTransform(pol1,pol1final),
+                ReplacementTransform(pol2,pol2final),
+                FadeOut(division))
+
+            self.wait()
+
+
+        Intro()
+        Equation()
+        SameAreaScene()
+        FinalScene()
