@@ -33,7 +33,6 @@ class pitagoras(Scene):
 
             return square
 
-        
 
 
         #be careful with the order of the triangle, start with square angle, go clockwise o idk ahi veo
@@ -77,6 +76,20 @@ class pitagoras(Scene):
         pos2_2d=np.array([pos2[0],pos2[1]])
         pos3_2d=np.array([pos3[0],pos3[1]])
 
+        """ Trapezoid Area Scene """
+
+        #trapezoid shift 1
+        areasquare=Polygon([-1,1,0],[1,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
+        areatrapezoind=Polygon([0,1,0],[2,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
+        triangleoffset=Polygon([1,1,0],[1,-1,0],[2,1,0],color=GOLD)
+        triangleoffset2=Polygon([-1,1,0],[-1,-1,0],[0,1,0],color=GOLD)
+
+        #trapezoid shift 2
+        areatrapezoind2=Polygon([1,1,0],[3,1,0],[1,-1,0],[-1,-1,0],color=BLACK,fill_color=BLUE,fill_opacity=0.6)
+        triangleoffset3=Polygon([1,1,0],[1,-1,0],[3,1,0],color=GOLD)
+        triangleoffset4=Polygon([-1,1,0],[-1,-1,0],[1,1,0],color=GOLD)
+
+
 
         """ Equation Scene """
 
@@ -86,7 +99,15 @@ class pitagoras(Scene):
 
         #equation=Tex(r"\a^{2}", r"+", " b ", r"=",r"\c^{2}").move_to(UP*3+RIGHT*3).set_color(BLACK)
 
+        ecuacion=MathTex(r"a^{2}","+",r"b^{2}","=" ,r"c^{2}").set_color(BLACK).move_to(2*DOWN)
 
+        frameboxa=SurroundingRectangle(ecuacion[0],color=GOLD,buff=0.1)
+        frameboxb=SurroundingRectangle(ecuacion[2],color=GOLD,buff=0.1)
+        frameboxc=SurroundingRectangle(ecuacion[4],color=GOLD,buff=0.1)
+
+        framebox_cuadro_a=SurroundingRectangle(squarea,color=GOLD,buff=0.3)
+        framebox_cuadro_b=SurroundingRectangle(squareb,color=GOLD,buff=0.5)
+        framebox_cuadro_c=SurroundingRectangle(squarec,color=GOLD,buff=0.1)
 
 
         #lines that mark the cathetus vector
@@ -160,10 +181,57 @@ class pitagoras(Scene):
         if debug:
             dots=debugging(0.6)
             self.add(dots)
+        
+        ecuacion.move_to(ORIGIN)
+        self.play(Create(ecuacion))
+
+        self.play(ecuacion.animate.move_to(2*DOWN))
 
         self.play(Create(squarea),Create(squareb),Create(squarec),Create(suma),Create(igual))
 
         self.wait()
+
+        self.play(
+            Create(frameboxa),
+            Create(framebox_cuadro_a)
+        )
+
+        self.play(
+            ReplacementTransform(frameboxa,frameboxb),
+            ReplacementTransform(framebox_cuadro_a,framebox_cuadro_b)
+        )
+
+        self.play(
+            ReplacementTransform(frameboxb,frameboxc),
+            ReplacementTransform(framebox_cuadro_b,framebox_cuadro_c)
+        )
+
+        
+        self.play(FadeOut(frameboxc),FadeOut(framebox_cuadro_c))
+        self.play(FadeOut(squarea),FadeOut(squareb),FadeOut(squarec),FadeOut(suma),FadeOut(igual),FadeOut(ecuacion))
+
+        self.play(Create(areasquare))
+        self.play(ReplacementTransform(areasquare,areatrapezoind))
+
+        self.wait()
+
+        self.play(Create(triangleoffset))
+        self.play(ReplacementTransform(triangleoffset,triangleoffset2))
+
+        self.wait()
+
+        self.play(FadeOut(triangleoffset2))
+
+        self.play(ReplacementTransform(areatrapezoind,areatrapezoind2))
+
+        self.play(Create(triangleoffset3))
+        self.play(ReplacementTransform(triangleoffset3,triangleoffset4))
+        self.wait()
+
+        self.play(FadeOut(triangleoffset4))
+
+        self.play(FadeOut(areatrapezoind2))
+
 
         #self.play(Write(atext),Write(btext)
         #,Write(ctext),Write(equation)

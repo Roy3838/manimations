@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/2966498957_904945010_223132457.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_2499512647_1343513165.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_4165863043_631829896.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_4102353181_4174018169.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_1437739169_298410108.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_4165863043_3547520947.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_3184955768_3828168139.mp4'
+file 'file:/home/jay/manimations/py/media/videos/Logo/480p15/partial_movie_files/Logo/4002048535_2821336743_2278733648.mp4'
