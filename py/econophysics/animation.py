@@ -14,12 +14,24 @@ class eco(Scene):
             #\frac{N}{s\sqrt{2\pi}}e^{\frac{-\left(x-u\right)^{2}}{2s^{2}}}
             N=102000
             s=2.3
-            u=5.1
+            u=4.1
             A=N/(s*np.sqrt(2*np.pi))
             arg=-(x-u)**2 / (2*s**2)
             y=(A)*np.exp(arg)
             return y
-        
+        def expo(x):
+            #data from desmos
+            c=2.5
+            A=23000
+            b=-0.173
+
+
+            #direct data from excel 
+            """c=0
+            A=25690
+            b=-0.216 """
+            y=A*np.exp(b*(x+c))
+            return y
         self.camera.background_color = "#E2E2E2"
         clock = tick()
         iterations=230
@@ -79,16 +91,24 @@ class eco(Scene):
 
 
             self.add(chart.set_color(BLACK))
+            
             if i == 1:
                 self.wait(2)
-            self.wait(0.05)
+            if i<i_cambio:
+                self.wait(0.1)
+            else:
+                self.wait(0.05)
             self.remove(chart)
 
-            if i==230:
-                self.add(chart)
-                self.wait()
-                
 
+        self.add(chart)
+        expplot=chart.plot(expo, color=BLUE)
+        self.play(Create(expplot))
+        self.wait()
+        self.play(FadeOut(expplot))
+        self.wait()
+        self.play(FadeOut(chart))
+        self.wait()
 
         clock.tock()
         
