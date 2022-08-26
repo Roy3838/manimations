@@ -1,3 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/jay/manimations/py/media/videos/eco/480p15/partial_movie_files/eco/2966498957_950943019_3743851896.mp4'
-file 'file:/home/jay/manimations/py/media/videos/eco/480p15/partial_movie_files/eco/4002048535_2202726386_2383533454.mp4'
