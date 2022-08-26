@@ -3,7 +3,7 @@ from manim import *
 import numpy as np
 from random import randint, uniform
 from ticktock import tick
-
+import pandas as pd
 
 clock = tick()
 population = np.zeros(100000)
@@ -30,8 +30,40 @@ for i in range(int(iterations)):
         print(i/iterations)
 
 
-print(mat)
-print(len(mat))
+values=np.zeros([230,25])
+
+for i in range(230):
+    population=mat[i]
+    values[i]=[((0 < population) & (population < c_d)).sum(),
+                                ((c_d <= population) & (population < 2*c_d)).sum(),
+                                ((2*c_d <= population) & (population < 3*c_d)).sum(),
+                                ((3*c_d <= population) & (population < 4*c_d)).sum(),
+                                ((4*c_d <= population) & (population < 5*c_d)).sum(),
+                                ((5*c_d <= population) & (population < 6*c_d)).sum(),
+                                ((6*c_d <= population) & (population < 7*c_d)).sum(),
+                                ((7*c_d <= population) & (population < 8*c_d)).sum(),
+                                ((8*c_d <= population) & (population < 9*c_d)).sum(),
+                                ((9*c_d <= population) & (population < 10*c_d)).sum(),
+                                ((10*c_d <= population) & (population < 11*c_d)).sum(),
+                                ((11*c_d <= population) & (population < 12*c_d)).sum(),
+                                ((12*c_d <= population) & (population < 13*c_d)).sum(),
+                                ((13*c_d <= population) & (population < 14*c_d)).sum(),
+                                ((14*c_d <= population) & (population < 15*c_d)).sum(),
+                                ((15*c_d <= population) & (population < 16*c_d)).sum(),
+                                ((16*c_d <= population) & (population < 17*c_d)).sum(),
+                                ((17*c_d <= population) & (population < 18*c_d)).sum(),
+                                ((18*c_d <= population) & (population < 19*c_d)).sum(),
+                                ((19*c_d <= population) & (population < 20*c_d)).sum(),
+                                ((20*c_d <= population) & (population < 21*c_d)).sum(),
+                                ((21*c_d <= population) & (population < 22*c_d)).sum(),
+                                ((22*c_d <= population) & (population < 23*c_d)).sum(),
+                                ((23*c_d <= population) & (population < 24*c_d)).sum(),
+                                ((24*c_d <= population) & (population < 25*c_d)).sum(),
+                                ]
+
+dataset=pd.DataFrame(values)
+#save dataset to csv
+dataset.to_csv('matclasses.csv', index=False)
 
 clock.tock()
         
