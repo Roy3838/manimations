@@ -6,8 +6,6 @@ from ticktock import tick
 
 
 
-
-
 class eco(Scene):
 
     def construct(self):
@@ -17,9 +15,10 @@ class eco(Scene):
         population = np.zeros(100000)
         population.fill(10)
         iterations=40000000
-
+        mat=np.zeros([230,100000])
+        contador=0
         
-        for i in range(iterations):
+        for i in range(int(iterations/1000)):
             yi=randint(0,len(population)-1)
             yb=randint(0,len(population)-1)
             mi=uniform(0,1)
@@ -29,9 +28,10 @@ class eco(Scene):
 
             
             c_d = 2
-            if ((i%(iterations/500)==0 and i<=iterations/10) 
+            if ((i%(iterations/500)==0 and i<=iterations/10)  # 500 y 200
             or (i%(iterations/200)==0 and i>iterations/10)):
-                
+                mat[contador]=population
+                contador+=1
                 if (i<iterations/10):
                     rango=[0, 100000, 10000]
                 elif(i==iterations/10):
@@ -87,7 +87,10 @@ class eco(Scene):
                 
         self.add(chart)
         self.wait()
+        print(mat)
+
         clock.tock()
+        
             
             
             
