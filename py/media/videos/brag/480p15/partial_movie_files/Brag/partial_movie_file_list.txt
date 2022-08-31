@@ -1,9 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/2966498957_3675916837_223132457.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_4291151212_2510674419.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_1940825794_3419755657.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_2379830410_4207421383.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_1334700245_2559550087.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_1435369083_2409009368.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_274951616_2301823431.mp4'
-file 'file:/home/jay/manimations/py/media/videos/brag/480p15/partial_movie_files/Brag/4002048535_3119002603_1656720945.mp4'

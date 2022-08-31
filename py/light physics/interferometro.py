@@ -9,11 +9,11 @@ class TwoPointInterference(Scene):
     
     def construct(self):
         self.camera.background_color = "#E2E2E2"
-        #self.twopoints()
-        #self.twodistances()
-        #self.mathequations()
-        #self.young()
-        #self.michelson()
+        self.twopoints()
+        self.twodistances()
+        self.mathequations()
+        self.young()
+        self.michelson()
         self.hyperbolic()
         
     def twopoints(self):

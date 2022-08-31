@@ -1,5 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/home/jay/manimations/py/media/videos/squarelaw/1440p60/partial_movie_files/Logo/3975511219_728037065_223132457.mp4'
-file 'file:/home/jay/manimations/py/media/videos/squarelaw/1440p60/partial_movie_files/Logo/4107248957_3315967912_1466576731.mp4'
-file 'file:/home/jay/manimations/py/media/videos/squarelaw/1440p60/partial_movie_files/Logo/1498375821_2575317228_2652943186.mp4'
-file 'file:/home/jay/manimations/py/media/videos/squarelaw/1440p60/partial_movie_files/Logo/4193427037_3315967912_3694855629.mp4'

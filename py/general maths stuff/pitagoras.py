@@ -1,3 +1,4 @@
+from tkinter import CENTER
 from manim import *
 
 
@@ -183,6 +184,70 @@ class pitagoras(Scene):
         hypothenusefinal=hypothenuse.copy()
 
 
+        """ GENERALIZING SCENE """
+
+        #generalizing the proof to any triangle
+
+        def make_proof(dim=[np.array([-1,-1, 0]),np.array([ 1,-1, 0]),np.array([-1, 0, 0])], offset=[0,0,0]):
+            pos1=dim[0] + offset
+            pos2=dim[1] + offset
+            pos3=dim[2] + offset
+            triangle = Polygon(pos1,pos2,pos3).set_color(BLACK)
+            catetogrande=makesquare(pos1,pos2)
+            hypothenuse=makesquare(pos2,pos3,RED)
+            catetochico=makesquare(pos3,pos1)
+            pos1_2d=np.array([pos1[0],pos1[1]])
+            pos2_2d=np.array([pos2[0],pos2[1]])
+            pos3_2d=np.array([pos3[0],pos3[1]])
+            vector = pos1_2d + -np.dot(rotation_matrix,(pos1_2d-pos2_2d)) + np.dot(rotation_matrix,(pos1_2d-pos3_2d))
+            
+
+            vector = [vector[0],vector[1],0]
+
+
+            vector1=Line([pos1[0],vector[1],0], vector).set_color(BLACK)
+            vector2=Line([vector[0],pos1[1],0], vector).set_color(BLACK)
+
+
+            #prueba=ValueTracker([0,0,0])
+            
+            #solving the linear algebra equations to get the values of t and s to know where the point is
+            #using cramers rule
+            A=np.array([[pos1[0]-vector[0], -(pos3[0]-pos2[0])],[pos1[1]-vector[1], -(pos3[1]-pos2[1])]])
+            B=np.array([pos2[0]-vector[0], pos2[1]-vector[1]])
+            t,s=np.linalg.solve(A,B)
+
+            #point on the line hypotenuse of the triangle
+            point=np.array(vector + t*(pos1-vector))
+            extra=np.dot(rotation_matrix,(pos2_2d-pos3_2d))
+            extra=[extra[0],extra[1],0]
+            pointdivisor=point-extra
+
+            division=Line(vector,pointdivisor).set_color(BLACK)
+            
+            #poligono
+            puntopol1=np.array(vector+(pos3-pos1))
+            puntopol2=np.array(vector+(pos2-pos1))
+
+            #esquinas
+            puntoesquinaizquierda=pos3-extra
+            puntoesquinadercha=pos2-extra
+
+            fill_color=BLUE
+            lines_color=BLACK
+
+            pol1=Polygon(puntopol1,vector,pos1,pos3,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
+            pol2=Polygon(vector,puntopol2,pos2,pos1,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
+
+            #poligonos finales
+            pol1final=Polygon(pos3,point,pointdivisor,puntoesquinaizquierda,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
+            pol2final=Polygon(point,pos2,puntoesquinadercha,pointdivisor,fill_opacity=0.6, fill_color=fill_color, color=lines_color)
+            
+
+            return [triangle,catetogrande,hypothenuse,catetochico,vector1,vector2,division,pol1,pol2,pol1final,pol2final]
+        
+
+
         def debugging(tamanyo=0.3,color=RED):
             #debugging
             d1=Dot().move_to(pos1).scale(tamanyo).set_color(color)
@@ -344,8 +409,8 @@ class pitagoras(Scene):
             #show all Polygons
             self.play(
                 Create(areasquareog.move_to(LEFT*4)),
-                Create(areatrapezoindog.move_to(RIGHT*4)),
-                areatrapezoind2.animate.shift(LEFT),
+                Create(areatrapezoindog.move_to([0,0,0])),
+                areatrapezoind2.animate.move_to(RIGHT*4),
                 Create(equalsign),
                 Create(equalsign2)
                 )
@@ -382,12 +447,133 @@ class pitagoras(Scene):
             self.play(
                 ReplacementTransform(pol1,pol1final),
                 ReplacementTransform(pol2,pol2final),
-                FadeOut(division))
+                FadeOut(division),
+                hypothenusefinal.animate.set_fill(opacity=0))
 
             self.wait()
+
+            self.play(FadeOut(pol1final),FadeOut(pol2final),
+            FadeOut(triangle),FadeOut(hypothenusefinal ))
+
+        def Generalizing():
+
+            
+            #LaTeX MORADO
+            # \left(4,-1\right),\left(5,-1\right),\left(4,1\right)
+            #numpy arrays
+            t1= [np.array([4,-1,0]), np.array([5,-1,0]), np.array([4,1,0])]
+
+            #LaTeX VERDE
+            # \left(-1,-1\right),\left(1,-1\right),\left(-1,0\right)
+            #numpy arrays
+            t2= [np.array([-1,-1,0]), np.array([1,-1,0]), np.array([-1,0,0])]
+
+            #LaTeX ROJO
+            # \left(-5,-1\right),\left(-4,-1\right),\left(-5,0\right)
+            #numpy arrays
+            t3 = [np.array([-5,-1,0]), np.array([-4,-1,0]), np.array([-5,0,0])]
+
+
+            [triangle,catetogrande,hypothenuse,
+            catetochico,vector1,vector2,division,
+            pol1,pol2,pol1final,pol2final]=make_proof(t1)
+
+            [triangle1,catetogrande1,hypothenuse1,
+            catetochico1,vector11,vector21,division1,
+            pol11,pol21,pol1final1,pol2final1]=make_proof(t2 , [-0.5,0,0])
+
+            [triangle2,catetogrande2,hypothenuse2,
+            catetochico2,vector12,vector22,division2,
+            pol12,pol22,pol1final2,pol2final2]=make_proof(t3, [-0.5,0,0])
+
+
+            self.play(Write(triangle),Write(triangle1),Write(triangle2))
+            self.play(
+                Write(catetogrande),
+                Write(hypothenuse),
+                Write(catetochico),
+
+                Write(catetogrande1),
+                Write(hypothenuse1),
+                Write(catetochico1),
+
+                Write(catetogrande2),
+                Write(hypothenuse2),
+                Write(catetochico2))
+            self.play(Write(vector1),Write(vector2),
+                Write(vector11),Write(vector21),
+                Write(vector12),Write(vector22))
+
+            self.play(Write(division),Write(division1),Write(division2))
+            self.play(
+                ReplacementTransform(catetochico,pol1),
+                ReplacementTransform(catetogrande,pol2),
+
+                ReplacementTransform(catetochico1,pol11),
+                ReplacementTransform(catetogrande1,pol21),
+
+                ReplacementTransform(catetochico2,pol12),
+                ReplacementTransform(catetogrande2,pol22),
+
+                FadeOut(vector1),
+                FadeOut(vector2),
+                
+                FadeOut(vector11),
+                FadeOut(vector21),
+
+                FadeOut(vector12),
+                FadeOut(vector22))
+            self.play(
+                ReplacementTransform(pol1,pol1final),
+                ReplacementTransform(pol2,pol2final),
+
+                ReplacementTransform(pol11,pol1final1),
+                ReplacementTransform(pol21,pol2final1),
+
+                ReplacementTransform(pol12,pol1final2),
+                ReplacementTransform(pol22,pol2final2),
+
+
+                FadeOut(division),
+                FadeOut(division1),
+                FadeOut(division2),
+                
+                hypothenuse.animate.set_fill(opacity=0),
+                hypothenuse1.animate.set_fill(opacity=0),
+                hypothenuse2.animate.set_fill(opacity=0))
+            self.play(FadeOut(pol1final),
+                FadeOut(pol1final1),
+                FadeOut(pol1final2),
+                FadeOut(hypothenuse),
+                FadeOut(hypothenuse1),
+                FadeOut(hypothenuse2),
+                FadeOut(triangle),
+                FadeOut(triangle1),
+                FadeOut(triangle2),
+                FadeOut(pol2final),
+                FadeOut(pol2final1),
+                FadeOut(pol2final2))
+            
+
+
+
+            self.wait()
+            
+        def Logo():
+            LateX = MathTex("\\text{mc=}", color=GRAY_D)
+            LateX.scale(3)
+            self.play(Write(LateX), run_time=3)
+            self.wait()
+
 
 
         Intro()
         Equation()
         SameAreaScene()
         FinalScene()
+        Generalizing()
+        Logo()
+
+
+
+
