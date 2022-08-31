@@ -3,7 +3,7 @@ from manim import *
 class Logo(Scene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
-        LateX = MathTex("\\text{mc=}", color=GRAY_D)
+        LateX = MathTex("\\text{MC=}", color=GRAY_D)
         LateX2 = MathTex("\\text{E/c}", color=GRAY_D)
         LateX3 = MathTex(r"\frac{E}{c}", color=GRAY_D)
         LateX.scale(3)
