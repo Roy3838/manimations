@@ -14,19 +14,19 @@ class Potential(Scene):
             val = gradiente*(-9.81)
             return val
         
-        def animate_ball(x_0,v_0):
+        def animate_ball(particulas,x_0=-2,v_0=2.35, size=0.1, color=RED):
             E=0.7
-            v_0=2.35
+
             #v = lambda x :np.sqrt((E-U(x))*2*m) + v_0
 
 
 
-            ball = Dot().move_to([x_0,U(x_0),0])
-            ball.set_color(RED)
+            ball = Dot(size=size).move_to([x_0,U(x_0),0])
+            ball.set_color(color)
 
             E_lim=Line(axes.c2p(0.3537,0.7) + 8*LEFT,axes.c2p(0.3537,0.7)+ 3*RIGHT).set_color(GREEN)
-            #E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
-            self.add(E_lim)#,E_text)
+            E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
+            self.play(Write(E_lim),Write(E_text))
 
             dx=0.005
             #dx=0.05
@@ -71,8 +71,9 @@ class Potential(Scene):
         #dot = Dot(point=initial_point).set_color(BLACK)
         #dot.add_updater(lambda x: x.move_to(axes.c2p( )))
         graph=axes.plot(lambda x:U(x), x_range=[-3.5,2.5]).set_color(BLACK)
+        label=axes.get_axis_labels(x_label="x", y_label="U(x)").set_color(BLACK)
         #derivative=axes.plot(v).set_color(BLUE)
-        self.play(Create(graph),Create(axes))#,Create(derivative))
+        self.play(Create(graph),Create(axes),Create(label))#,Create(derivative))
         #self.play(t.animate.set_value(1.25))
         animate_ball(-2,0)
         self.wait()
