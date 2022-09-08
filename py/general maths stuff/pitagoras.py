@@ -1,12 +1,22 @@
 from tkinter import CENTER
 from manim import *
 
-
-
-class pitagoras(Scene):
+width=1080
+height=1920
+# config.pixel_width = width
+# config.pixel_height = height
+config.frame_size = [width, height]
+class pitagoras(MovingCameraScene):
     def construct(self):
         #change background color to gray
         self.camera.background_color = "#E2E2E2"
+        self.camera.frame.scale(0.5)
+        #watermark
+        watermark=MathTex(r"\mathbb{R}euler", color=GRAY_D, fill_opacity=0.3).scale(1).move_to(RIGHT*2.5 + DOWN*5)
+        self.add(watermark)
+        
+        #zoom on the camera
+        
 
         #rotation matrix for vector [0,1],[-1,0]
         rotation_matrix=np.array([[0,1],[-1,0]])
@@ -82,12 +92,12 @@ class pitagoras(Scene):
         squareb=catetogrande.copy()
         squarec=hypothenuse.copy()
 
-        squarea.move_to(LEFT*3.5)
+        squarea.move_to(LEFT*3)
         squareb.move_to(LEFT)
-        squarec.move_to(RIGHT*2.5)
+        squarec.move_to(RIGHT*2)
 
-        suma=Tex("+").move_to(LEFT*2.5).set_color(BLACK)
-        igual=Tex("=").set_color(BLACK).move_to(RIGHT*0.5)
+        suma=Tex("+").move_to(LEFT*2.25).set_color(BLACK)
+        igual=Tex("=").set_color(BLACK).move_to(RIGHT*0.3)
 
 
 
@@ -387,9 +397,7 @@ class pitagoras(Scene):
             #show the area is the same 1
             self.play(Create(triangleoffset))
             self.play(ReplacementTransform(triangleoffset,triangleoffset2))
-            self.wait()
             self.play(Create(ogsquare))
-            self.wait()
             self.play(Uncreate(ogsquare))
             self.play(FadeOut(triangleoffset2))
 
@@ -399,23 +407,24 @@ class pitagoras(Scene):
             self.play(ReplacementTransform(triangleoffset3,triangleoffset4))
             self.play(Create(ogsquare2))
             self.play(Uncreate(ogsquare2))
-            self.wait()
+
             self.play(FadeOut(triangleoffset4))
 
             #equalsigns
-            equalsign=MathTex("=").move_to(LEFT*1.5).set_color(BLACK)
-            equalsign2=MathTex("=").move_to(RIGHT*1.5).set_color(BLACK)
+            equalsign=MathTex("=").move_to(LEFT*1.1).set_color(BLACK)
+            equalsign2=MathTex("=").move_to(RIGHT*1.1).set_color(BLACK)
 
             #show all Polygons
+            self.play(areatrapezoind2.animate.move_to(RIGHT*2.3),run_time=0.5)
             self.play(
-                Create(areasquareog.move_to(LEFT*4)),
-                Create(areatrapezoindog.move_to([0,0,0])),
-                areatrapezoind2.animate.move_to(RIGHT*4),
+                Create(areasquareog.move_to(LEFT*2.3).scale(0.8)),
+                Create(areatrapezoindog.move_to([0,0,0]).scale(0.8)),
+                areatrapezoind2.animate.scale(0.8),
                 Create(equalsign),
                 Create(equalsign2)
                 )
 
-            self.wait()
+            self.wait(0.5)
             #Fade Out of Scene
             self.play(
                 FadeOut(areasquareog),
@@ -476,15 +485,15 @@ class pitagoras(Scene):
 
             [triangle,catetogrande,hypothenuse,
             catetochico,vector1,vector2,division,
-            pol1,pol2,pol1final,pol2final]=make_proof(t1)
+            pol1,pol2,pol1final,pol2final]=make_proof(t1, [-4.5,-4,0])
 
             [triangle1,catetogrande1,hypothenuse1,
             catetochico1,vector11,vector21,division1,
-            pol11,pol21,pol1final1,pol2final1]=make_proof(t2 , [-0.5,0,0])
+            pol11,pol21,pol1final1,pol2final1]=make_proof(t2 , [0,4.3,0])
 
             [triangle2,catetogrande2,hypothenuse2,
             catetochico2,vector12,vector22,division2,
-            pol12,pol22,pol1final2,pol2final2]=make_proof(t3, [-0.5,0,0])
+            pol12,pol22,pol1final2,pol2final2]=make_proof(t3, [4.5,0,0])
 
 
             self.play(Write(triangle),Write(triangle1),Write(triangle2))
@@ -554,15 +563,11 @@ class pitagoras(Scene):
                 FadeOut(pol2final1),
                 FadeOut(pol2final2))
             
-
-
-
-            self.wait()
             
         def Logo():
-            LateX = MathTex("\\text{mc=}", color=GRAY_D)
-            LateX.scale(3)
-            self.play(Write(LateX), run_time=3)
+            self.remove(watermark)
+            Reuler=MathTex(r"\mathbb{R}euler", color=GRAY_D).scale(3)
+            self.play(Write(Reuler), run_time=3)
             self.wait()
 
 
