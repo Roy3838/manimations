@@ -13,6 +13,12 @@ class Potential(Scene):
             gradiente= (  np.exp(-x**2) * (1- 2 * (x**3 + x)* np.arctan(x) ) )/(x**2 + 1)
             val = gradiente*(-9.81)
             return val
+
+        def dx(x):
+            gradiente= (  np.exp(-x**2) * (1- 2 * (x**3 + x)* np.arctan(x) ) )/(x**2 + 1)
+            return gradiente
+
+
         
         def animate_ball(x_0,v_0):
             E=0.7
@@ -25,8 +31,9 @@ class Potential(Scene):
             ball.set_color(RED)
 
             E_lim=Line(axes.c2p(0.3537,0.7) + 8*LEFT,axes.c2p(0.3537,0.7)+ 3*RIGHT).set_color(GREEN)
-            #E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
-            self.add(E_lim)#,E_text)
+            E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
+
+            self.add(E_lim,E_text)
 
             dx=0.005
             #dx=0.05
@@ -49,17 +56,24 @@ class Potential(Scene):
             
             for j in range(len(x[0])-1):
                 balls=VGroup()
+                balls1d=VGroup()
                 for i in range(len(x)):
                     v[i][j+1] = v[i][j] + F(x[i][j])*dx
                     x[i][j+1] = x[i][j] + v[i][j]*dx
                     if U(x[i][j+1]) > 0.7:
+                        #shift balls so they are over the graph and not on the graph
+                        #derivative_value=dx(x[i][j+1])
+
+
                         balls.add(Dot(fill_opacity=0.4).move_to(axes.c2p(x[i][j+1],U(x[i][j+1])) + UP*0.12).set_color(RED))
+                        
                     else:
                         balls.add(ball.copy().move_to(axes.c2p(x[i][j+1],U(x[i][j+1])) + UP*0.12))
-                self.add(balls)
+                        balls1d.add(Dot().move_to(axes.c2p(x[i][j+1],1)).set_color(RED))
+                self.add(balls,balls1d)
                 print(i)
                 self.wait(1/60)
-                self.remove(balls)
+                self.remove(balls,balls1d)
 
             
         axes=Axes(x_range=[-3, 2], y_range=[-0.25, 1]).set_color(BLACK)
