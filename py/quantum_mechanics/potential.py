@@ -1,10 +1,10 @@
 from manim import *
 import numpy as np
-
-
-
+# despues de lo de Blas ya no se xd
 class Potential(Scene):
+
     def construct(self):
+        self.camera.background_color = "#E2E2E2"
 
         def pot(x):
             return np.arctan(x)*(np.exp(-x**2)) + 0.4
@@ -16,10 +16,19 @@ class Potential(Scene):
 
         def derivative(x):
             gradiente= (  np.exp(-x**2) * (1- 2 * (x**3 + x)* np.arctan(x) ) )/(x**2 + 1)
-            return gradiente
+            vector= np.array([1,gradiente*1.7,0])
+            vector_norm= vector/np.linalg.norm(vector)
+            return vector_norm
 
+        def norm(x):
+            gradiente= (  np.exp(-x**2) * (1- 2 * (x**3 + x)* np.arctan(x) ) )/(x**2 + 1)
+            gradiente = -gradiente
+            #vect= np.array([gradiente, 1,0])
+            #norma = np.linalg.norm(vect)
+            vector= np.array([gradiente*1.7, 1, 0])
+            vector_norm = vector/np.linalg.norm(vector)
+            return vector_norm
 
-        
         def animate_ball(x_0,v_0,
                         particulas, 
                         U_x, F,
@@ -27,6 +36,7 @@ class Potential(Scene):
                         t_max=3, 
                         size=0.1,
                         color=RED,
+                        colorarrow=RED,
                         rnd_v=True,
                         rnd_x=True):
             E=0.7
@@ -36,9 +46,6 @@ class Potential(Scene):
             # Reference Ball
             ball = Dot().move_to([x_0,U_x(x_0),0])
             ball.set_color(color)
-            
-
-
             
 
             # Make velocity and position vectors
@@ -65,18 +72,33 @@ class Potential(Scene):
             for j in range(len(x[0])-1):
                 balls=VGroup()
                 balls1d=VGroup()
+                NormalVectors=VGroup()
+                SpeedVectors=VGroup()
                 for i in range(len(x)):
+                    # Euler integration
                     v[i][j+1] = v[i][j] + F(x[i][j])*dx
                     x[i][j+1] = x[i][j] + v[i][j]*dx
+                    # Position and Velocity Vectors
+                    nor_v=norm(x[i][j+1])
+                    contact_vector=norm(x[i][j+1])*0.12
+                    speedabs= v[i][j+1]/2
+                    speedvector=speedabs*( derivative(x[i][j+1]))
+                    ball_pos=axes.c2p(x[i][j+1],U_x(x[i][j+1])) + contact_vector
+
                     if U_x(x[i][j+1]) > 0.7:
-                        balls.add(Dot(fill_opacity=0.2).move_to(axes.c2p(x[i][j+1],U_x(x[i][j+1])) + UP*0.12).set_color(color))
-                        
+                        # If Balls are in the prohibited region, they have less fill opacity
+                        balls.add(Dot(fill_opacity=0.2).move_to(ball_pos)).set_color(color)
+                        balls1d.add(Dot(fill_opacity=0.2).move_to(axes.c2p(x[i][j+1],1.25)).set_color(color))
                     else:
-                        balls.add(ball.copy().move_to(axes.c2p(x[i][j+1],U_x(x[i][j+1])) + UP*0.12))
+                        # Make Mobjects
+                        balls.add(ball.copy().move_to(ball_pos))
                         balls1d.add(Dot().move_to(axes.c2p(x[i][j+1],1.25)).set_color(color))
-                self.add(balls,balls1d)
+                        NormalVectors.add(Arrow(ball_pos ,nor_v + ball_pos , buff=0.1)).set_color(colorarrow)
+                        SpeedVectors.add(Arrow( ball_pos , speedvector + ball_pos , buff=0.1).set_color(colorarrow))
+                
+                self.add(balls,balls1d,NormalVectors,SpeedVectors)
                 self.wait(1/60)
-                self.remove(balls,balls1d)
+                self.remove(balls,balls1d,NormalVectors,SpeedVectors)
 
             
         axes=Axes(x_range=[-3, 2], y_range=[-0.25, 1]).set_color(BLACK)
@@ -89,13 +111,8 @@ class Potential(Scene):
 
 
 
-        self.camera.background_color = "#E2E2E2"
-        #initial_point = [axes.coords_to_point(-2, U(-2))]
-        #dot = Dot(point=initial_point).set_color(BLACK)
-        #dot.add_updater(lambda x: x.move_to(axes.c2p( )))
         graph=axes.plot(lambda x:pot(x), x_range=[-3.5,2.5]).set_color(BLACK)
         label=axes.get_axis_labels(x_label="x", y_label="U(x)").set_color(BLACK)
-        #derivative=axes.plot(v).set_color(BLUE)
         self.play(Create(axes),Create(label),Create(oneDaxes),run_time=1.5)
         self.play(Create(graph))#,Create(derivative))
 
@@ -103,10 +120,10 @@ class Potential(Scene):
         E_lim=Line(axes.c2p(E_max,pot(E_max)) + 8*LEFT,axes.c2p(E_max,pot(E_max))+ 3*RIGHT).set_color(GREEN)
         E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
         self.play(Write(E_lim),Write(E_text))
-        #self.play(t.animate.set_value(1.25))
-        animate_ball(-2,2.3, 1, U_x=pot, F=force, rnd_x=False, rnd_v=False, dx=0.005, color=BLUE)
+        
+        #animate_ball(-2,2.3, 1, t_max=2, U_x=pot, F=force, rnd_x=False, rnd_v=False, dx=0.01, color=BLUE)
         self.wait()
-        animate_ball(-2,2.3, 80, U_x=pot, F=force, dx=0.005)
+        #animate_ball(-2,2.3, 80, U_x=pot, F=force, dx=0.005)
         self.wait()
         self.play(Uncreate(graph),Uncreate(axes),Uncreate(label),Uncreate(oneDaxes))
 

@@ -37,7 +37,8 @@ def sha256_tex_mob(message, n_forced_start_zeros = 0):
 
 class hashexplanation(Scene):
     def construct(self):
-        self.generalfunction()
+        self.camera.background_color = "#E2E2E2"
+        #self.generalfunction()
         self.hashfunction()
     
     
@@ -55,36 +56,30 @@ class hashexplanation(Scene):
     def hashfunction(self):
         #make scene to explain the identifying caracteristics that a hash function has
         
-        def make_two_hash_function(message):
+        def make_two_hash_function(message1, message2):
             Inputbefore=Text("Hash( \"").scale(0.6).move_to(3*LEFT)
 
-            messagehash=sha256_tex_mob(message).scale([0.4,0.6,1])
-
-            messagemob1 = Text(message.split(",")[0],color=BLUE).scale(0.6)
-            messagemob1.align_to(Inputbefore,DOWN)
-            messagemob2 = Text(", ",color=WHITE).scale(0.6)
-            messagemob2.move_to(messagemob1.get_corner(DR)+RIGHT*0.1)
-            messagemob3 = Text(message.split(",")[1],color=BLUE).scale(0.6)
-            messagemob3.move_to(messagemob1.get_right()+RIGHT*0.6)
-            messagemob1.shift(0.1*DOWN)
-            
-            messagemob3.align_to(Inputbefore,DOWN)
-            messagemob1.align_to(Inputbefore,DOWN)
-            messagemob = VGroup(messagemob1,messagemob2,messagemob3)
-            
-            widthofmessage=messagemob.get_width()
-            
-            # messagemob moved to inputright with buffer messagewidth--> |-----.-----|
-            messagemob.move_to(Inputbefore.get_right()+widthofmessage/2*RIGHT + 0.05*RIGHT)
-            # Input after moved to messageright with buffer widthInput |-----.-----| <---
-            
+            messagehash=sha256_tex_mob(message1+message2).scale([0.4,0.6,1])
+            messagemob1 = Text(message1).scale(0.6)
+            comma=Text(", ").scale(0.6)
+            messagemob2 = Text(message2).scale(0.6)
             Inputafter=Text("\" ) = ").scale(0.6)
-            Inputwidth=Inputafter.get_width()
-            Inputafter.move_to(messagemob.get_right() + Inputwidth/2*RIGHT + 0.05*RIGHT)
-            
-            #align 
-            
-            Input=VGroup(Inputbefore,messagemob1,messagemob2,messagemob3,Inputafter)
+
+            # Align
+            messagemob1.move_to(Inputbefore.get_right() + 0.95*RIGHT + 0.05*DOWN)
+            comma.move_to(messagemob1.get_right()       + 0.1*RIGHT + 0.1*DOWN)
+            messagemob2.align_on_border(messagemob1.get_right(), RIGHT)
+            Inputafter.move_to(messagemob2.get_right()  + 0.45*RIGHT + 0.05*UP)
+
+            # Color
+            messagemob1.set_color(BLUE)
+            messagemob2.set_color(BLUE)
+            Inputbefore.set_color(BLACK)
+            comma.set_color(BLACK)
+            Inputafter.set_color(BLACK)
+            messagehash.set_color(BLACK)
+                        
+            Input=VGroup(Inputbefore,messagemob1,messagemob2,comma,Inputafter)
             
             messagehash.move_to(Inputafter.get_right() + 2*RIGHT)
             
@@ -94,10 +89,10 @@ class hashexplanation(Scene):
         
         def make_hash_function(message):
             #hash with message
-            Inputbefore=Text("Hash( \"").scale(0.6).move_to(3*LEFT)
+            Inputbefore=Text("Hash( \"").scale(0.6).move_to(3*LEFT).set_color(BLACK)
             
             
-            messagehash=sha256_tex_mob(message).scale([0.4,0.6,1])
+            messagehash=sha256_tex_mob(message).scale([0.4,0.6,1]).set_color(BLACK)
             messagemob = Text(message,color=BLUE).scale(0.6)
                 
             
@@ -105,11 +100,11 @@ class hashexplanation(Scene):
             #centering and aligning
             widthofmessage=messagemob.get_width()
             
-            # messagemob moved to inputright with buffer messagewidth--> |-----.-----|
+            # messagemob moved to inputright with buffer messagewidth --> |-----.-----|
             messagemob.move_to(Inputbefore.get_right()+widthofmessage/2*RIGHT + 0.05*RIGHT)
-            # Input after moved to messageright with buffer widthInput |-----.-----| <---
+            # Input after moved to messageright with buffer widthInput  |-----.-----| <---
             
-            Inputafter=Text("\" ) = ").scale(0.6)
+            Inputafter=Text("\" ) = ").scale(0.6).set_color(BLACK)
             Inputwidth=Inputafter.get_width()
             Inputafter.move_to(messagemob.get_right() + Inputwidth/2*RIGHT + 0.05*RIGHT)
             Input=VGroup(Inputbefore,messagemob,Inputafter)
@@ -119,8 +114,18 @@ class hashexplanation(Scene):
         
         
         [Input,messagehash]=make_hash_function("Message")
+        [SecondImput,Secondmessagehash]=make_hash_function("Message1")
+        [ThirdImput,Thirdmessagehash]=make_hash_function("Message2")
+        [FourthImput,Fourthmessagehash]=make_hash_function("Message3")
+        [two,hash2]=make_two_hash_function("Message","Salt")
+        [three,hash3]=make_two_hash_function("Message","Salt2")
         self.play(Write(Input))
-        
+        self.play(Write(messagehash))
+        self.play(ReplacementTransform(Input,SecondImput),ReplacementTransform(messagehash,Secondmessagehash))
+        self.play(ReplacementTransform(SecondImput,ThirdImput),ReplacementTransform(Secondmessagehash,Thirdmessagehash))
+        self.play(ReplacementTransform(ThirdImput,FourthImput),ReplacementTransform(Thirdmessagehash,Fourthmessagehash))
+        self.play(ReplacementTransform(FourthImput,two),ReplacementTransform(Fourthmessagehash,hash2))
+        self.play(ReplacementTransform(two,three),ReplacementTransform(hash2,hash3))
         
         self.wait()
         
