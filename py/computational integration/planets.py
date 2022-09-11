@@ -84,12 +84,12 @@ class Euler(ThreeDScene):
         F1[0][:] = fuerza(G,m1,m2,m3,R1[0][:],R2[0][:],R3[0][:])
         F2[0][:] = fuerza(G,m2,m1,m3,R2[0][:],R1[0][:],R3[0][:])
         F3[0][:] = fuerza(G,m3,m1,m2,R3[0][:],R1[0][:],R2[0][:])
-        mEuler = True
-        LeapFrog=False
+        mEuler = False
+        LeapFrog=True
 
         if mEuler:
             for t in range(0,n-1):
-                print(t)
+                #print(t)
                 R1[t+1][:] = R1[t][:] + dt*dR1[t][:]
                 R2[t+1][:] = R2[t][:] + dt*dR2[t][:]
                 R3[t+1][:] = R3[t][:] + dt*dR3[t][:]
@@ -121,18 +121,22 @@ class Euler(ThreeDScene):
                 dR3[t+1][:] = dR3i[t+1][:] + 0.5*dt*F3[t+1][:]/m3
 
         # Graficar
-        planet1=Sphere(radius=0.3,fill_opacity=1,fill_color=BLUE,stroke_width=0)
-        planet2=Sphere(radius=0.3,fill_opacity=1,fill_color=RED,stroke_width=0)
-        planet3=Sphere(radius=0.3,fill_opacity=1,fill_color=GREEN,stroke_width=0)
+        planet1=Sphere(radius=0.5,fill_opacity=1,stroke_width=0).set_color(YELLOW)
+        planet2=Sphere(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN)
+        planet3=Sphere(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
         scalingfactor=(8e+11)/4
-        for i in range(n):
-            if i % 2 == 0:
-                planet1.move_to(R1[i][:]/scalingfactor)
-                planet2.move_to(R2[i][:]/scalingfactor)
-                planet3.move_to(R3[i][:]/scalingfactor)
-                self.add(planet1,planet2,planet3)
-                self.wait(1/60)
-                self.remove(planet1,planet2,planet3)
+        scalingfactorv=13720
+        for i in range(0,n,2):
+            print(str(i*100/n) + "%")
+            planet1.move_to(R1[i][:]/scalingfactor)
+            planet2.move_to(R2[i][:]/scalingfactor)
+            planet3.move_to(R3[i][:]/scalingfactor)
+            #print(dR3[i][:]/scalingfactorv)
+            arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=RED)
+            arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=RED)
+            self.add(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
+            self.wait(1/60)
+            self.remove(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
         
         #self.add(Text("hi"))
         print(str(time.time()-start) + " seconds")
