@@ -121,21 +121,23 @@ class Euler(ThreeDScene):
                 dR3[t+1][:] = dR3i[t+1][:] + 0.5*dt*F3[t+1][:]/m3
 
         # Graficar
-        planet1=Sphere(radius=0.5,fill_opacity=1,stroke_width=0).set_color(YELLOW)
-        planet2=Sphere(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN)
+        planet1=Sphere(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
+        planet2=Sphere(radius=0.5,fill_opacity=1,stroke_width=0).set_color(GREEN)
         planet3=Sphere(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
+
         scalingfactor=(8e+11)/4
         scalingfactorv=13720
-        for i in range(0,n,2):
-            print(str(i*100/n) + "%")
+
+        for i in range(0,n,10):
+            print(str(round((i*100/n),2)) + "%")
             planet1.move_to(R1[i][:]/scalingfactor)
             planet2.move_to(R2[i][:]/scalingfactor)
             planet3.move_to(R3[i][:]/scalingfactor)
             #print(dR3[i][:]/scalingfactorv)
-            arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=RED)
-            arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=RED)
+            arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=GREY_C)
+            arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=GREY_C)
             self.add(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
-            self.wait(1/60)
+            self.wait(1/10)
             self.remove(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
         
         #self.add(Text("hi"))
