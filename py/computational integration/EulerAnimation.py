@@ -148,7 +148,8 @@ class Euler(MovingCameraScene):
                     GarbageCollection.add(result[i+1])
                 self.play(FadeOut(GarbageCollection))
 
-
+        def ecuaciones():
+            grav=MathTex("F\left(r\right)=G\frac{m_{1}m_{2}}{r^{2}}")
         
         
         ax = Axes(
@@ -157,7 +158,6 @@ class Euler(MovingCameraScene):
         labels = ax.get_axis_labels(x_label="x", y_label="f(x)").set_color(BLACK)
         graph_integral = ax.plot(func_integral, color=GOLD)      
         self.play(Write(labels),Write(ax),Write(graph_integral))
-        self.play(Write(ax),Write(labels))
         x_range=[-1.5, 1.5]
         punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento1')
         #self.clear()
