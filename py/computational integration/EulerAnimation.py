@@ -65,8 +65,8 @@ class Euler(MovingCameraScene):
                     posarrow=ax.coords_to_point(x[i], y[i])
                     scale_vect_vel=1/2
                     arrowvect=np.array(  [1*scale_vect_vel,scale_vect_vel*func(x[i])/scalingfactor,0  ] )
-                    velocidad=Arrow(posarrow, posarrow+arrowvect, buff=0 ).set_color(BLACK)
-                    gravarrow=Arrow(posarrow,posarrow+DOWN,buff=0).set_color(BLACK)
+                    velocidad=Arrow(posarrow, posarrow+arrowvect, buff=0 ).set_color(GREY_C)
+                    gravarrow=Arrow(posarrow,posarrow+DOWN,buff=0).set_color(GOLD)
                     self.play(Write(velocidad))
                     self.play(Write(gravarrow ))
 

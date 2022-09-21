@@ -6,6 +6,7 @@ start=time.time()
 width=1080
 height=1920
 config.frame_size = [width, height]
+
 class Euler(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
@@ -38,7 +39,7 @@ class Euler(MovingCameraScene):
         # masa [kg]
         m1 = 1.989e30
         m2 = 1.89819e28
-        m3 = 1#0.04784e24
+        m3 = 0.04784e24
         # posicion inicial [m]
         r10 = [0, 0]
         r20 = [7.40522e11, 0]
@@ -144,9 +145,9 @@ class Euler(MovingCameraScene):
             v2=np.array([dR2[i][0]/scalingfactorv,dR2[i][1]/scalingfactorv,0])
             v3=np.array([dR3[i][0]/scalingfactorv,dR3[i][1]/scalingfactorv,0])
             #print(pos2+v2)
-            Fm1=np.array([F1[i][0]/scalingfactorf,F1[i][1]/scalingfactorf,0])
-            Fm2=np.array([F2[i][0]/scalingfactorf,F2[i][1]/scalingfactorf,0])
-            Fm3=np.array([F3[i][0],F3[i][1],0])/np.linalg.norm(np.array([F3[i][0],F3[i][1],0]))
+            Fm1=np.array([F1[i][0],F1[i][1],0])*1.5/np.linalg.norm(np.array([F1[i][0],F1[i][1],0]))
+            Fm2=np.array([F2[i][0],F2[i][1],0])*1.5/np.linalg.norm(np.array([F2[i][0],F2[i][1],0]))
+            Fm3=np.array([F3[i][0],F3[i][1],0])*1.5/np.linalg.norm(np.array([F3[i][0],F3[i][1],0]))
             #print(Fm3)
 
             arrowplanet2=Arrow(pos2, pos2+v2, buff=0,color=GREY_C)
