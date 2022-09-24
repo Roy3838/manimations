@@ -159,16 +159,46 @@ class Euler(MovingCameraScene):
         graph_integral = ax.plot(func_integral, color=GOLD)      
         self.play(Write(labels),Write(ax),Write(graph_integral))
         x_range=[-1.5, 1.5]
-        punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento1')
-        #self.clear()
-        punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento')
-        #self.clear()
-        punto_euler(func,func_integral,x_range,0.2,x_range[0],x_range[1],'rapido')
-        #self.clear()
-        #punto_euler(lambda x: np.cos(x),lambda x: np.sin(x)+1,x_range,0.1,x_range[0],x_range[1],'rapido')
-        punto_euler(func,func_integral,x_range,0.1,x_range[0],x_range[1],'rapidisimo')
+        
+        def introduccion():
+            punto=Dot(ax.coords_to_point(1,1),color=BLACK)
+            gravedad=Arrow(ax.coords_to_point(1,1),ax.coords_to_point(1,0),buff=0).set_color(BLACK)
+            gravedad.add_updater(lambda x: x.move_to(punto.get_center()))
+            gravedad.add_updater(lambda x: x.align_to(punto,UP))
 
-        punto_euler(func,func_integral,x_range,0.05,x_range[0],x_range[1],'rapidisimo')
+            centro_gravitacional=Dot(ax.coords_to_point(0,0),color=BLACK)
+            pos1=punto.get_center()
+            pos2=centro_gravitacional.get_center()
+            vector_norm=(pos2-pos1)/np.linalg.norm(pos2-pos1)*2
+            print(vector_norm)
+            gravedad_con_centro=Arrow(pos1,vector_norm,buff=0).set_color(BLACK)
+            gravedad_con_centro.add_updater(lambda x: x.become(
+                Arrow(pos1,vector_norm,buff=0).set_color(BLACK)
+            ))
+
+            self.wait()
+            self.add(punto,gravedad)
+            self.play(punto.animate.move_to(ax.coords_to_point(1,3)),run_time=1)
+            self.play(punto.animate.move_to(ax.coords_to_point(2,1)),run_time=1)
+            self.play(Write(gravedad_con_centro),Write(centro_gravitacional))
+            self.play(punto.animate.move_to(ax.coords_to_point(1,1)),run_time=1)
+
+
+        def compute_animation():
+            #self.clear()
+            punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento1')
+
+            punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento')
+            
+            #self.clear()
+            #punto_euler(func,func_integral,x_range,0.2,x_range[0],x_range[1],'rapido')
+            #self.clear()
+            #punto_euler(lambda x: np.cos(x),lambda x: np.sin(x)+1,x_range,0.1,x_range[0],x_range[1],'rapido')
+            #punto_euler(func,func_integral,x_range,0.1,x_range[0],x_range[1],'rapidisimo')
+
+            #punto_euler(func,func_integral,x_range,0.05,x_range[0],x_range[1],'rapidisimo')
+        introduccion()
+        #compute_animation()
         self.wait()
 
 
