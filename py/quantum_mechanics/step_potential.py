@@ -68,6 +68,9 @@ sol = integrate.solve_ivp(psi_t,
                           method="RK23")
 
 
+
+
+
 # Plotting
 fig = plt.figure(figsize=(6, 4))
 for i, t in enumerate(sol.t):
