@@ -40,9 +40,9 @@ D2 = sparse.diags([1, -2, 1], [-1, 0, 1], shape=(x.size, x.size)) / dx**2
 D2.toarray()*dx**2
 
 """ INUTIL SOLO ES PROBAR DIFERENCIAS FINITAS"""
-plt.plot(x[1:-1], np.sin(x)[1:-1], label=r"$\sin(x)$")
-plt.plot(x[1:-1], D2.dot(np.sin(x))[1:-1], label=r"$\mathbf{D2} \cdot \sin(x) = -\sin(x)$")
-plt.legend(loc=1, fontsize=8, fancybox=False)
+# plt.plot(x[1:-1], np.sin(x)[1:-1], label=r"$\sin(x)$")
+# plt.plot(x[1:-1], D2.dot(np.sin(x))[1:-1], label=r"$\mathbf{D2} \cdot \sin(x) = -\sin(x)$")
+# plt.legend(loc=1, fontsize=8, fancybox=False)
 
 
 # RHS of Schrodinger Equation
@@ -66,3 +66,26 @@ for i, t in enumerate(sol.t):
 plt.plot(x, V * 0.01, "k--", label=r"$V(x) = \frac{1}{2}m\omega^2 (x-5)^2$ (x0.01)")   # Plot Potential
 plt.legend(loc=1, fontsize=8, fancybox=False)
 fig.savefig('sho@2x.png')
+
+
+# fig = plt.figure()
+# ax1 = plt.subplot(1,1,1)
+# ax1.set_xlim(0, 10)
+# ax1.set_ylim(0, 6)
+# title = ax1.set_title('')
+# line1, = ax1.plot([], [], "k--")
+# line2, = ax1.plot([], [])
+
+# def init():
+#     line1.set_data(x, V * 0.01)
+#     return line1,
+# def animate(i):
+#     line2.set_data(x, np.abs(sol.y[:,i])**2)
+#     title.set_text('Time = {0:1.3f}'.format(sol.t[i]))
+#     return line1,
+# anim = animation.FuncAnimation(fig, animate, init_func=init,
+#                                frames=len(sol.t), interval=50,                 
+#                                blit=True)
+# # Save the animation into a short video
+# anim.save('sho.mp4', fps=15, 
+#           extra_args=['-vcodec', 'libx264'], dpi=600)
