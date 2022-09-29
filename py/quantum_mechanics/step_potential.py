@@ -3,12 +3,13 @@
 import numpy as np
 from scipy import integrate
 from scipy import sparse
+import time
 
 import matplotlib.pyplot as plt
 from matplotlib import animation
 plt.rc('savefig', dpi=300)
 
-
+time1=time.time()
 # Set initial conditions
 dx = 0.005                  # spatial separation
 x = np.arange(0, 10, dx)    # spatial grid points
@@ -65,7 +66,7 @@ sol = integrate.solve_ivp(psi_t,
                           t_span=[t0, tf],
                           y0=psi0,
                           t_eval=t_eval,
-                          method="RK23")
+                          method="RK45")
 
 
 
@@ -116,11 +117,12 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, init_func=init,
                                frames=len(sol.t), interval=200, blit=True)
 
-
+print(str(time.time()-time1) + " seconds")
 # Save the animation into a short video
 print("Generating mp4")
-anim.save('V' + str(magnitud) + 'squish' + str(squish) + 'step.mp4', fps=15, extra_args=['-vcodec', 'libx264'], dpi=600)
+
 #print("Generating GIF")
 # anim.save('step@2x.gif', writer='pillow', fps=15)
 # anim.save('step@2x.gif', writer='imagemagick', fps=15, dpi=150, extra_args=['-layers Optimize'])
 #anim.save('step@2x.gif', writer='imagemagick', fps=15, dpi=150)
+print(str(time.time()-time1) + " seconds")
