@@ -47,10 +47,18 @@ class Euler(ThreeDScene):
         dr20 = [0, 13720, 0]
         dr30 = [-7252.9479, 10370, 0]
 
-        n= 1300
         d=3
+
+        n= 1300
         tf=1.3e+09
+
         dt=tf/n
+        #OR FORCE MORE TIME WITH SAME DT
+        multiplier=2
+        tf = tf*multiplier
+        n=n*multiplier
+
+
         T=np.arange(0,tf,n)
 
         #pos
@@ -122,13 +130,13 @@ class Euler(ThreeDScene):
 
         # Graficar
         planet1=Sphere(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
-        planet2=Sphere(radius=0.5,fill_opacity=1,stroke_width=0).set_color(GREEN)
-        planet3=Sphere(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
+        planet2=Sphere(radius=0.2,fill_opacity=1,stroke_width=0).set_color(GREEN)
+        planet3=Sphere(radius=0.1,fill_opacity=1,stroke_width=0).set_color(BLACK)
 
         scalingfactor=(8e+11)/4
         scalingfactorv=13720
 
-        for i in range(0,n,10):
+        for i in range(0,n,1):
             print(str(round((i*100/n),2)) + "%")
             planet1.move_to(R1[i][:]/scalingfactor)
             planet2.move_to(R2[i][:]/scalingfactor)
@@ -136,9 +144,15 @@ class Euler(ThreeDScene):
             #print(dR3[i][:]/scalingfactorv)
             arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=GREY_C)
             arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=GREY_C)
-            self.add(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
-            self.wait(1/10)
-            self.remove(planet1,planet2,planet3,arrowplanet2,arrowplanet3)
+            self.add(planet1,planet2)
+            self.add(planet3)#,arrowplanet2,arrowplanet3)
+            self.wait(1/60)
+            self.remove(planet1,planet2,planet3)#,arrowplanet2,arrowplanet3)
+            # if i==n/2 :
+            #     #ecuacion de Gravitacion de Newton en LaTeX
+            #     ecuaciones=MathTex(r"F\left(r\right)=G\frac{mM}{r^{2}}").move_to(UP*2)
+            #     ecuaciones.set_color(BLACK)
+            #     self.add_fixed_in_frame_mobjects(ecuaciones)
         
         #self.add(Text("hi"))
         print(str(time.time()-start) + " seconds")
