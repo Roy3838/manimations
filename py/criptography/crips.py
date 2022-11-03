@@ -65,7 +65,9 @@ class cripto(MovingCameraScene):
                     person1=random.choice(names)
                     person2=random.choice(names)
                     cantidad = random.randint(1,99)
-                result.submobjects[i]=Text(person1+" transfiere a "+person2+" "+str(cantidad)+" BTC").shift(0.25*DOWN*(i+1) + 1.1*UP).scale([0.15,0.2,1])
+                result.submobjects[i]=Text(
+                    person1+" transfiere a "+person2+" "+str(cantidad)+" BTC"
+                    ).shift(0.25*DOWN*(i+1) + 1.1*UP).scale([0.15,0.2,1])
                 
             block_color = BLACK
             text_color = BLACK
