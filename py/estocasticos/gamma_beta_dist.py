@@ -4,7 +4,9 @@ import random as rd
 
 
 class GammaBetaDist(Scene):
+
     def construct(self):
+    
         # set seed of numpy and random
         np.random.seed(0)
         rd.seed(0)
@@ -15,8 +17,6 @@ class GammaBetaDist(Scene):
         # generate gamma distribution numbers
         gamma = np.random.gamma(2, 2, 10)
         x=np.linspace(0, 10, 10)
-
-        
 
         # Create Axes
         ax = Axes(
@@ -34,7 +34,6 @@ class GammaBetaDist(Scene):
             stroke_width = 4
         ).set_color(BLACK)
 
-
-
-
         self.play(Create(ax),Create(plot1))
+
+        
