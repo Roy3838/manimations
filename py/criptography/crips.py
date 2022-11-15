@@ -4,7 +4,9 @@ import itertools as it
 import binascii
 import random
 import time
-
+width=1080
+height=1920
+config.frame_size = [width, height]
 #imported from cripto 3b1b video
 def sha256_bit_string(message):
     hexdigest = sha256(message.encode('utf-8')).hexdigest()
@@ -38,6 +40,7 @@ def sha256_tex_mob(message, n_forced_start_zeros = 0):
 class cripto(MovingCameraScene):
     def construct(self):
         
+        
         #a method that creates a blockchain block of random transactions
         def Create_block_list(lista_transactions,testing):
             if testing:
@@ -66,8 +69,8 @@ class cripto(MovingCameraScene):
                     person2=random.choice(names)
                     cantidad = random.randint(1,99)
                 result.submobjects[i]=Text(
-                    person1+" transfiere a "+person2+" "+str(cantidad)+" BTC"
-                    ).shift(0.25*DOWN*(i+1) + 1.1*UP).scale([0.15,0.2,1])
+                    person1+" -> "+person2+" "+str(cantidad)+" BTC"
+                    ).shift(0.3*DOWN*(i+1) + 1.1*UP).scale([0.25,0.3,1])
                 
             block_color = BLACK
             text_color = BLACK
@@ -95,13 +98,18 @@ class cripto(MovingCameraScene):
         
         self.camera.frame.save_state()
         self.camera.background_color = "#E2E2E2"
+        #move center to first block
+        self.camera.frame.move_to([-3,0,0])
+        #set camera zoom
+        self.camera.frame.scale(0.48)
+
         
         
         
         
         
         
-        l=8
+        l=7
         testing=False
         for i in range(l):
             tic = time.perf_counter()
@@ -118,7 +126,7 @@ class cripto(MovingCameraScene):
             
             print("Block creation = " + str(i+1) + "/" + str(l))
             #create block
-            [block,result,alt]=Create_block_list(random.randint(6,9),testing)#nice
+            [block,result,alt]=Create_block_list(random.randint(6,8),testing)#nice
             block.move_to(i*3*RIGHT + 5*LEFT+ UP*2.3 + DOWN*0.5*alt)
             #create salt
             salt=random.randint(100000000000000,999999999999999)
@@ -178,20 +186,27 @@ class cripto(MovingCameraScene):
 
             hashbox=SurroundingRectangle(arrowtext, buff = 0.1, color=GOLD)
             hashbox2=SurroundingRectangle(hash, buff = .1, color=GOLD)
-            self.play(Create(block),run_time=1)
+
+            
+            
+            if i>=1:
+                self.play(Create(block),
+                self.camera.frame.animate.move_to([block.get_center()[0],0,0]),
+                run_time=1)
+            else:
+                self.play(Create(block),run_time=1)
             self.play(Create(salt),run_time=0.3)
             self.play(Create(newarrow),Create(arrowtext),run_time=0.3)
             self.play(Create(hash),run_time=0.3)
-            if i==0:
-                self.play(Create(hashbox))
-                self.wait()
-                self.play(ReplacementTransform(hashbox,hashbox2),run_time=1)
+            # if i==0:
+            #     self.play(Create(hashbox))
+            #     self.wait()
+            #     self.play(ReplacementTransform(hashbox,hashbox2),run_time=1)
             
             hashrate=random.randint(5,40)
             if testing:
                 hashrate=0
-            if i>=1:
-                self.play(self.camera.frame.animate.move_to([block.get_center()[0] + 5,0,0]))
+
             #hashing proof of work 
             for x in range(hashrate):
                 self.remove(hash,salt)
@@ -209,11 +224,11 @@ class cripto(MovingCameraScene):
                 hash.set_color(hash_color)
                 salt.set_color(salt_color)
                 self.add(hash, salt)
-                self.wait(0.1)
+                self.wait(1/15)
             
             if i!=l-1:
-                if i==0:
-                    self.play(FadeOut(hashbox2))
+                # if i==0:
+                #     self.play(FadeOut(hashbox2))
                 self.play(Create(hashbrace))
                 self.play(Write(texto))
                 self.wait(0.5)
