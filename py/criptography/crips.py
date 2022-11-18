@@ -133,7 +133,9 @@ class cripto(MovingCameraScene):
             salt=Text(str(salt), color = salt_color).scale(0.3)
             salt.move_to(block.get_bottom()+0.23*UP)
             header=random.randint(100000000000000,999999999999999)
-            header=Text(str(header), color = header_color).scale(0.3)
+            # make random 14 bit header
+            bits = "00000000000000"
+            header=Text(str(bits) + "...", color = header_color).scale(0.3)
             header.move_to(block.get_top()+0.23*DOWN + 3*RIGHT)
 
             #arrow to hash

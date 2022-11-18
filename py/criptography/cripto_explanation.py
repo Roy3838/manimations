@@ -37,7 +37,7 @@ def sha256_tex_mob(message, n_forced_start_zeros = 0):
     
     return bit_string_to_mobject(bit_string)
  
-class cripto(MovingCameraScene):
+class cripto_explanation(MovingCameraScene):
     def construct(self):
         self.camera.frame.save_state()
         self.camera.background_color = "#E2E2E2"
@@ -48,11 +48,11 @@ class cripto(MovingCameraScene):
             # explica lo que es un hash
 
             # explain a function as a machine
-            def get_machine():
+            def get_machine(stringinput=Tex("x"), stringoutput=Tex("f(x)")):
                 machine = VGroup(
                     Rectangle(height = 3, width = 6),
-                    Tex("f(x)"),
-                    Tex("x"),
+                    stringoutput,
+                    stringinput,
                     Polygon(UR+LEFT*0.5, UL+RIGHT*0.5, LEFT, RIGHT),
                     Polygon(UR+LEFT*0.5, UL+RIGHT*0.5, LEFT, RIGHT).rotate(PI)
                 ).set_color(BLACK)
@@ -64,8 +64,24 @@ class cripto(MovingCameraScene):
                 machine[4].shift(UP+LEFT*2)
                 machine[2].next_to(machine[4], UP, buff = SMALL_BUFF)
                 return machine
+            
+            machine1=get_machine().shift(2*DOWN)
+            self.play(Write(machine1))
+            f_x=MathTex("f(x)=x^2").move_to(machine1[1].get_center()).set_color(BLACK)
+            
+            f_n1=Tex("2").move_to(machine1[2].get_center()).set_color(BLACK)
+            f_o1=Tex("4").move_to(machine1[3].get_bottom() + DOWN*0.25).set_color(BLACK)
+            f_n2=Tex("4").move_to(machine1[2].get_center()).set_color(BLACK)
+            f_o2=Tex("16").move_to(machine1[3].get_bottom() + DOWN*0.25).set_color(BLACK)
 
-            self.play(Write(get_machine().shift(DOWN)))
+
+            self.play(ReplacementTransform(machine1[1], f_x))
+            self.play(ReplacementTransform(machine1[2], f_n1))
+            self.play(ReplacementTransform(f_n1.copy(), f_o1))
+
+            self.play(ReplacementTransform(f_n1, f_n2))
+            self.play(ReplacementTransform(f_n2.copy(), f_o2), FadeOut(f_o1))
+            self.wait()
             
 
         
