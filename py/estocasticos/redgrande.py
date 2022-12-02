@@ -27,9 +27,10 @@ class ChangedColors(ZoomedScene):
         dataSIR = dataSIR.to_numpy()
         #print(dataSIR)
         # data from 0 to 100
-        S_data = dataSIR[0:100,0]
+        # CHECAR PORQUE FLIPEE EL VECTOR
+        R_data = dataSIR[0:100,0]
         I_data = dataSIR[100:200,0]
-        R_data = dataSIR[200:300,0]
+        S_data = dataSIR[200:300,0]
         #print(S_data.shape, I_data.shape, R_data.shape)
         #flip data around
         S_data = np.flip(S_data)
