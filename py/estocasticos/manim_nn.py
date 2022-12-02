@@ -14,9 +14,7 @@ class VariationalAutoencoderScene(Scene):
 
     def construct(self):
 
-
-
-
+        self.camera.background_color = "#E2E2E2"
         """ SETUP """   
         neural_network = NeuralNetwork([
             FeedForwardLayer(1),
@@ -43,7 +41,7 @@ class VariationalAutoencoderScene(Scene):
             x_range=[0, 100, 10],
             y_range=[0, 500, 50],
             
-        ).scale(0.5).move_to(DOWN*1.5)
+        ).scale(0.5).move_to(DOWN*1.5).set_color(BLACK)
         # plot the data
         S_plot = axes.plot_line_graph(x_axis,S_data, 
         add_vertex_dots=False).set_color(BLUE)
@@ -53,7 +51,8 @@ class VariationalAutoencoderScene(Scene):
         add_vertex_dots=False).set_color(GREEN)
 
         """ DOING ANIMATIONS    """
-
+        Tex.set_default(color=BLACK)
+        Text.set_default(color=BLACK)
         # change neural_network color
         label_inputs = Text("i").move_to(neural_network.get_left() + LEFT).scale(0.8)
         S = Text("S[i]").move_to(UP).scale(0.8)

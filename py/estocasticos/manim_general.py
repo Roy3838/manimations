@@ -16,7 +16,7 @@ class VariationalAutoencoderScene(Scene):
 
 
 
-
+        self.camera.background_color = "#E2E2E2"
         """ SETUP """   
         neural_network = NeuralNetwork([
             FeedForwardLayer(1),
@@ -43,7 +43,7 @@ class VariationalAutoencoderScene(Scene):
             x_range=[0, 100, 10],
             y_range=[0, 500, 50],
             
-        ).scale(0.5).move_to(DOWN*1.5)
+        ).scale(0.5).move_to(DOWN*1.5).set_color(BLACK)
         # plot the data
         S_plot = axes.plot_line_graph(x_axis,S_data, 
         add_vertex_dots=False).set_color(BLUE)
@@ -53,7 +53,8 @@ class VariationalAutoencoderScene(Scene):
         add_vertex_dots=False).set_color(GREEN)
 
         """ DOING ANIMATIONS    """
-
+        Tex.set_default(color=BLACK)
+        Text.set_default(color=BLACK)
         # change neural_network color
         label_inputs = Text("i").move_to(neural_network.get_left() + LEFT).scale(0.8)
         S = Text("S[i]").move_to(UP).scale(0.8)
@@ -89,9 +90,10 @@ class VariationalAutoencoderScene(Scene):
             label_graphI = I1.copy().move_to(axes.coords_to_point(0,I_data[i1])+LEFT*0.5)
             label_graphR = R1.copy().move_to(axes.coords_to_point(0,R_data[i1])+LEFT*0.5)
 
-            lineS = Line(pointS,axes.coords_to_point(0,S_data[i1]), color=BLUE)
-            lineI = Line(pointI,axes.coords_to_point(0,I_data[i1]), color=RED)
-            lineR = Line(pointR,axes.coords_to_point(0,R_data[i1]), color=GREEN)
+
+            lineS = Line(pointS,axes.coords_to_point(0,S_data[i1]), color=BLUE, stroke_width=2)
+            lineI = Line(pointI,axes.coords_to_point(0,I_data[i1]), color=RED, stroke_width=2)
+            lineR = Line(pointR,axes.coords_to_point(0,R_data[i1]), color=GREEN, stroke_width=2)
             
 
             self.play(Create(i1_tex_graph), Create(dotS), Create(dotI), Create(dotR), run_time=0.6)
@@ -113,7 +115,7 @@ class VariationalAutoencoderScene(Scene):
         animi(40)
         animi(25)
         animi(35)
-        animi(50)
+        animi(60)
         animi(75)
 
 
