@@ -8,11 +8,12 @@ Código para animaciones hechas con manim por Roy Medina
 
 Here are some videos of the animations made with manim:
 
-<video src="https://github.com/Roy3838/manimations/rendered/cripto.mp4" width="320" height="240" controls></video>
+<img src="./rendered/GIFS/Potential.gif" alt="Quantum" width="495" height="270">
 
-<video src="https://github.com/Roy3838/manimations/rendered/polarization.mp4" width="320" height="240" controls></video>
+<img src="./rendered/GIFS/SIR_neural_Net.gif" alt="Quantum" width="495" height="270">
 
-The videos are contained in the folder "rendered"
+<img src="./rendered/GIFS/Euler.gif" alt="Euler" width="270" height="495">
 
-![](https://github.com/Roy3838/manimations/rendered/cripto.mp4)
+<img src="./rendered/GIFS/cripto.gif" alt="Cripto" width="270" height="495">
+
 
