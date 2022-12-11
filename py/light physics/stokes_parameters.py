@@ -1,4 +1,4 @@
-from turtle import fillcolor, width
+# from turtle import fillcolor, width
 from manim import *
 import numpy as np
 
@@ -146,20 +146,21 @@ class sphere(ThreeDScene):
         #horizontal
         animatelight(S0,S1,S2,S3,self,2)
         
-        #circulo
+        #de lado
         animatelight(1,0.7,0.3,0.648,self,2)
         
-        #vertical
+        #circulo
+        animatelight(1,z,z,1,self,2)
+
+        #de lado
         animatelight(1,-0.7,-0.3,0.648,self,2)
 
-        #horizontal
-        #animatelight(S0,S1,S2,S3,self,2)
-        
-        #circulo
-        #animatelight(1,z,z,1,self,2)
-        
         #vertical
-        #animatelight(1,1,z,z,self,2)
+        animatelight(1,1,z,z,self,2)
+        
+
+        
+
         
     
 

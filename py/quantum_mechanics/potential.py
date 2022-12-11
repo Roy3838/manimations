@@ -121,9 +121,9 @@ class Potential(Scene):
         E_text=MathTex(r"E_{total}").next_to(E_lim,RIGHT).set_color(GREEN)
         self.play(Write(E_lim),Write(E_text))
         
-        #animate_ball(-2,2.3, 1, t_max=2, U_x=pot, F=force, rnd_x=False, rnd_v=False, dx=0.01, color=BLUE)
+        animate_ball(-2,2.3, 1, t_max=2, U_x=pot, F=force, rnd_x=False, rnd_v=False, dx=0.01, color=BLUE)
         self.wait()
-        #animate_ball(-2,2.3, 80, U_x=pot, F=force, dx=0.005)
+        animate_ball(-2,2.3, 80, U_x=pot, F=force, dx=0.005)
         self.wait()
         self.play(Uncreate(graph),Uncreate(axes),Uncreate(label),Uncreate(oneDaxes))
 

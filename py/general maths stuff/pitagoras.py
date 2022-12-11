@@ -1,4 +1,4 @@
-from tkinter import CENTER
+# from tkinter import CENTER
 from manim import *
 
 width=1080

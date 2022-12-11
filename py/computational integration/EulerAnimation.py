@@ -144,7 +144,8 @@ class Euler(MovingCameraScene):
                     else:
                         ecuacion=MathTex(r"y\left(i+1)",r"=",r"y(i)+",r"\frac{d}{dx}f(x)",r"\cdot",r"dx").shift(UP*0.4+LEFT*1.9).set_color(BLACK).scale(0.5)
                         ecueacion_e_x=MathTex(r"f(x) = e^{x}").shift(UP*0.4+RIGHT*2).set_color(BLACK).scale(0.5)
-                        self.add(ecuacion,ecueacion_e_x )
+                        self.remove(lines[i])
+                        #self.add(ecuacion,ecueacion_e_x )
                     GarbageCollection.add(result[i+1])
                 self.play(FadeOut(GarbageCollection))
 
@@ -191,14 +192,15 @@ class Euler(MovingCameraScene):
             punto_euler(func,func_integral,x_range,0.5,x_range[0],x_range[1],'lento')
             
             #self.clear()
-            #punto_euler(func,func_integral,x_range,0.2,x_range[0],x_range[1],'rapido')
+            punto_euler(func,func_integral,x_range,0.2,x_range[0],x_range[1],'rapido')
             #self.clear()
             #punto_euler(lambda x: np.cos(x),lambda x: np.sin(x)+1,x_range,0.1,x_range[0],x_range[1],'rapido')
-            #punto_euler(func,func_integral,x_range,0.1,x_range[0],x_range[1],'rapidisimo')
+            punto_euler(func,func_integral,x_range,0.1,x_range[0],x_range[1],'rapidisimo')
+            punto_euler(func,func_integral,x_range,0.04,x_range[0],x_range[1],'rapidisimo')
 
             #punto_euler(func,func_integral,x_range,0.05,x_range[0],x_range[1],'rapidisimo')
-        introduccion()
-        #compute_animation()
+        #introduccion()
+        compute_animation()
         self.wait()
 
 

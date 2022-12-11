@@ -75,5 +75,5 @@ class Brag(Scene):
         self.play(c.animate.set_value(0.3))
         self.play(c.animate.set_value(0.5))
         self.play(c.animate.set_value(1))
-        self.play(c.animate.set_value(2))
-        self.play(c.animate.set_value(3))
+        #self.play(c.animate.set_value(2))
+        #self.play(c.animate.set_value(3))

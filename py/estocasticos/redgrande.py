@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 ROOT_DIR = Path(__file__).parents[2]
 
-class ChangedColors(ZoomedScene):
+class SIR_neural_Net(ZoomedScene):
 
     def construct(self):
         
@@ -23,7 +23,7 @@ class ChangedColors(ZoomedScene):
             FeedForwardLayer(5),
         ], layer_spacing=0.5).move_to(RIGHT*4).scale(0.9)
 
-        dataSIR = pd.read_csv(ROOT_DIR / "SIR.csv")
+        dataSIR = pd.read_csv(ROOT_DIR / "py/estocasticos/SIR.csv")
         dataSIR = dataSIR.to_numpy()
         #print(dataSIR)
         # data from 0 to 100
@@ -67,12 +67,12 @@ class ChangedColors(ZoomedScene):
             puntosI.add(Dot(pointI, color=RED))
             puntosR.add(Dot(pointR, color=GREEN))
 
-        vectorS = Matrix([[S_data[99]],[S_data[98]],  [ S_data[85]], [ S_data[55]],
+        vectorS = Matrix([[S_data[90]],[S_data[88]],  [ S_data[85]], [ S_data[55]],
         [" ... "], 
         [S_data[15]],[S_data[13]],[S_data[10]],  [S_data[1]], [S_data[0]]
         ]).scale(0.5).set_color(BLACK)
 
-        vectorI = Matrix([[I_data[99]],[I_data[98]],  [ I_data[85]], [ I_data[55]],
+        vectorI = Matrix([[I_data[89]],[I_data[88]],  [ I_data[85]], [ I_data[55]],
         [" ... "],
         [I_data[15]],[I_data[13]],[I_data[10]],  [I_data[1]], [I_data[0]]
         ]).scale(0.5).set_color(BLACK)
@@ -94,10 +94,10 @@ class ChangedColors(ZoomedScene):
         input_red_label = Tex("In =").next_to(input_red, LEFT).set_color(BLACK)
 
         entrada_bigchungus = Matrix([
-            [S_data[99]],[S_data[98]],  [ S_data[85]], [ S_data[55]],
+            [S_data[89]],[S_data[88]],  [ S_data[85]], [ S_data[55]],
         [" ... "], 
         [S_data[15]],[S_data[13]],[S_data[10]],  [S_data[1]], [S_data[0]],
-        [I_data[99]],[I_data[98]],  [ I_data[85]], [ I_data[55]],
+        [I_data[89]],[I_data[88]],  [ I_data[85]], [ I_data[55]],
         [" ... "],
         [I_data[15]],[I_data[13]],[I_data[10]],  [I_data[1]], [I_data[0]],
         [R_data[90]],[R_data[89]],  [ R_data[75]], [ R_data[55]],

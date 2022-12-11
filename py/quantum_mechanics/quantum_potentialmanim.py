@@ -170,7 +170,7 @@ class quantum(MovingCameraScene):
             self.play(Create(oneDaxes))
             self.wait()
 
-            #compute_schrodingers()
+            compute_schrodingers()
             animate_ball(0,5, 1, t_max=2, U_x=pot, F=force, rnd_x=False, rnd_v=False, dx=0.01, color=BLUE)
             print(str(time.time()-time1) + " seconds")
             

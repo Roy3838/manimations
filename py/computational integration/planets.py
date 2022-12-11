@@ -6,7 +6,7 @@ start=time.time()
 width=1080
 height=1920
 config.frame_size = [width, height]
-class Euler(ThreeDScene):
+class Planets(ThreeDScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
         self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)
