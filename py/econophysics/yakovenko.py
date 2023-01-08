@@ -7,8 +7,6 @@ class Yakovenko(Scene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
-
-
         e = 2.718281828459045
         
         def funcexp(x):
