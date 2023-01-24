@@ -1,8 +1,11 @@
 import numpy as np
 
-ti, tf, dt = 0, 100, 1
-y, x = np.zeros(tf), np.zeros(tf)
-f = lambda t: -9.81*t + 5
-for i in range(ti,tf-1,dt):
-    y[i + 1] = y[i] + dt * f(x[i])
-    print(y[i])
+xi, xf, dx, vi = 0, 1, 0.1, 5
+
+x = np.linspace(xi, xf, int((xf - xi) / dx))
+y = np.zeros(len(x))
+v = lambda t: -9.81*t + vi
+
+for i in range(xi, len(x)-1, 1):
+    y[i + 1] = y[i] + dx * v(x[i])
+
