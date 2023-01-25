@@ -181,10 +181,28 @@ class Euler(MovingCameraScene):
             posiciones2=VGroup()
             velocidades2=VGroup()
             fuerzas2=VGroup()
-            
+            scene_completa = VGroup()
+
+            """  SOME LATEX """
+            # set default color to black
+            MathTex.set_default(color= BLACK)
+            eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
+            eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
+            eqv.shift(UP*5)
+            eqa.shift(UP*4)
+
+            eqvdt = MathTex(r"v = \frac{d}{t}")
+            eqadt = MathTex(r"a = \frac{v}{t}")
+            eqvdt.shift(UP*5 + RIGHT)
+            eqadt.shift(UP*4 + RIGHT)
+
+            uni_v = MathTex(r"\frac{m}{s}")
+            uni_a = MathTex(r"\frac{m}{s^2}")
+            uni_v.shift(UP*5 + RIGHT*2)
+            uni_a.shift(UP*4 + RIGHT*2)
 
 
-            for i in range(200,290,40):
+            for i in range(200,320,30):
                 # DO SOME CALCULATIONS
                 scalingfactor=(8e+11)/4 #distance scaling factor for scene
                 scalingfactorv=13720/1.5 #velocity vector scaling factor for scene
@@ -210,11 +228,13 @@ class Euler(MovingCameraScene):
                 
                 # CREATE ARROWS
                 arrowplanet2=Arrow(pos2, pos2+v2, buff=0,color=GOLD)
-                posiciones2.add(arrowplanet2)
+                velocidades2.add(arrowplanet2)
                 Fuerza2=Arrow(pos2,pos2+Fm2, buff=0,color=RED)
                 fuerzas2.add(Fuerza2)
                 planetpos2=Arrow(pos1,pos2,color=BLACK, buff=0)   
                 posiciones2.add(planetpos2) 
+
+                scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2,planet3)
 
                 # LABEL ARROWS
                 velocity = Tex(r"$\vec{v}$").set_color(BLACK).scale(0.8).next_to(arrowplanet2,LEFT)
@@ -237,8 +257,35 @@ class Euler(MovingCameraScene):
                     self.play(Create(planet2))
                     self.play(Create(Fuerza2),Create(arrowplanet2),Create(planetpos2))
 
+            velocidades_seg=velocidades2.copy()
+            self.play(posiciones2.animate.shift(UP*6))
+            self.play(velocidades2.animate.shift(UP*6))
+            
+            for i in range(0,len(posiciones2)-1):
+                self.play(ReplacementTransform(posiciones2[i],posiciones2[i+1]),
+                ReplacementTransform(velocidades2[i],velocidades2[i+1]))
+            
+            self.play(FadeOut(posiciones2[len(posiciones2)-1]),FadeOut(velocidades2[len(velocidades2)-1]),)
+
+
+            self.play(fuerzas2.animate.shift(UP*6),velocidades_seg.animate.shift(UP*6))
+            self.wait()
+
+            for i in range(0,len(fuerzas2)-1):
+                self.play(ReplacementTransform(fuerzas2[i],fuerzas2[i+1]),
+                ReplacementTransform(velocidades_seg[i],velocidades_seg[i+1]))
+            self.wait()
+
+            self.play(FadeOut(fuerzas2[len(fuerzas2)-1]),FadeOut(velocidades_seg[len(velocidades_seg)-1]))
+            self.wait()
+
+            self.play(Write(uni_v),Write(uni_a))
+            self.wait()
+            self.play(Write(eqv),Write(eqa))
+            self.wait()
+            self.play(Write(eqvdt),Write(eqadt))
+            self.wait()
             self.wait(3)
-            self.play(Wiggle(planet1))
 
                     
 
