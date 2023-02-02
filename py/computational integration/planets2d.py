@@ -127,8 +127,6 @@ class Euler(MovingCameraScene):
         
         R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute()
 
-
-
         def animacion_frames():
             # Graficar
             planet1=Dot(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
@@ -188,17 +186,17 @@ class Euler(MovingCameraScene):
             MathTex.set_default(color= BLACK)
             eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
             eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
-            eqv.shift(UP*5)
-            eqa.shift(UP*4)
+            eqv.shift(UP*6 + LEFT*2)
+            eqa.shift(UP*4 + LEFT*2)
 
             eqvdt = MathTex(r"v = \frac{d}{t}")
             eqadt = MathTex(r"a = \frac{v}{t}")
-            eqvdt.shift(UP*5 + RIGHT)
-            eqadt.shift(UP*4 + RIGHT)
+            eqvdt.shift(UP*6)
+            eqadt.shift(UP*4)
 
             uni_v = MathTex(r"\frac{m}{s}")
             uni_a = MathTex(r"\frac{m}{s^2}")
-            uni_v.shift(UP*5 + RIGHT*2)
+            uni_v.shift(UP*6 + RIGHT*2)
             uni_a.shift(UP*4 + RIGHT*2)
 
 
@@ -216,9 +214,9 @@ class Euler(MovingCameraScene):
                 Fm1=np.array([F1[i][0],F1[i][1],0])*1.5/np.linalg.norm(np.array([F1[i][0],F1[i][1],0]))
                 Fm2=np.array([F2[i][0],F2[i][1],0])*1.5/np.linalg.norm(np.array([F2[i][0],F2[i][1],0]))
                 Fm3=np.array([F3[i][0],F3[i][1],0])*1.5/np.linalg.norm(np.array([F3[i][0],F3[i][1],0]))
-                
 
-                """             MOBJECTS            """
+
+                """             MOBJECTS           """
                 # MOVE PLANETS
                 planet2=Dot(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN)
                 planet3=Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
@@ -236,12 +234,13 @@ class Euler(MovingCameraScene):
 
                 scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2,planet3)
 
-                # LABEL ARROWS
-                velocity = Tex(r"$\vec{v}$").set_color(BLACK).scale(0.8).next_to(arrowplanet2,LEFT)
-                force = Tex(r"$\vec{F}$").set_color(BLACK).scale(0.8).next_to(Fuerza2,UP)
-                distance = Tex(r"$\vec{r}$").set_color(BLACK).scale(0.8).next_to(planetpos2,DOWN)
                 
                 if i==200:
+                    # LABEL ARROWS
+                    velocity = Tex(r"$\vec{v}$").set_color(BLACK).scale(0.8).next_to(arrowplanet2,LEFT)
+                    force = Tex(r"$\vec{F}$").set_color(BLACK).scale(0.8).next_to(Fuerza2,UP)
+                    distance = Tex(r"$\vec{r}$").set_color(BLACK).scale(0.8).next_to(planetpos2,DOWN)
+                    distance.shift(UP*0.5)
                     self.play(Write(planet1))
                     self.wait()
                     self.play(Create(planet2))
@@ -252,46 +251,48 @@ class Euler(MovingCameraScene):
                     self.play(Create(planetpos2))
                     self.play(Write(distance))
                     self.wait()
-                    self.play(Unwrite(velocity),Unwrite(force),Unwrite(distance))
+                    #self.play(Unwrite(velocity),Unwrite(force),Unwrite(distance))
                 else:
                     self.play(Create(planet2))
                     self.play(Create(Fuerza2),Create(arrowplanet2),Create(planetpos2))
 
+            # # Label arrows up
+            # velocity2 = velocity.copy()
+            # force2 = force.copy()
+            # distance2 = distance.copy()
+
             velocidades_seg=velocidades2.copy()
-            self.play(posiciones2.animate.shift(UP*6))
-            self.play(velocidades2.animate.shift(UP*6))
+            self.play(posiciones2.animate.shift(UP*6), distance.animate.shift(UP*6))
+            self.play(velocidades2.animate.shift(UP*6), velocity.animate.shift(UP*6))
             
             for i in range(0,len(posiciones2)-1):
                 self.play(ReplacementTransform(posiciones2[i],posiciones2[i+1]),
-                ReplacementTransform(velocidades2[i],velocidades2[i+1]))
+                ReplacementTransform(velocidades2[i],velocidades2[i+1]),run_time = 1.5)
             
             self.play(FadeOut(posiciones2[len(posiciones2)-1]),FadeOut(velocidades2[len(velocidades2)-1]),)
 
+            self.wait()
 
-            self.play(fuerzas2.animate.shift(UP*6),velocidades_seg.animate.shift(UP*6))
+            self.play(fuerzas2.animate.shift(UP*6),velocidades_seg.animate.shift(UP*6),
+            force.animate.shift(UP*6))
             self.wait()
 
             for i in range(0,len(fuerzas2)-1):
                 self.play(ReplacementTransform(fuerzas2[i],fuerzas2[i+1]),
-                ReplacementTransform(velocidades_seg[i],velocidades_seg[i+1]))
+                ReplacementTransform(velocidades_seg[i],velocidades_seg[i+1]), run_time = 1.5)
             self.wait()
 
-            self.play(FadeOut(fuerzas2[len(fuerzas2)-1]),FadeOut(velocidades_seg[len(velocidades_seg)-1]))
-            self.wait()
-
-            self.play(Write(uni_v),Write(uni_a))
+            self.play(FadeOut(fuerzas2[len(fuerzas2)-1]),FadeOut(velocidades_seg[len(velocidades_seg)-1]),
+            FadeOut(velocity),FadeOut(force),FadeOut(distance))
             self.wait()
             self.play(Write(eqv),Write(eqa))
             self.wait()
             self.play(Write(eqvdt),Write(eqadt))
             self.wait()
+            self.play(Write(uni_v),Write(uni_a))
+            self.wait()
+            self.wait()
             self.wait(3)
-
-                    
-
-
-                
-        
         
         #animacion_frames()
         animacion_vectores()
