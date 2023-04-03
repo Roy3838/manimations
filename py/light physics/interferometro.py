@@ -532,10 +532,10 @@ class TwoPointInterference(ThreeDScene):
 
             self.wait()
             
-        #self.twopoints()
-        #self.twodistances()
-        #self.mathequations()
-        #self.young()
-        #self.michelson()
+        twopoints()
+        twodistances()
+        mathequations()
+        young()
+        michelson()
         hyperbolic()
 
