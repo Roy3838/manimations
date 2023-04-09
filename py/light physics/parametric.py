@@ -1,16 +1,11 @@
 from manim import *
 import numpy as np
 
-
-
-class parametric(ThreeDScene):
-
-
+class ParametricSurfaceAnimation(ThreeDScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
-
-        def funcparametric3d(u, v, lamb = 2, n = 1, d = 1.4):
+        def funcparametric3d(u, v, lamb = 2, n = 2, d = 3, s = -1):
 
             # https://www.desmos.com/calculator/lohclpowwf
             # y equals y = -sqrt(-16 d^2 λ^2 n^2 + 256 d^2 u^2 + λ^4 n^4 - 16 λ^2 n^2 u^2 - 16 λ^2 n^2 v^2)/(4 λ n)
@@ -18,45 +13,22 @@ class parametric(ThreeDScene):
             x = u
             y = v
             
-            z = -np.sqrt(-16 * d**2 * lamb**2 * n**2 + 256 * d**2 * u**2 + lamb**4 * n**4 - 16 * lamb**2 * n**2 * u**2 - 16 * lamb**2 * n**2 * v**2)/(4 * lamb * n)
+            z = s*np.sqrt(-16 * d**2 * lamb**2 * n**2 + 256 * d**2 * u**2 + lamb**4 * n**4 - 16 * lamb**2 * n**2 * u**2 - 16 * lamb**2 * n**2 * v**2)/(4 * lamb * n)
 
-            return np.array(x, y , z)
+            return np.array([x, y, z])
 
-        def funcs(u, lamb = 10, n = 2, d = 3, s = -1):
-            # https://www.desmos.com/calculator/rht8qrfnxi
-            x = u
-            y = s*np.sqrt(16 * d**2 - lamb**2 * n**2)*np.sqrt( 16 * u**2 - lamb**2 * n**2)/(4 * lamb * n)
-            return np.array((x, y, 0))               
+        axes = ThreeDAxes().set_color(BLACK)
 
-        ax1 = Axes().set_color(BLACK)
+        surface = Surface(
+            lambda u, v: axes.c2p(*funcparametric3d(u, v)),
+            u_range=[9, 10],
+            v_range=[-10, 10],
+            resolution=5,
+        )
 
-        hyperbolas = VGroup()
-
-
-        # Create top and bottom hyperbolas of the interference pattern
-        # Change dt if lambda, s or d change
-        for i in range(1, 12):
-            hyp = ax1.plot(
-                lambda x: funcs(x, s=1, lamb=0.5, d=1.5, n=i)[1], # ojito que solo regrese el valor de y, y no el vector xyz
-                discontinuities=[0],  # discontinuous points
-                dt=0.125*i,  # left and right tolerance of discontinuity
-                color=RED,
-            )
-            hyp_ = ax1.plot(
-                lambda x: funcs(x, s=-1, lamb=0.5, d=1.5, n=i)[1], # ojito que solo regrese el valor de y, y no el vector xyz
-                discontinuities=[0],  # discontinuous points
-                dt=0.125*i,  # left and right tolerance of discontinuity
-                color=RED,
-            )
-            hyperbolas.add(hyp, hyp_)
-
-        self.play(Create(ax1))
-        self.wait()
-        
-        self.play(Write(hyperbolas), run_time=3)
-        self.add(ThreeDAxes().set_color(BLACK))
-        self.move_camera(phi=-30 * DEGREES, theta=-80 * DEGREES)
-        self.move_camera(phi=30 * DEGREES, theta=-80 * DEGREES)
-        self.move_camera(phi=30 * DEGREES, theta=80 * DEGREES)
-        self.move_camera(phi=-30 * DEGREES, theta=80 * DEGREES)
-        self.wait()
+        self.set_camera_orientation(phi=75 * DEGREES, theta=45 * DEGREES)
+        self.play(Create(axes))
+        self.play(Create(surface))
+        self.begin_ambient_camera_rotation(rate=0.2)
+        self.wait(3)
+        self.stop_ambient_camera_rotation()
