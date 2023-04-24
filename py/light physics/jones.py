@@ -5,17 +5,17 @@ class SineWaveX(ParametricFunction):
         self.t_value = t_value
         super().__init__(self.sine_wave_function, **kwargs)
 
-    def sine_wave_function(self, x):
-        z = np.sin(x - self.t_value.get_value())
-        return np.array([x, z, 0])
+    def sine_wave_function(self, z):
+        y = np.sin(z - self.t_value.get_value())
+        return np.array([0, y, z])
     
 class SineWaveY(ParametricFunction):
     def __init__(self, t_value, **kwargs):
         self.t_value = t_value
         super().__init__(self.sine_wave_function, **kwargs)
 
-    def sine_wave_function(self, x):
-        z = np.sin(x - self.t_value.get_value())
+    def sine_wave_function(self, z):
+        x = np.sin(z - self.t_value.get_value())
         return np.array([x, 0, z])
 
 
@@ -28,9 +28,9 @@ class Jones(ThreeDScene):
             x_range=(-5, 5, 1),
             y_range=(-5, 5, 1),
             z_range=(-5, 5, 1),
-            x_length=8,
-            y_length=8,
-            z_length=4,
+            x_length=4,
+            y_length=4,
+            z_length=8,
             axis_config={"color": BLACK},
         )
         
@@ -40,7 +40,9 @@ class Jones(ThreeDScene):
         z_label = Tex("z").next_to(axes, OUT).set_color(BLACK).scale(0.6)
 
         self.play(Create(axes), Write(x_label), Write(y_label))
-        self.move_camera(phi=60 * DEGREES, theta=-30 * DEGREES)
+        #self.move_camera(phi=80 * DEGREES, theta=70 * DEGREES) # phi polar theta azimuthal
+        self.move_camera(phi=80 * DEGREES, theta=70 * DEGREES, gamma=270 * DEGREES)
+
         self.play(Write(z_label))
         self.wait()
         
@@ -64,6 +66,5 @@ class Jones(ThreeDScene):
         self.begin_ambient_camera_rotation(rate=0.2)
         self.wait(6)
 
-        sine_wave.clear_updaters()
-        self.wait()
+        #self.wait()
         

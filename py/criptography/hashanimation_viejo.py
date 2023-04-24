@@ -113,10 +113,10 @@ class hashexplanation(Scene):
             return [Input,messagehash]
         
         
-        [Input,messagehash]=make_hash_function("Message")
-        [SecondImput,Secondmessagehash]=make_hash_function("Message1")
-        [ThirdImput,Thirdmessagehash]=make_hash_function("Message2")
-        [FourthImput,Fourthmessagehash]=make_hash_function("Message3")
+        [Input,messagehash]=make_hash_function("Mensaje")
+        [SecondImput,Secondmessagehash]=make_hash_function("mensaje")
+        [ThirdImput,Thirdmessagehash]=make_hash_function("mensaje1")
+        [FourthImput,Fourthmessagehash]=make_hash_function("mensaje2")
         [two,hash2]=make_two_hash_function("Message","Salt")
         [three,hash3]=make_two_hash_function("Message","Salt2")
         self.play(Write(Input))
