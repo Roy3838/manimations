@@ -63,12 +63,13 @@ class Bases(ThreeDScene):
         self.curve1 = VGroup()
         self.curve2 = VGroup()
 
-        self.path1 = TracedPath(Dot1.get_center, stroke_color=RED, stroke_width=2,dissipating_time=1.8)
-        self.path2 = TracedPath(Dot2.get_center, stroke_color=BLUE, stroke_width=2,dissipating_time=1.8)
-        self.path_suma = TracedPath(Dot_suma.get_center, stroke_color=GREEN, stroke_width=2,dissipating_time=1.8)
+        self.path1 = TracedPath(Dot1.get_center, stroke_color=RED, stroke_width=2,dissipating_time=2)
+        self.path2 = TracedPath(Dot2.get_center, stroke_color=BLUE, stroke_width=2,dissipating_time=2)
+        self.path_suma = TracedPath(Dot_suma.get_center, stroke_color=GREEN, stroke_width=2,dissipating_time=2)
 
         
-        self.set_camera_orientation(phi=40 * DEGREES, theta=-45 * DEGREES)
+        self.set_camera_orientation(phi=45 * DEGREES, theta=-45 * DEGREES)
+        time = 4*PI
         self.play(Create(axes))
         self.play(Create(plane1.faces))
         self.play(Create(plane2.faces))
@@ -78,11 +79,49 @@ class Bases(ThreeDScene):
         self.play(Create(Line1))
         self.play(Create(Line2))
         self.play(Create(self.path1), Create(self.path2), Create(self.path_suma))
-        self.play(param1.animate.set_value(4*PI), param2.animate.set_value(4*PI), rate_func=linear, run_time=5)
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
         self.play(phase_shift1.animate.set_value(PI/2), rate_func=linear, run_time=1)
-        self.play(param1.animate.set_value(8*PI), param2.animate.set_value(8*PI), rate_func=linear, run_time=5)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
+        self.play(phase_shift1.animate.set_value(PI/4), rate_func=linear, run_time=1)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
 
-        self.wait()
+        # Align before removing updaters
+        self.play(FadeOut(Dot1),FadeOut(Dot2), FadeOut(Dot_suma), FadeOut(self.path1), FadeOut(self.path2), FadeOut(self.path_suma), FadeOut(Line1), FadeOut(Line2), run_time = 0.8)
+
+        # Remove updaters
+        Dot1.clear_updaters()
+        Dot2.clear_updaters()
+        Dot_suma.clear_updaters()
+
+        # Diagonal orthogonal bases combination updaters
+        Dot1.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, 
+                                                      np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, 0)))
+
+        Dot2.add_updater(lambda m: m.move_to(axes.c2p(np.cos(-param2.get_value() + phase_shift2.get_value()) - 1.5, 
+                                                      -np.cos(-param2.get_value() + phase_shift2.get_value()) - 1.5, 0)))
+
+        Dot_suma.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, 
+                                                          -np.cos(-param2.get_value() + phase_shift2.get_value()) - 1.5,0)))
+        
+        self.path1 = TracedPath(Dot1.get_center, stroke_color=RED, stroke_width=2,dissipating_time=2)
+        self.path2 = TracedPath(Dot2.get_center, stroke_color=BLUE, stroke_width=2,dissipating_time=2)
+        self.path_suma = TracedPath(Dot_suma.get_center, stroke_color=GREEN, stroke_width=2,dissipating_time=2)
+
+        self.play(FadeIn(Dot1),FadeIn(Dot2), FadeIn(Dot_suma), FadeIn(self.path1), FadeIn(self.path2), FadeIn(self.path_suma), FadeIn(Line1), FadeIn(Line2), run_time = 0.8)
+
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
+        self.play(phase_shift1.animate.set_value(PI/2), rate_func=linear, run_time=1)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
+        self.play(phase_shift1.animate.set_value(PI/4), rate_func=linear, run_time=1)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
+
+        self.play(FadeOut(Dot1),FadeOut(Dot2), FadeOut(Dot_suma), FadeOut(self.path1), FadeOut(self.path2), FadeOut(self.path_suma), FadeOut(Line1), FadeOut(Line2),run_time = 0.8)
+
 
         # Remove updaters
         phase_shift1.set_value(0)
@@ -91,24 +130,39 @@ class Bases(ThreeDScene):
         Dot_suma.clear_updaters()
 
         # Circular bases combination updaters
-        Dot1.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, np.sin(param1.get_value() + phase_shift1.get_value()) + 1.5, 0)))
-        Dot2.add_updater(lambda m: m.move_to(axes.c2p(np.cos(-param2.get_value() + phase_shift2.get_value()) - 1.5, np.sin(-param2.get_value() + phase_shift2.get_value()) - 1.5, 0)))
+        Dot1.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, 
+                                                      np.sin(param1.get_value() + phase_shift1.get_value()) + 1.5, 0)))
+        Dot2.add_updater(lambda m: m.move_to(axes.c2p(np.cos(-param2.get_value() + phase_shift2.get_value()) - 1.5, 
+                                                      np.sin(-param2.get_value() + phase_shift2.get_value()) - 1.5, 0)))
 
         # 
-        Dot_suma.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) 
-                                                          + 1.5, np.sin(-param2.get_value() + phase_shift2.get_value()) - 1.5,0)))
+        Dot_suma.add_updater(lambda m: m.move_to(axes.c2p(np.cos(param1.get_value() + phase_shift1.get_value()) + 1.5, 
+                                                          np.sin(-param2.get_value() + phase_shift2.get_value()) - 1.5,0)))
 
+        self.path1 = TracedPath(Dot1.get_center, stroke_color=RED, stroke_width=2,dissipating_time=2)
+        self.path2 = TracedPath(Dot2.get_center, stroke_color=BLUE, stroke_width=2,dissipating_time=2)
+        self.path_suma = TracedPath(Dot_suma.get_center, stroke_color=GREEN, stroke_width=2,dissipating_time=2)
 
-        self.play(param1.animate.set_value(12*PI), param2.animate.set_value(12*PI), rate_func=linear, run_time=5)
+        self.play(FadeIn(Dot1),FadeIn(Dot2), FadeIn(Dot_suma), FadeIn(self.path1), FadeIn(self.path2), FadeIn(self.path_suma), FadeIn(Line1), FadeIn(Line2), run_time = 0.8)
+
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
         self.play(phase_shift1.animate.set_value(PI/2), rate_func=linear, run_time=1)
-        self.play(param1.animate.set_value(16*PI), param2.animate.set_value(16*PI), rate_func=linear, run_time=5)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
 
-        self.play(param1.animate.set_value(12*PI), param2.animate.set_value(12*PI), rate_func=linear, run_time=5)
+        time += 4*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
         self.play(phase_shift1.animate.set_value(PI/4), rate_func=linear, run_time=1)
-        self.play(param1.animate.set_value(16*PI), param2.animate.set_value(16*PI), rate_func=linear, run_time=5)
+        time += 8*PI
+        self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=10)
 
 
-        self.wait(3)
+        
+
+        
+
+
 
 
 
