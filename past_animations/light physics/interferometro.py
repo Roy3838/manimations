@@ -154,7 +154,7 @@ class TwoPointInterference(ThreeDScene):
         lambdadf3=SurroundingRectangle(lambdad[4], buff = .1, color=GOLD)
 
         
-        def twopoints(self):
+        def twopoints():
 
 
             ''' ANIMACIONES 1'''
@@ -173,8 +173,6 @@ class TwoPointInterference(ThreeDScene):
                     FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
             self.wait(0.5)
             
-            self.twodistances()
-
 
 
 
@@ -190,7 +188,7 @@ class TwoPointInterference(ThreeDScene):
             self.wait(0.5)
                 
 
-        def twodistances(self):
+        def twodistances():
             """ PART 2 DOS LINEAS POR SEPARADO"""
 
     
@@ -251,7 +249,7 @@ class TwoPointInterference(ThreeDScene):
             self.wait()
             
 
-        def mathequations(self):
+        def mathequations():
 
 
 
@@ -278,7 +276,7 @@ class TwoPointInterference(ThreeDScene):
             self.play(FadeOut(lambdad),FadeOut(deltad))
 
 
-        def young(self):
+        def young():
             def Create_semi(fuente):
                 #Create semi wave
                 radius = ValueTracker(0.01)
@@ -347,7 +345,7 @@ class TwoPointInterference(ThreeDScene):
             self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(fuente3),FadeOut(rejilla1),FadeOut(rejilla2),FadeOut(rejilla3),FadeOut(pantalla))
             
 
-        def michelson(self):
+        def michelson():
             def Create_wave(fuente):
                 #Create wave with circle
                 radius = ValueTracker(0.01)
@@ -534,7 +532,7 @@ class TwoPointInterference(ThreeDScene):
             
         twopoints()
         twodistances()
-        mathequations()
+        #mathequations()
         young()
         michelson()
         hyperbolic()

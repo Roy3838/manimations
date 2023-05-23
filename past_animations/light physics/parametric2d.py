@@ -20,7 +20,7 @@ class parametric(ThreeDScene):
             
             z = s*np.sqrt(-16 * d**2 * lamb**2 * n**2 + 256 * d**2 * u**2 + lamb**4 * n**4 - 16 * lamb**2 * n**2 * u**2 - 16 * lamb**2 * n**2 * v**2)/(4 * lamb * n)
 
-            return np.array([x, y , z])
+            return np.array([x, y, z])
 
         def funcs(u, lamb=0.5, d=1.5, n=1, s=1):
             # https://www.desmos.com/calculator/rht8qrfnxi
