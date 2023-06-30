@@ -54,7 +54,7 @@ class young(MovingCameraScene):
             Line(fuente2,analysispoint).set_color(GOLD)
         ))
         distance2.add_updater(lambda x: x.become(
-            Line(fuente3,analysispoint).set_color(GOLD)
+            Line(fuente3,analysispoint3 ).set_color(GOLD)
         ))
         
         #animaciones
