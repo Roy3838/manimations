@@ -290,6 +290,10 @@ class Euler(MovingCameraScene):
 
             self.play(vec1_vel2.animate.shift(UP*sep+RIGHT*2) , vec2_vel2.animate.shift(UP*sep+RIGHT*2))
             self.play(vec1_fuerza2.animate.shift(UP*sep+RIGHT*2))
+            
+            # Mover el vector vec1_vel2 y vec2_vel2 para que las bases se alineen
+            pos = vec1_vel2.get_start()
+            self.play(vec2_vel2.animate.shift(pos - vec2_vel2.get_start()))
 
             self.play(Wiggle(vec1_fuerza2))
             self.play(ReplacementTransform(vec1_vel2,vec2_vel2))
@@ -323,6 +327,7 @@ class Euler(MovingCameraScene):
             self.wait()
             self.play(ReplacementTransform(uni_a,uni_a_s_s))
             self.wait()
+            self.play(FadeOut(uni_a_s_s),FadeOut(uni_v),FadeOut(oggroup))
 
 
 
