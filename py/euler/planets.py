@@ -239,7 +239,11 @@ class Euler(MovingCameraScene):
 
                     # Contador para la creacion de los siguiente vectores
                     c = 0
-                    self.add(planet2.copy(),Fuerza2.copy(),arrowplanet2.copy(),planetpos2.copy())
+                    ogplanet = planet2.copy()
+                    ogFuerza = Fuerza2.copy()
+                    ogarrowplanet = arrowplanet2.copy()
+                    ogplanetpos = planetpos2.copy()
+                    self.add(ogplanet,ogFuerza,ogarrowplanet,ogplanetpos)
                 else:
                     # Se crean el resto de los vectores
                     # self.play(FadeIn(planet2),FadeIn(Fuerza2),FadeIn(arrowplanet2),FadeIn(planetpos2), run_time=0.2)
@@ -257,19 +261,78 @@ class Euler(MovingCameraScene):
 
 
 
+            # Se mueve la camara hacia arriba para tener espacio
+            self.play(self.camera.frame.animate.move_to(5*UP))
+
+            # Separacion entre circulo de arriba y de abajo
+            sep = 9
+
+
+            
+            """ DEMOSTRAR LOS CAMBIOS USANDO DOS VECTORES """
+
+            # Velocidad es cambio en posicion
+            vec1_pos = posiciones2[0].copy()
+            vec2_pos = posiciones2[1].copy()
+            vec1_vel = velocidades2[0].copy()
+
+            self.play(vec1_pos.animate.shift(UP*sep+RIGHT*2) , vec2_pos.animate.shift(UP*sep+RIGHT*2))
+            self.play(vec1_vel.animate.shift(UP*sep+RIGHT*2))
+
+            self.play(Wiggle(vec1_vel))
+            self.play(ReplacementTransform(vec1_pos,vec2_pos))
+            self.play(FadeOut(vec2_pos),FadeOut(vec1_vel))
+
+            # Aceleracion es cambio en velocidad
+            vec1_vel2 = velocidades2[0].copy()
+            vec2_vel2 = velocidades2[1].copy()
+            vec1_fuerza2 = fuerzas2[0].copy()
+
+            self.play(vec1_vel2.animate.shift(UP*sep+RIGHT*2) , vec2_vel2.animate.shift(UP*sep+RIGHT*2))
+            self.play(vec1_fuerza2.animate.shift(UP*sep+RIGHT*2))
+
+            self.play(Wiggle(vec1_fuerza2))
+            self.play(ReplacementTransform(vec1_vel2,vec2_vel2))
+            self.play(FadeOut(vec2_vel2),FadeOut(vec1_fuerza2))
+
+            MathTex.set_default(color= BLACK)
+            # eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
+            # eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
+            # eqvdt = MathTex(r"v = \frac{d}{t}")
+            # eqadt = MathTex(r"a = \frac{v}{t}")
+
+            # EXPLICACION DE LAS ECUACIONES
+
+            uni_v = MathTex(r"\vec{v}=\frac{m}{s}")
+            uni_a = MathTex(r"\vec{a}=\frac{m}{s^2}")
+            uni_a_s_s = MathTex(r"\vec{a}=\frac{\frac{m}{s}}{s}")
+            uni_v.shift(UP*9 + RIGHT*3)
+            uni_a.shift(UP*7 + RIGHT*3)
+            uni_a_s_s.shift(UP*7 + RIGHT*3)
+
+
+            oggroup = VGroup(ogplanet,ogFuerza,ogarrowplanet,ogplanetpos)
+            self.play(oggroup.animate.shift(UP*sep + RIGHT*2),
+            self.camera.frame.animate.scale(0.8).move_to(UP*sep + RIGHT))
+
+            """ Seccion de ecuaciones, probablemente se tiene que incluir con las de arriba """
+            self.wait()
+            self.play(Write(uni_v), Wiggle(ogarrowplanet))
+            self.wait()
+            self.play(Write(uni_a), Wiggle(ogFuerza))
+            self.wait()
+            self.play(ReplacementTransform(uni_a,uni_a_s_s))
+            self.wait()
+
+
+
+            """ PARTE DONDE SE PROPAGA EL DT """
 
             # Vamos a hacer copias para mover hacia arriba sin que desaparezca lo de abajo
             posiciones2_arriba = posiciones2.copy()
             distance_arriba = distance.copy()
             velocidades2_arriba = velocidades2.copy()
             velocity_arriba = velocity.copy()
-
-            # Separacion entre circulo de arriba y de abajo
-            sep = 9
-
-            # Move camera up
-            self.play(self.camera.frame.animate.move_to(5*UP))
-
 
             # Se cambian las posiciones y las velocidades hacia arriba
             self.play(posiciones2_arriba.animate.shift(UP*sep), distance_arriba.animate.shift(UP*sep))
@@ -281,7 +344,7 @@ class Euler(MovingCameraScene):
                     self.play(FadeOut(distance_arriba),FadeOut(velocity_arriba),
 
                     ReplacementTransform(posiciones2_arriba[i],posiciones2_arriba[i+1]),
-                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 1.5)
+                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 0.4)
                 else:
                     self.remove(posiciones2_arriba[i],velocidades2_arriba[i])
                     self.play(ReplacementTransform(posiciones2_arriba[i],posiciones2_arriba[i+1]),
@@ -289,7 +352,6 @@ class Euler(MovingCameraScene):
             
             # Fade y wait
             self.play(FadeOut(posiciones2_arriba[len(posiciones2)-1]),FadeOut(velocidades2_arriba[len(velocidades2)-1]),)
-            self.wait()
 
             
             # Vamos a hacer copias para mover hacia arriba sin que desaparezca lo de abajo
@@ -298,8 +360,6 @@ class Euler(MovingCameraScene):
             force_arriba = force.copy()
             velocity_label_2_arriba = velocity.copy()
             
-
-
             # Se cambian las velocidades y aceleraciones hacia arriba
             self.play(fuerzas2_arriba.animate.shift(UP*sep),velocidades_seg_arriba.animate.shift(UP*sep),
             force_arriba.animate.shift(UP*sep), velocity_label_2_arriba.animate.shift(UP*sep))
@@ -311,7 +371,7 @@ class Euler(MovingCameraScene):
                     self.play(FadeOut(force_arriba),FadeOut(velocity_label_2_arriba),
                         
                     ReplacementTransform(fuerzas2_arriba[i],fuerzas2_arriba[i+1]),
-                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 1.5)
+                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 0.4)
                 else:
                     # en el resto de los ciclos se mueven los vectores
                     self.remove(fuerzas2_arriba[i], velocidades_seg_arriba[i])
@@ -320,38 +380,6 @@ class Euler(MovingCameraScene):
             
             # Fade y Wait
             self.play(FadeOut(fuerzas2_arriba[len(fuerzas2_arriba)-1]),FadeOut(velocidades_seg_arriba[len(velocidades_seg_arriba)-1]),)
-            self.wait()
-
-
-            """  SOME LATEX """
-            # set default color to black
-            MathTex.set_default(color= BLACK)
-            eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
-            eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
-            eqv.shift(UP*6 + LEFT*2)
-            eqa.shift(UP*4 + LEFT*2)
-
-            eqvdt = MathTex(r"v = \frac{d}{t}")
-            eqadt = MathTex(r"a = \frac{v}{t}")
-            eqvdt.shift(UP*6)
-            eqadt.shift(UP*4)
-
-            uni_v = MathTex(r"\frac{m}{s}")
-            uni_a = MathTex(r"\frac{m}{s^2}")
-            uni_v.shift(UP*6 + RIGHT*2)
-            uni_a.shift(UP*4 + RIGHT*2)
-
-
-            """ Seccion de ecuaciones, probablemente se tiene que incluir con las de arriba """
-            self.wait()
-            self.play(Write(eqv),Write(eqa))
-            self.wait()
-            self.play(Write(eqvdt),Write(eqadt))
-            self.wait()
-            self.play(Write(uni_v),Write(uni_a))
-            self.wait()
-            self.wait()
-            self.wait(3)
         
         #animacion_frames()
         animacion_vectores()
