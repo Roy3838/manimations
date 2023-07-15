@@ -1,7 +1,7 @@
 from manim import *
 
 
-
+# DEPRECATED, se movio todo a scripts separados para que sea menos complicado.
 
 #Animation of two point emminating spherical waves that interfere with each other
 class TwoPointInterference(ThreeDScene):
@@ -24,7 +24,6 @@ class TwoPointInterference(ThreeDScene):
 
         ''' PART 1 PLANO GENERAL'''
         
-
         #Create two points
         fuente1=Dot(color=BLUE).shift(3*LEFT)
         fuente2=Dot(color=BLUE).shift(3*RIGHT)
@@ -55,11 +54,7 @@ class TwoPointInterference(ThreeDScene):
         dis2label=MathTex(r"d_{2}", color=BLACK).move_to(bracedis2.get_center()+0.5*DOWN)
         dis2label.add_updater(lambda z: z.move_to(bracedis2.get_center()+0.5*DOWN))
         
-       
-        
-
-
-
+            
         #puntos de fuentes
         point1=Dot(color=BLUE).shift(3*LEFT+UP)
         point2=Dot(color=BLUE).shift(3*LEFT+DOWN)
@@ -93,7 +88,7 @@ class TwoPointInterference(ThreeDScene):
             ParametricFunction(lambda t: 
             np.array((t, (1/1.54)*np.arctan(4*t)*amplitud*np.sin(periodo * t +phi.get_value()), 0)), 
             t_range = np.array([0, np.abs(point1.get_x()-x1.get_value())]), fill_opacity=0)
-            .set_color(RED).align_to(point1,LEFT).shift(UP+0.05*RIGHT)
+            .set_color(RED).align_to(point1,LEFT).shift(UP+0.05*RIGHT).shift(LEFT*(x1.get_value()-3))
         ))
         
         sound2=ParametricFunction(lambda t: np.array((t, amplitud*np.sin(periodo * t), 0)), t_range = np.array([0, len2.get_value()]), fill_opacity=0).set_color(RED)
@@ -121,6 +116,7 @@ class TwoPointInterference(ThreeDScene):
         vector2.add_updater(lambda x: x.become(
             Arrow(target2.get_center(),analysispoint2.get_center(),buff=0,color=BLACK).set_x(4.5)
         ))
+
 
 
         #Brace de delta d
@@ -167,8 +163,6 @@ class TwoPointInterference(ThreeDScene):
             self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),
                     FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
             self.wait(0.5)
-            
-
 
 
             ''' PART 2 PLANO GENERAL'''
@@ -205,34 +199,34 @@ class TwoPointInterference(ThreeDScene):
             self.play(phi.animate.set_value(-30),rate_func=linear, run_time=4)
 
 
-            self.play(x1.animate.set_value(3+lambda0/4),x2.animate.set_value(3-lambda0/4))
-            self.play(phi.animate.set_value(-60),rate_func=linear, run_time=4)
+            # self.play(x1.animate.set_value(3+lambda0/4),x2.animate.set_value(3-lambda0/4))
+            # self.play(phi.animate.set_value(-60),rate_func=linear, run_time=4)
             
-            self.play(x1.animate.set_value(3+lambda0/2),x2.animate.set_value(3-lambda0/2))
-            self.play(phi.animate.set_value(-90),rate_func=linear, run_time=4)
+            # self.play(x1.animate.set_value(3+lambda0/2),x2.animate.set_value(3-lambda0/2))
+            # self.play(phi.animate.set_value(-90),rate_func=linear, run_time=4)
 
-            self.play(FadeOut(deltalabel))
-            self.play(Write(deltalabel2))
+            # self.play(FadeOut(deltalabel))
+            # self.play(Write(deltalabel2))
             
-            self.play(x1.animate.set_value(3+lambda0/4),x2.animate.set_value(3-lambda0/4))
-            self.play(phi.animate.set_value(-120),rate_func=linear, run_time=4)
+            # self.play(x1.animate.set_value(3+lambda0/4),x2.animate.set_value(3-lambda0/4))
+            # self.play(phi.animate.set_value(-120),rate_func=linear, run_time=4)
             
-            self.play(text_tracker.animate.set_value(2),run_time=0.1)
-            self.play(x1.animate.set_value(3+lambda0/2),x2.animate.set_value(3-lambda0/2))
-            self.play(phi.animate.set_value(-150),rate_func=linear, run_time=4)
+            # self.play(text_tracker.animate.set_value(2),run_time=0.1)
+            # self.play(x1.animate.set_value(3+lambda0/2),x2.animate.set_value(3-lambda0/2))
+            # self.play(phi.animate.set_value(-150),rate_func=linear, run_time=4)
 
-            self.play(text_tracker.animate.set_value(3),run_time=0.1)
-            self.play(x1.animate.set_value(3+3*lambda0/4),x2.animate.set_value(3-3*lambda0/4))
-            self.play(phi.animate.set_value(-180),rate_func=linear, run_time=4)
+            # self.play(text_tracker.animate.set_value(3),run_time=0.1)
+            # self.play(x1.animate.set_value(3+3*lambda0/4),x2.animate.set_value(3-3*lambda0/4))
+            # self.play(phi.animate.set_value(-180),rate_func=linear, run_time=4)
             
-            self.play(text_tracker.animate.set_value(4),run_time=0.1)
-            self.play(x1.animate.set_value(3+lambda0),x2.animate.set_value(3-lambda0))
-            self.play(phi.animate.set_value(-210),rate_func=linear, run_time=4)
+            # self.play(text_tracker.animate.set_value(4),run_time=0.1)
+            # self.play(x1.animate.set_value(3+lambda0),x2.animate.set_value(3-lambda0))
+            # self.play(phi.animate.set_value(-210),rate_func=linear, run_time=4)
 
-            self.play(text_tracker.animate.set_value(5),run_time=0.1)
-            self.play(x1.animate.set_value(3+5*lambda0/4),x2.animate.set_value(3-5*lambda0/4))
-            self.play(phi.animate.set_value(-240),rate_func=linear, run_time=4)
-            self.play(phi.animate.set_value(-270),rate_func=linear, run_time=4)
+            # self.play(text_tracker.animate.set_value(5),run_time=0.1)
+            # self.play(x1.animate.set_value(3+5*lambda0/4),x2.animate.set_value(3-5*lambda0/4))
+            # self.play(phi.animate.set_value(-240),rate_func=linear, run_time=4)
+            # self.play(phi.animate.set_value(-270),rate_func=linear, run_time=4)
 
             #self.play(phi.animate.set_value(5))
             self.wait()
@@ -270,7 +264,7 @@ class TwoPointInterference(ThreeDScene):
             self.play(FadeOut(lambdad),FadeOut(deltad))
       
             
-        def hyperbolic():
+        def hyperbolic():   
             #modo es el lambda y d es el valuetracker de la distancia
             def hyperbolic_mobject(modo,d, COLOR=RED):
                 #d es un value tracker de la distancia entre los dos puntos
@@ -339,8 +333,16 @@ class TwoPointInterference(ThreeDScene):
 
             self.wait()
             
-        twopoints()
+
+        # Distances with braces
+        #twopoints()
+
+        # Distances with wave functions
         twodistances()
+
+        # Math equations
         #mathequations()
-        hyperbolic()
+
+        # Hyperbolic graphs
+        #hyperbolic()
 
