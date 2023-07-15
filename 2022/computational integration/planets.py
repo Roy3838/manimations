@@ -49,8 +49,8 @@ class Planets(ThreeDScene):
 
         d=3
 
-        n= 1300
-        tf=1.3e+09
+        n= int(1300/10)
+        tf=1.3e+08
 
         dt=tf/n
         #OR FORCE MORE TIME WITH SAME DT
@@ -136,24 +136,68 @@ class Planets(ThreeDScene):
         scalingfactor=(8e+11)/4
         scalingfactorv=13720
 
-        for i in range(0,n,1):
-            print(str(round((i*100/n),2)) + "%")
-            planet1.move_to(R1[i][:]/scalingfactor)
-            planet2.move_to(R2[i][:]/scalingfactor)
-            planet3.move_to(R3[i][:]/scalingfactor)
-            #print(dR3[i][:]/scalingfactorv)
-            arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=GREY_C)
-            arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=GREY_C)
-            self.add(planet1,planet2)
-            self.add(planet3)#,arrowplanet2,arrowplanet3)
-            self.wait(1/60)
-            self.remove(planet1,planet2,planet3)#,arrowplanet2,arrowplanet3)
-            # if i==n/2 :
-            #     #ecuacion de Gravitacion de Newton en LaTeX
-            #     ecuaciones=MathTex(r"F\left(r\right)=G\frac{mM}{r^{2}}").move_to(UP*2)
-            #     ecuaciones.set_color(BLACK)
-            #     self.add_fixed_in_frame_mobjects(ecuaciones)
+
+        # Planets and their initial positions
+        planet1=Sphere(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW).move_to(R1[0][:]/scalingfactor)
+        planet2=Sphere(radius=0.2,fill_opacity=1,stroke_width=0).set_color(GREEN).move_to(R2[0][:]/scalingfactor)
+        planet3=Sphere(radius=0.1,fill_opacity=1,stroke_width=0).set_color(BLACK).move_to(R3[0][:]/scalingfactor)
+
+        # Store locations and velocities
+        planet1.locations = R1/scalingfactor
+        planet2.locations = R2/scalingfactor
+        planet3.locations = R3/scalingfactor
+
+        planet1.velocities = dR1/scalingfactorv
+        planet2.velocities = dR2/scalingfactorv
+        planet3.velocities = dR3/scalingfactorv
+
+        # Initialize time offset
+        planet1.t_offset = 0
+        planet2.t_offset = 0
+        planet3.t_offset = 0
+
+
+        def planet_updater(mob, dt):
+            mob.t_offset += (int(dt * n))
+            mob.move_to(mob.locations[mob.t_offset % len(mob.locations)])
+
         
-        #self.add(Text("hi"))
-        print(str(time.time()-start) + " seconds")
+
+        # Add updaters to the planets
+        planet1.add_updater(planet_updater)
+        planet2.add_updater(planet_updater)
+        planet3.add_updater(planet_updater)
+
+        # Add planets to the scene
+        self.add(planet1,planet2,planet3)
+        
+        self.wait(n/120)
+        self.play(Write(Text("hi")))
+        self.wait(n/120)
+
+        # Remove the planets
+        self.remove(planet1,planet2,planet3)
+
+
+
+        # for i in range(0,n,1):
+        #     print(str(round((i*100/n),2)) + "%")
+        #     planet1.move_to(R1[i][:]/scalingfactor)
+        #     planet2.move_to(R2[i][:]/scalingfactor)
+        #     planet3.move_to(R3[i][:]/scalingfactor)
+        #     #print(dR3[i][:]/scalingfactorv)
+        #     arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=GREY_C)
+        #     arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=GREY_C)
+        #     self.add(planet1,planet2)
+        #     self.add(planet3)#,arrowplanet2,arrowplanet3)
+        #     self.wait(1/60)
+        #     self.remove(planet1,planet2,planet3)#,arrowplanet2,arrowplanet3)
+        #     # if i==n/2 :
+        #     #     #ecuacion de Gravitacion de Newton en LaTeX
+        #     #     ecuaciones=MathTex(r"F\left(r\right)=G\frac{mM}{r^{2}}").move_to(UP*2)
+        #     #     ecuaciones.set_color(BLACK)
+        #     #     self.add_fixed_in_frame_mobjects(ecuaciones)
+        
+        # #self.add(Text("hi"))
+        # print(str(time.time()-start) + " seconds")
         
