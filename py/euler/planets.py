@@ -124,7 +124,10 @@ class PlanetsForce(ThreeDScene):
             return R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30
         
         def threeDplanets():
+            # Set camera orientation
             self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)
+            # Move camera closer
+            self.move_camera(zoom=1.5)
 
             R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute()
 
@@ -134,7 +137,7 @@ class PlanetsForce(ThreeDScene):
             planet3=Sphere(radius=0.1,fill_opacity=1,stroke_width=0).set_color(BLACK)
 
             scalingfactor=(8e+11)/4
-            scalingfactorv=13720
+            scalingfactorv=13720/1.2
 
 
             # Planets and their initial positions
@@ -147,30 +150,71 @@ class PlanetsForce(ThreeDScene):
             planet2.locations = R2/scalingfactor
             planet3.locations = R3/scalingfactor
 
-            planet1.velocities = dR1/scalingfactorv
-            planet2.velocities = dR2/scalingfactorv
-            planet3.velocities = dR3/scalingfactorv
+            #vel1 = Arrow(ORIGIN,dR1[0][:]/scalingfactorv).set_color(YELLOW).move_to(R1[0][:]/scalingfactor)
+            vel2 = Arrow(ORIGIN,dR2[0][:]/scalingfactorv).set_color(GREEN).move_to(R2[0][:]/scalingfactor)
+            vel3 = Arrow(ORIGIN,dR3[0][:]/scalingfactorv).set_color(BLACK).move_to(R3[0][:]/scalingfactor)
+
+            #vel1.locations = R1/scalingfactor
+            vel2.locations = R2/scalingfactor
+            vel3.locations = R3/scalingfactor
+
+            #vel1.velocities = dR1/scalingfactorv
+            vel2.velocities = dR2/scalingfactorv
+            vel3.velocities = dR3/scalingfactorv
 
             # Initialize time offset
             planet1.t_offset = 0
             planet2.t_offset = 0
             planet3.t_offset = 0
 
+            # Initialize time offset
+            #vel1.t_offsetv = 0
+            vel2.t_offsetv = 0
+            vel3.t_offsetv = 0
+
             def planet_updater(mob, dt):
                 # Convert to time
                 mob.t_offset += int(dt*n/12)
                 mob.move_to(mob.locations[mob.t_offset % len(mob.locations)])
+
+            def velocity_updater(mob, dt):
+                # Convert to time
+                mob.t_offsetv += int(dt*n/12)
+                mob.become(
+                    Arrow(ORIGIN,mob.velocities[mob.t_offsetv % len(mob.velocities)])
+                    ).move_to(
+                    mob.locations[mob.t_offsetv % len(mob.locations)]
+                    + mob.velocities[mob.t_offsetv % len(mob.velocities)]/2
+                    ).set_color(BLACK)
 
             # Add updaters to the planets
             planet1.add_updater(planet_updater)
             planet2.add_updater(planet_updater)
             planet3.add_updater(planet_updater)
 
+            #vel1.add_updater(velocity_updater)
+            vel2.add_updater(velocity_updater)
+            vel3.add_updater(velocity_updater)
+
+            example_listing = Code(
+                "/home/jay/manimations/py/euler/example.py",
+                tab_width=4,
+                background="window",
+                language="python",
+                font="Monospace",
+                background_stroke_color= WHITE,
+            ).shift(6*UP).scale(1.5)
+
+
             # Add planets to the scene
-            self.add(planet1,planet2,planet3)
+            self.add(planet1,planet2,planet3,vel2,vel3)
             
-            self.wait(n/240)
-            self.play(Write(Text("hi")))
+            self.wait(3)
+
+            self.add_fixed_in_frame_mobjects(example_listing)
+            self.play(Write(example_listing))
+
+            self.wait(1)
 
             # Remove the planets
             self.remove(planet1,planet2,planet3)

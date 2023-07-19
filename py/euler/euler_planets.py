@@ -230,12 +230,9 @@ class Euler(MovingCameraScene):
                     # Se crean los planetas
                     self.play(Write(planet1),Create(planet2)) # Create(axesss)
                     # Se crea el vector y el label de fuerza
-                    self.play(Create(Fuerza2),Write(force))
-                    # Se crea el vector y label de velocidad
-                    self.play(Create(arrowplanet2),Write(velocity))
-                    # Se crea el vector y labelde distancia
-                    self.play(Create(planetpos2),Write(distance))
-                    #self.play(Unwrite(velocity),Unwrite(force),Unwrite(distance))
+                    self.play(Create(Fuerza2),Write(force),Create(planetpos2),Write(distance),
+                              Create(arrowplanet2),Write(velocity))
+
 
                     # Contador para la creacion de los siguiente vectores
                     c = 0
