@@ -338,9 +338,6 @@ class Euler(MovingCameraScene):
             self.play(ReplacementTransform(uni_vel_ac,uni_der_acc),
             ReplacementTransform(uni_pos_vel, uni_der_vel))
 
-
-
-
             self.play(FadeOut(uni_a_s_s),FadeOut(uni_v),FadeOut(oggroup))
 
 
