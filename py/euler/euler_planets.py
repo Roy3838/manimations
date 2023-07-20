@@ -223,15 +223,23 @@ class Euler(MovingCameraScene):
                 
                 if i==200:
                     # LABEL ARROWS
+                    
                     velocity = Tex(r"$\vec{v}$").set_color(BLACK).scale(0.8).next_to(arrowplanet2,LEFT)
                     force = Tex(r"$\vec{F}$").set_color(BLACK).scale(0.8).next_to(Fuerza2,UP)
                     distance = Tex(r"$\vec{p}$").set_color(BLACK).scale(0.8).next_to(planetpos2,DOWN)
                     distance.shift(UP*0.5)
                     # Se crean los planetas
                     self.play(Write(planet1),Create(planet2)) # Create(axesss)
-                    # Se crea el vector y el label de fuerza
-                    self.play(Create(Fuerza2),Write(force),Create(planetpos2),Write(distance),
-                              Create(arrowplanet2),Write(velocity))
+                    # Se crea el vector y el label de fuerzas
+                    self.play(Create(planetpos2),Write(distance),)
+                    self.play(Create(Fuerza2),Write(force),)
+
+                    self.play(Create(arrowplanet2),Write(velocity))
+                    
+
+                    grav_formula=MathTex(r"F=G\frac{m_{1}m_{2}}{r^{2}}").set_color(
+                        BLACK).shift(UP*3+RIGHT)
+                    
 
 
                     # Contador para la creacion de los siguiente vectores
@@ -241,6 +249,33 @@ class Euler(MovingCameraScene):
                     ogarrowplanet = arrowplanet2.copy()
                     ogplanetpos = planetpos2.copy()
                     self.add(ogplanet,ogFuerza,ogarrowplanet,ogplanetpos)
+
+                    # Aqui se va a hacer la transformacion del planeta para demostrar que se puede calcular la fuerza desde cualquier posicion
+                    mover_planeta = planet2.copy()
+                    mover_fuerza = Fuerza2.copy()
+
+                    mover_fuerza.add_updater(
+                        lambda m: m.become(
+                        # WTF ESTOY HACIENDO YA QUIERO ACABAR ESTO
+                            # normalized mover_planeta.get_center() is
+                            # mover_planeta.get_center() / np.linalg.norm(mover_planeta.get_center())
+                            Arrow(
+                        mover_planeta.get_center(),
+                        
+                        -1.5*mover_planeta.get_center() / np.linalg.norm(mover_planeta.get_center())
+                          + mover_planeta.get_center()
+                          
+                          , buff=0,color=RED)
+                        )
+                    )
+                    self.add(mover_fuerza,mover_planeta)
+                    self.play(Write(grav_formula),mover_planeta.animate.shift(UP*4 + RIGHT*3), run_time=0.8)
+                    self.play(mover_planeta.animate.shift(RIGHT*4+ DOWN*3), run_time=0.8)
+                    self.play(mover_planeta.animate.shift(DOWN*4 + LEFT*3), run_time=0.8)
+                    self.play(FadeOut(mover_planeta),FadeOut(mover_fuerza),Unwrite(grav_formula), run_time=0.8)
+
+
+
                 else:
                     # Se crean el resto de los vectores
                     # self.play(FadeIn(planet2),FadeIn(Fuerza2),FadeIn(arrowplanet2),FadeIn(planetpos2), run_time=0.2)
@@ -252,14 +287,13 @@ class Euler(MovingCameraScene):
                     Transform(velocidades2[c], velocidades2[c+1]),
                     Transform(fuerzas2[c], fuerzas2[c+1]),
                     Transform(posiciones2[c], posiciones2[c+1]),
-                    run_time=0.4
+                    run_time=0.2
                     )
-                    c+=1
-
+                    c+=1            
 
 
             # Se mueve la camara hacia arriba para tener espacio
-            self.play(self.camera.frame.animate.move_to(5*UP))
+            self.play(self.camera.frame.animate.move_to(4*UP))
 
             # Separacion entre circulo de arriba y de abajo
             sep = 9
@@ -268,77 +302,104 @@ class Euler(MovingCameraScene):
             
             """ DEMOSTRAR LOS CAMBIOS USANDO DOS VECTORES """
 
+            MathTex.set_default(color= BLACK)
+            # eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
+            # eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
+            # eqvdt = MathTex(r"v = \frac{d}{t}")
+            # eqadt = MathTex(r"a = \frac{v}{t}")
+ 
+            # EXPLICACION DE LAS ECUACIONES
+
+            uni_v = MathTex(r"v=", r"\frac{m}{s}").scale(1.3)
+            uni_a = MathTex(r"a=", r"\frac{m}{s^2}").scale(1.3)
+            uni_a_s_s = MathTex(r"a=", r"\frac{\frac{m}{s}}{s}").scale(1.3)
+
+            uni_v.shift(UP*8 + RIGHT*2)
+            uni_a.shift(UP*6 + RIGHT*2)
+            uni_a_s_s.shift(UP*6 + RIGHT*2)
+
+            uni_pos_vel = MathTex(r"\vec{v}=", r"\frac{\vec{p}}{s}").move_to(uni_v.get_center())
+            uni_vel_ac = MathTex(r"\vec{a}=", r"\frac{\vec{v}}{s}").move_to(uni_a.get_center())
+
+            
+
+            shift_direc = UP*(sep+3) + RIGHT*2
+
+            self.play(
+                distance.animate.shift(shift_direc),
+                ogplanetpos.animate.shift(shift_direc),
+                ogplanet.animate.shift(shift_direc),
+            )
+
+            self.play(
+                velocity.animate.shift(shift_direc),
+                ogarrowplanet.animate.shift(shift_direc),
+                      )
+            
+            self.play(
+                force.animate.shift(shift_direc),
+                ogFuerza.animate.shift(shift_direc),
+            )
+            
+
             # Velocidad es cambio en posicion
             vec1_pos = posiciones2[0].copy()
             vec2_pos = posiciones2[1].copy()
             vec1_vel = velocidades2[0].copy()
 
-            self.play(vec1_pos.animate.shift(UP*sep+RIGHT*2) , vec2_pos.animate.shift(UP*sep+RIGHT*2))
-            self.play(vec1_vel.animate.shift(UP*sep+RIGHT*2))
+            self.play(vec1_pos.animate.shift(UP*sep+RIGHT) , vec2_pos.animate.shift(UP*sep+RIGHT))
+            self.play(vec1_vel.animate.shift(UP*sep+RIGHT))
 
-            self.play(Wiggle(vec1_vel))
+            self.play(Wiggle(vec1_vel), Write(uni_v))
             self.play(ReplacementTransform(vec1_pos,vec2_pos))
             self.play(FadeOut(vec2_pos),FadeOut(vec1_vel))
+
 
             # Aceleracion es cambio en velocidad
             vec1_vel2 = velocidades2[0].copy()
             vec2_vel2 = velocidades2[1].copy()
             vec1_fuerza2 = fuerzas2[0].copy()
 
-            self.play(vec1_vel2.animate.shift(UP*sep+RIGHT*2) , vec2_vel2.animate.shift(UP*sep+RIGHT*2))
-            self.play(vec1_fuerza2.animate.shift(UP*sep+RIGHT*2))
+
+            self.play(vec1_fuerza2.animate.shift(UP*sep+RIGHT), Write(uni_a))
+            self.play(vec1_vel2.animate.shift(UP*sep+RIGHT) , vec2_vel2.animate.shift(UP*sep+RIGHT))
+            
             
             # Mover el vector vec1_vel2 y vec2_vel2 para que las bases se alineen
             pos = vec1_vel2.get_start()
-            self.play(vec2_vel2.animate.shift(pos - vec2_vel2.get_start()))
+            self.play(vec2_vel2.animate.shift(pos - vec2_vel2.get_start()), run_time=0.4)
+
 
             self.play(Wiggle(vec1_fuerza2))
-            self.play(ReplacementTransform(vec1_vel2,vec2_vel2))
-            self.play(FadeOut(vec2_vel2),FadeOut(vec1_fuerza2))
 
-            MathTex.set_default(color= BLACK)
-            # eqv = MathTex(r"\vec{v} = \frac{d\vec{r}}{dt}")
-            # eqa = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}")
-            # eqvdt = MathTex(r"v = \frac{d}{t}")
-            # eqadt = MathTex(r"a = \frac{v}{t}")
-
-            # EXPLICACION DE LAS ECUACIONES
-
-            uni_v = MathTex(r"\vec{v}=\frac{m}{s}")
-            uni_a = MathTex(r"\vec{a}=", r"\frac{m}{s^2}")
-            uni_a_s_s = MathTex(r"\vec{a}=", r"\frac{\frac{m}{s}}{s}")
-
-            uni_v.shift(UP*9 + RIGHT*3)
-            uni_a.shift(UP*7 + RIGHT*3)
-            uni_a_s_s.shift(UP*7 + RIGHT*3)
-
-            uni_pos_vel = MathTex(r"\vec{v} = \frac{\vec{p}}{s}").move_to(uni_v.get_center())
-            uni_vel_ac = MathTex(r"\vec{a} = \frac{\vec{v}}{s}").move_to(uni_a.get_center())
-
-            uni_der_vel = MathTex(r"\vec{v} = \frac{d\vec{p}}{dt}").move_to(uni_v.get_center())
-            uni_der_acc = MathTex(r"\vec{a} = \frac{d\vec{v}}{dt}").move_to(uni_a.get_center())
-
-
-            oggroup = VGroup(ogplanet,ogFuerza,ogarrowplanet,ogplanetpos)
-            self.play(oggroup.animate.shift(UP*sep + RIGHT*2),
-            self.camera.frame.animate.scale(0.8).move_to(UP*sep + RIGHT))
-
-            """ Seccion de ecuaciones, probablemente se tiene que incluir con las de arriba """
-            self.wait()
-            self.play(Write(uni_v), Wiggle(ogarrowplanet))
-            self.wait()
-            self.play(Write(uni_a), Wiggle(ogFuerza))
-            self.wait()
-            self.play(ReplacementTransform(uni_a[0], uni_a_s_s[0]),
+            self.play(ReplacementTransform(vec1_vel2,vec2_vel2),ReplacementTransform(uni_a[0], uni_a_s_s[0]),
             ReplacementTransform(uni_a[1],uni_a_s_s[1]))
-            self.wait()
-            self.play(ReplacementTransform(uni_a_s_s,uni_vel_ac),
-            ReplacementTransform(uni_v,uni_pos_vel))
-            self.wait()
-            self.play(ReplacementTransform(uni_vel_ac,uni_der_acc),
-            ReplacementTransform(uni_pos_vel, uni_der_vel))
 
-            self.play(FadeOut(uni_a_s_s),FadeOut(uni_v),FadeOut(oggroup))
+            self.play(FadeOut(vec2_vel2),FadeOut(vec1_fuerza2),
+                      FadeOut(ogplanetpos), FadeOut(ogplanet),FadeOut(ogarrowplanet),FadeOut(ogFuerza),FadeOut(velocity),FadeOut(force),FadeOut(distance))
+            
+
+            uni_der_vel = MathTex(r"v=", r"\frac{p}{t}").move_to(uni_v.get_center()).scale(1.3)
+            uni_der_acc = MathTex(r"a=", r"\frac{v}{t}").move_to(uni_a.get_center()).scale(1.3)
+            
+            self.wait()
+            # Por lo que sabemos que la velocidad es la posicion entre el tiempo
+            self.play(ReplacementTransform(uni_v[0],uni_der_vel[0]),
+                      ReplacementTransform(uni_v[1],uni_der_vel[1]))
+            self.play(ReplacementTransform(uni_a_s_s[0],uni_der_acc[0]),
+                        ReplacementTransform(uni_a_s_s[1],uni_der_acc[1]))
+
+
+            # Y la aceleracion es la velocidad entre el tiempo
+            
+            
+            
+            
+            
+            self.play(
+                uni_der_acc.animate.shift(DOWN*2 + RIGHT*2),
+                uni_der_vel.animate.shift(DOWN*2.5 + RIGHT*2),
+                )
 
 
 
@@ -350,24 +411,28 @@ class Euler(MovingCameraScene):
             velocidades2_arriba = velocidades2.copy()
             velocity_arriba = velocity.copy()
 
+            sep=8.3
+            distance_arriba.shift(DOWN*9)
+            velocity_arriba.shift(DOWN*12 + RIGHT*2)
+
             # Se cambian las posiciones y las velocidades hacia arriba
-            self.play(posiciones2_arriba.animate.shift(UP*sep), distance_arriba.animate.shift(UP*sep))
-            self.play(velocidades2_arriba.animate.shift(UP*sep), velocity_arriba.animate.shift(UP*sep))
+            self.play(posiciones2_arriba.animate.shift(UP*sep),) #distance_arriba.animate.shift(UP*sep))
+            self.play(velocidades2_arriba.animate.shift(UP*sep),) #velocity_arriba.animate.shift(UP*sep))
             
             # Se mueven las posiciones en direccion de las velocidades
             for i in range(0,len(posiciones2_arriba)-1):
                 if i == 0:
-                    self.play(FadeOut(distance_arriba),FadeOut(velocity_arriba),
+                    self.play(#FadeOut(distance_arriba),FadeOut(velocity_arriba),
 
                     ReplacementTransform(posiciones2_arriba[i],posiciones2_arriba[i+1]),
-                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 0.4)
+                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 0.25)
                 else:
                     self.remove(posiciones2_arriba[i],velocidades2_arriba[i])
                     self.play(ReplacementTransform(posiciones2_arriba[i],posiciones2_arriba[i+1]),
-                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 0.4)
+                    ReplacementTransform(velocidades2_arriba[i],velocidades2_arriba[i+1]),run_time = 0.25)
             
             # Fade y wait
-            self.play(FadeOut(posiciones2_arriba[len(posiciones2)-1]),FadeOut(velocidades2_arriba[len(velocidades2)-1]),)
+            self.play(FadeOut(posiciones2_arriba[len(posiciones2)-1]),FadeOut(velocidades2_arriba[len(velocidades2)-1]),run_time = 0.25)
 
             
             # Vamos a hacer copias para mover hacia arriba sin que desaparezca lo de abajo
@@ -375,28 +440,79 @@ class Euler(MovingCameraScene):
             fuerzas2_arriba = fuerzas2.copy()
             force_arriba = force.copy()
             velocity_label_2_arriba = velocity.copy()
+
+            velocity_label_2_arriba.shift(DOWN*9)
+            force_arriba.shift(DOWN*9)
+
+            
             
             # Se cambian las velocidades y aceleraciones hacia arriba
-            self.play(fuerzas2_arriba.animate.shift(UP*sep),velocidades_seg_arriba.animate.shift(UP*sep),
-            force_arriba.animate.shift(UP*sep), velocity_label_2_arriba.animate.shift(UP*sep))
+            self.play(fuerzas2_arriba.animate.shift(UP*sep),velocidades_seg_arriba.animate.shift(UP*sep),)
+            #force_arriba.animate.shift(UP*sep), velocity_label_2_arriba.animate.shift(UP*sep))
 
             # Se mueven las velocidades en direccion de la aceleracion
             for i in range(0,len(fuerzas2_arriba)-1):
                 if i == 0:
                     # en el primer ciclo se desaparecen las labels
-                    self.play(FadeOut(force_arriba),FadeOut(velocity_label_2_arriba),
+                    self.play(#FadeOut(force_arriba),FadeOut(velocity_label_2_arriba),
                         
                     ReplacementTransform(fuerzas2_arriba[i],fuerzas2_arriba[i+1]),
-                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 0.4)
+                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 0.25)
                 else:
                     # en el resto de los ciclos se mueven los vectores
                     self.remove(fuerzas2_arriba[i], velocidades_seg_arriba[i])
                     self.play(ReplacementTransform(fuerzas2_arriba[i],fuerzas2_arriba[i+1]),
-                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 0.4)
+                    ReplacementTransform(velocidades_seg_arriba[i],velocidades_seg_arriba[i+1]), run_time = 0.25)
             
             # Fade y Wait
-            self.play(FadeOut(fuerzas2_arriba[len(fuerzas2_arriba)-1]),FadeOut(velocidades_seg_arriba[len(velocidades_seg_arriba)-1]),)
-        
+            self.play(FadeOut(fuerzas2_arriba[len(fuerzas2_arriba)-1]),FadeOut(velocidades_seg_arriba[len(velocidades_seg_arriba)-1]),run_time=0.25)
+
+            self.play(
+                uni_der_acc.animate.shift(DOWN*11 + LEFT*4),
+                uni_der_vel.animate.shift(DOWN*11 + LEFT*4),
+                self.camera.frame.animate.move_to(4*DOWN).scale(0.5))
+
+            #Labels en tiempo P_i y P_f
+            p_i = MathTex(r"\vec{p}_i").set_color(BLACK).scale(0.8).next_to(posiciones2[1],DOWN).shift(LEFT*0.7)
+            p_f = MathTex(r"\vec{p}_f").set_color(BLACK).scale(0.8).next_to(posiciones2[2],DOWN).shift(RIGHT*0.2)
+
+            self.play(Write(p_i),Write(p_f))
+            self.play(Wiggle(posiciones2[1]),Wiggle(posiciones2[2]))
+
+            # Ecuacion con deltas
+            ec_v = MathTex(r"\vec{v}=", r"\frac{\Delta \vec{p}}{\Delta t}").move_to(uni_der_vel.get_center()).scale(1.3)
+            ev_v_d = MathTex(r"\vec{v}=", r"\frac{\vec{p}_{f}-\vec{p}_{i}}{\Delta t}").move_to(uni_der_vel.get_center()).scale(1.3)
+
+            self.play(ReplacementTransform(uni_der_vel[0],ec_v[0]),
+                        ReplacementTransform(uni_der_vel[1],ec_v[1]))
+            self.play(ReplacementTransform(ec_v[0],ev_v_d[0]),
+                        ReplacementTransform(ec_v[1],ev_v_d[1]))
+
+            # Labels en tiempo v_i y v_f
+            v_i = MathTex(r"\vec{v}_i").set_color(BLACK).scale(0.8).move_to(p_i.get_center()).shift(RIGHT*0.8+DOWN*0.2)
+            v_f = MathTex(r"\vec{v}_f").set_color(BLACK).scale(0.8).move_to(p_f.get_center()).shift(RIGHT*0.8+ UP*0.2)
+
+
+            ec_a = MathTex(r"\vec{a}=", r"\frac{\Delta \vec{v}}{\Delta t}").move_to(uni_der_acc.get_center()).scale(1.3)
+            ea_a_d = MathTex(r"\vec{a}=", r"\frac{\vec{v}_{f}-\vec{v}_{i}}{\Delta t}").move_to(uni_der_acc.get_center()).scale(1.3)
+
+            
+            self.play(Write(v_i),Write(v_f))
+            
+            
+            self.play(ReplacementTransform(uni_der_acc[0],ec_a[0]),
+                        ReplacementTransform(uni_der_acc[1],ec_a[1]))
+            self.play(ReplacementTransform(ec_a[0],ea_a_d[0]),
+                        ReplacementTransform(ec_a[1],ea_a_d[1]))
+
+
+
+
+            self.wait()
+
+
+
+
         #animacion_frames()
         animacion_vectores()
         
