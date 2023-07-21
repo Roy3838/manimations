@@ -19,40 +19,41 @@ class Euler(MovingCameraScene):
             F=F12+F13
             return F
 
-        def compute():
+        def compute(
+            # """ EARTH SUN ASTEROID"""
+            # masa [kg]
+            m1 = 1.989e30,
+            m2 = 1.89819e28,
+            m3 = 0.04784e24,
+            # posicion inicial [m]
+            r10 = [0, 0],
+            r20 = [7.40522e11, 0],
+            r30 = [-7.40522e11, 150000],
+            # velocidad inicial [m/s]
+            dr10 = [0, 0],
+            dr20 = [0, 13720],
+            dr30 = [-7252.9479, 10370],
+
+            n= 1300*2,
+            d=2,
+            tf=1.3e+09*2,
             G=6.67e-11
-            """  Earth Sun Moon  """
-            # masa [kg]
-            m1 = 1.989e30 
-            m2 = 1.89819e28
-            m3 = 0.04784e24
-            # posicion inicial [m]
-            r10 = [0, 0, 0]
-            r20 = [7.40522e11, 0, 0]
-            r30 = [-5*384.4e7 + 7.405e11, 0, 0]
-            # velocidad inicial [m/s]
-            dr10 = [0, 0, 0]
-            dr20 = [0, 13720, 0]
-            dr30 = [0, np.sqrt(G*m2/np.linalg.norm(np.array(r20)-np.array(r30))) + 13720 , 0]
+            ):
 
+            # """  Earth Sun Moon  """
+            # # masa [kg]
+            # m1 = 1.989e30 
+            # m2 = 1.89819e28
+            # m3 = 0.04784e24
+            # # posicion inicial [m]
+            # r10 = [0, 0, 0]
+            # r20 = [7.40522e11, 0, 0]
+            # r30 = [-5*384.4e7 + 7.405e11, 0, 0]
+            # # velocidad inicial [m/s]
+            # dr10 = [0, 0, 0]
+            # dr20 = [0, 13720, 0]
+            # dr30 = [0, np.sqrt(G*m2/np.linalg.norm(np.array(r20)-np.array(r30))) + 13720 , 0]
             
-            """ EARTH SUN ASTEROID"""
-            # masa [kg]
-            m1 = 1.989e30
-            m2 = 1.89819e28
-            m3 = 0.04784e24
-            # posicion inicial [m]
-            r10 = [0, 0]
-            r20 = [7.40522e11, 0]
-            r30 = [-7.40522e11, 150000]
-            # velocidad inicial [m/s]
-            dr10 = [0, 0]
-            dr20 = [0, 13720]
-            dr30 = [-7252.9479, 10370]
-
-            n= 1300*2
-            d=2
-            tf=1.3e+09*2
             dt=tf/n
             T=np.arange(0,tf,n)
 
@@ -87,8 +88,8 @@ class Euler(MovingCameraScene):
             F1[0][:] = fuerza(G,m1,m2,m3,R1[0][:],R2[0][:],R3[0][:])
             F2[0][:] = fuerza(G,m2,m1,m3,R2[0][:],R1[0][:],R3[0][:])
             F3[0][:] = fuerza(G,m3,m1,m2,R3[0][:],R1[0][:],R2[0][:])
-            mEuler = False
-            LeapFrog=True
+            mEuler = True
+            LeapFrog=False
 
             if mEuler:
                 for t in range(0,n-1):
@@ -175,10 +176,17 @@ class Euler(MovingCameraScene):
             axesss = NumberPlane().set_color(GREY_C).scale(1.5).rotate(PI/2)
             planet1=Dot(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
             planetas2=VGroup()
+           
             posiciones2=VGroup()
             velocidades2=VGroup()
             fuerzas2=VGroup()
             scene_completa = VGroup()
+
+            # Pal rato pero de una
+            planetas3 = VGroup()
+            posiciones3 = VGroup()
+            velocidades3 = VGroup()
+            fuerzas3 = VGroup()
 
             # range (200, 320, 30) para lo normal
             for i in range(200,550,30):
@@ -208,6 +216,7 @@ class Euler(MovingCameraScene):
                 # CREATE ARROWS VGROUP
                 # planetas
                 planetas2.add(planet2)
+                
                 # velocidades
                 arrowplanet2=Arrow(pos2, pos2+v2, buff=0,color=GOLD)
                 velocidades2.add(arrowplanet2)
@@ -219,6 +228,15 @@ class Euler(MovingCameraScene):
                 posiciones2.add(planetpos2) 
 
                 scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2)
+
+                # Pal rato 
+                planetas3.add(planet3)
+                arrowplanet3=Arrow(pos3, pos3+v3, buff=0,color=GOLD)
+                velocidades3.add(arrowplanet3)
+                Fuerza3=Arrow(pos3,pos3+Fm3, buff=0,color=RED)
+                fuerzas3.add(Fuerza3)
+                planetpos3=Arrow(pos1,pos3,color=BLACK, buff=0)
+                posiciones3.add(planetpos3)
 
                 
                 if i==200:
@@ -269,11 +287,11 @@ class Euler(MovingCameraScene):
                         )
                     )
                     self.add(mover_fuerza,mover_planeta)
-                    self.play(Write(grav_formula),mover_planeta.animate.shift(UP*4 + RIGHT*3), run_time=0.8)
-                    self.play(mover_planeta.animate.shift(RIGHT*4+ DOWN*3), run_time=0.8)
-                    self.play(mover_planeta.animate.shift(DOWN*4 + LEFT*3), run_time=0.8)
-                    self.play(FadeOut(mover_planeta),FadeOut(mover_fuerza),Unwrite(grav_formula), run_time=0.8)
-
+                    self.play(Write(grav_formula),mover_planeta.animate.shift(DOWN*4 + RIGHT*3), run_time=0.8)
+                    self.play(mover_planeta.animate.shift(RIGHT*4+ UP*3), run_time=0.8)
+                    self.play(mover_planeta.animate.shift(UP*2 + LEFT*6), run_time=0.8)
+                    self.play(mover_planeta.animate.shift(DOWN + LEFT),Unwrite(grav_formula), run_time=0.8)
+                    self.remove(mover_planeta,mover_fuerza)
 
 
                 else:
@@ -289,6 +307,8 @@ class Euler(MovingCameraScene):
                     Transform(posiciones2[c], posiciones2[c+1]),
                     run_time=0.2
                     )
+                    #redundante por coso raro de manim
+                    self.add(posiciones2[c])
                     c+=1            
 
 
@@ -296,7 +316,7 @@ class Euler(MovingCameraScene):
             self.play(self.camera.frame.animate.move_to(4*UP))
 
             # Separacion entre circulo de arriba y de abajo
-            sep = 9
+            sep = 9.1
 
 
             
@@ -501,7 +521,7 @@ class Euler(MovingCameraScene):
 
             ec_a_despejada1 = MathTex(r"\vec{a}\cdot \Delta t =", r" \vec{v}_{f}-\vec{v}_{i}").move_to(uni_der_acc.get_center()).scale(1.3)
             ec_a_despejada2 = MathTex(r"\vec{a}\cdot \Delta t + \vec{v}_{i} =", r" \vec{v}_{f}").move_to(uni_der_acc.get_center()).scale(1.3)
-            
+
             self.play(Write(v_i),Write(v_f))
             
             
@@ -523,6 +543,29 @@ class Euler(MovingCameraScene):
                         ReplacementTransform(ec_a_despejada1[0],ec_a_despejada2[0]),
                         ReplacementTransform(ec_a_despejada1[1],ec_a_despejada2[1]))
 
+            # maroma xd
+            ec_v_despejada_copia = MathTex(r"\vec{v}\cdot \Delta t + \vec{p}_{i}", r"=", r" \vec{p}_{f}").move_to(uni_der_vel.get_center()).scale(1.3)
+            ec_a_despejada_copia = MathTex(r"\vec{a}\cdot \Delta t + \vec{v}_{i}", r"=", r" \vec{v}_{f}").move_to(uni_der_acc.get_center()).scale(1.3)
+
+            ec_v_despejada_final = MathTex(r" \vec{p}_{f}" , r"=", r"\vec{v}\cdot \Delta t + \vec{p}_{i}").move_to(uni_der_vel.get_center()).scale(1.3)
+            ec_a_despejada_final = MathTex(r" \vec{v}_{f}" , r"=", r"\vec{a}\cdot \Delta t + \vec{v}_{i}").move_to(uni_der_acc.get_center()).scale(1.3)
+            
+
+            self.play(FadeOut(ec_v_despejada2),FadeOut(ec_a_despejada2))
+            
+
+            # Maromeada
+            self.play(ec_v_despejada_copia[0].animate.move_to(ec_v_despejada_final[2].get_center()),
+                        ec_v_despejada_copia[1].animate.move_to(ec_v_despejada_final[1].get_center()),
+                        ec_v_despejada_copia[2].animate.move_to(ec_v_despejada_final[0].get_center()),
+                        
+                        ec_a_despejada_copia[0].animate.move_to(ec_a_despejada_final[2].get_center()),
+                        ec_a_despejada_copia[1].animate.move_to(ec_a_despejada_final[1].get_center()),
+                        ec_a_despejada_copia[2].animate.move_to(ec_a_despejada_final[0].get_center()),
+                        )
+
+            
+
 
             example_listing = Code(
                 "/home/jay/manimations/py/euler/example.py",
@@ -536,11 +579,43 @@ class Euler(MovingCameraScene):
             self.play(Write(example_listing))
 
             self.wait()
-
-            self.play(example_listing.animate.shift(DOWN*2),
-                      ec_v_despejada2.animate.shift(DOWN*1.5),ec_a_despejada2.animate.shift(DOWN),)
+            newscale = 2
+            self.play(self.camera.frame.animate.scale(newscale),
+                        example_listing.animate.shift(DOWN*3).scale(newscale),
+                        ec_v_despejada2.animate.shift(DOWN*3.5).scale(newscale),ec_a_despejada2.animate.shift(4*DOWN).scale(newscale),)
 
             self.wait()
+
+            pos_boxes = VGroup()
+            vel_boxes = VGroup()
+
+
+            # Code Block lines
+            pos_boxes.add(SurroundingRectangle(example_listing[2][2],buff=0).shift(DOWN*0.1+LEFT*0.1))
+            vel_boxes.add(SurroundingRectangle(example_listing[2][4],buff=0).shift(DOWN*0.1+LEFT*0.1))
+
+            pos_boxes.add(SurroundingRectangle(ec_v_despejada2,buff=0.2))
+            vel_boxes.add(SurroundingRectangle(ec_a_despejada2,buff=0.2))
+
+            self.play(Create(pos_boxes))
+            #self.play(Create(vel_boxes))
+
+            #pos to vel
+            self.play(ReplacementTransform(pos_boxes[0],vel_boxes[0]),
+                        ReplacementTransform(pos_boxes[1],vel_boxes[1]))
+            
+            #vel to pos
+            self.play(ReplacementTransform(vel_boxes[0],pos_boxes[0]),
+                        ReplacementTransform(vel_boxes[1],pos_boxes[1]))
+
+            self.play(FadeOut(fuerzas2),FadeOut(planetas2),FadeOut(posiciones2),FadeOut(velocidades2),
+                      FadeOut(p_i),FadeOut(p_f),FadeOut(v_i),FadeOut(v_f))
+
+            
+            self.wait()
+
+
+
 
 
 
