@@ -483,6 +483,9 @@ class Euler(MovingCameraScene):
             ec_v = MathTex(r"\vec{v}=", r"\frac{\Delta \vec{p}}{\Delta t}").move_to(uni_der_vel.get_center()).scale(1.3)
             ev_v_d = MathTex(r"\vec{v}=", r"\frac{\vec{p}_{f}-\vec{p}_{i}}{\Delta t}").move_to(uni_der_vel.get_center()).scale(1.3)
 
+            ec_v_despejada1 = MathTex(r"\vec{v}\cdot \Delta t =", r" \vec{p}_{f}-\vec{p}_{i}").move_to(uni_der_vel.get_center()).scale(1.3)
+            ec_v_despejada2 = MathTex(r"\vec{v}\cdot \Delta t + \vec{p}_{i} =", r" \vec{p}_{f}").move_to(uni_der_vel.get_center()).scale(1.3)
+
             self.play(ReplacementTransform(uni_der_vel[0],ec_v[0]),
                         ReplacementTransform(uni_der_vel[1],ec_v[1]))
             self.play(ReplacementTransform(ec_v[0],ev_v_d[0]),
@@ -496,6 +499,8 @@ class Euler(MovingCameraScene):
             ec_a = MathTex(r"\vec{a}=", r"\frac{\Delta \vec{v}}{\Delta t}").move_to(uni_der_acc.get_center()).scale(1.3)
             ea_a_d = MathTex(r"\vec{a}=", r"\frac{\vec{v}_{f}-\vec{v}_{i}}{\Delta t}").move_to(uni_der_acc.get_center()).scale(1.3)
 
+            ec_a_despejada1 = MathTex(r"\vec{a}\cdot \Delta t =", r" \vec{v}_{f}-\vec{v}_{i}").move_to(uni_der_acc.get_center()).scale(1.3)
+            ec_a_despejada2 = MathTex(r"\vec{a}\cdot \Delta t + \vec{v}_{i} =", r" \vec{v}_{f}").move_to(uni_der_acc.get_center()).scale(1.3)
             
             self.play(Write(v_i),Write(v_f))
             
@@ -504,11 +509,35 @@ class Euler(MovingCameraScene):
                         ReplacementTransform(uni_der_acc[1],ec_a[1]))
             self.play(ReplacementTransform(ec_a[0],ea_a_d[0]),
                         ReplacementTransform(ec_a[1],ea_a_d[1]))
+            
+            # Despejando la ecuacion 
+            self.play(ReplacementTransform(ev_v_d[0],ec_v_despejada1[0]),
+                        ReplacementTransform(ev_v_d[1],ec_v_despejada1[1]),
+                        
+                        ReplacementTransform(ea_a_d[0],ec_a_despejada1[0]),
+                        ReplacementTransform(ea_a_d[1],ec_a_despejada1[1]))
+            
+            self.play( ReplacementTransform(ec_v_despejada1[0],ec_v_despejada2[0]),
+                        ReplacementTransform(ec_v_despejada1[1],ec_v_despejada2[1]),
+
+                        ReplacementTransform(ec_a_despejada1[0],ec_a_despejada2[0]),
+                        ReplacementTransform(ec_a_despejada1[1],ec_a_despejada2[1]))
 
 
+            example_listing = Code(
+                "/home/jay/manimations/py/euler/example.py",
+                tab_width=4,
+                background="window",
+                language="python",
+                font="Monospace",
+                background_stroke_color= WHITE,
+            ).move_to(ec_v_despejada2.get_center()+ UP*2).scale(0.5)
 
+            self.play(Write(example_listing))
 
             self.wait()
+
+
 
 
 
