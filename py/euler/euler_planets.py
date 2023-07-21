@@ -218,7 +218,7 @@ class Euler(MovingCameraScene):
                 planetpos2=Arrow(pos1,pos2,color=BLACK, buff=0)   
                 posiciones2.add(planetpos2) 
 
-                scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2,planet3)
+                scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2)
 
                 
                 if i==200:
@@ -534,6 +534,11 @@ class Euler(MovingCameraScene):
             ).move_to(ec_v_despejada2.get_center()+ UP*2).scale(0.5)
 
             self.play(Write(example_listing))
+
+            self.wait()
+
+            self.play(example_listing.animate.shift(DOWN*2),
+                      ec_v_despejada2.animate.shift(DOWN*1.5),ec_a_despejada2.animate.shift(DOWN),)
 
             self.wait()
 

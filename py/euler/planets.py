@@ -6,9 +6,10 @@ start=time.time()
 width=1080
 height=1920
 config.frame_size = [width, height]
-class PlanetsForce(ThreeDScene):
+class PlanetsForce(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
+        self.camera.frame.scale(0.7)
 
 # Calculate force between three bodies
         def fuerza(G,m1,m2,m3,r1,r2,r3):
@@ -122,79 +123,90 @@ class PlanetsForce(ThreeDScene):
                     dR3[t+1][:] = dR3i[t+1][:] + 0.5*dt*F3[t+1][:]/m3
 
             return R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30
-        
-        def threeDplanets():
-            # Set camera orientation
-            self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)
-            # Move camera closer
-            self.move_camera(zoom=1.5)
 
+        def twoDplanets():
             R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute()
 
-            # Graficar
-            planet1=Sphere(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
-            planet2=Sphere(radius=0.2,fill_opacity=1,stroke_width=0).set_color(GREEN)
-            planet3=Sphere(radius=0.1,fill_opacity=1,stroke_width=0).set_color(BLACK)
+            scalingfactor=(8e+11)/4 
+            scalingfactorv=13720/1.5
 
-            scalingfactor=(8e+11)/4
-            scalingfactorv=13720/1.2
+            scalingfactorf=np.amax(F1)/1.7 #force vector scaling factor for scene
+            scalingfactorf3=np.amax(F3) #the third object varies a lot in force so it is not used
 
+            planet1=Dot(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
+            planet2=Dot(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN)
+            planet3=Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
 
-            # Planets and their initial positions
-            planet1=Sphere(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW).move_to(R1[0][:]/scalingfactor)
-            planet2=Sphere(radius=0.2,fill_opacity=1,stroke_width=0).set_color(GREEN).move_to(R2[0][:]/scalingfactor)
-            planet3=Sphere(radius=0.1,fill_opacity=1,stroke_width=0).set_color(BLACK).move_to(R3[0][:]/scalingfactor)
+            planet1=Dot(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW).move_to(R1[0][:]/scalingfactor)
+            planet2=Dot(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN).move_to(R2[0][:]/scalingfactor)
+            planet3=Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C).move_to(R3[0][:]/scalingfactor)
 
-            # Store locations and velocities
+            vel2 = Arrow(ORIGIN,dR2[0][:]/scalingfactorv).set_color(RED).move_to(R2[0][:]/scalingfactor)
+            vel3 = Arrow(ORIGIN,dR3[0][:]/scalingfactorv).set_color(RED).move_to(R3[0][:]/scalingfactor)
+
+            force2 = Arrow(ORIGIN,F2[0][:]/scalingfactorf).set_color(BLUE).move_to(R2[0][:]/scalingfactor)
+            force3 = Arrow(ORIGIN,F3[0][:]/scalingfactorf).set_color(BLUE).move_to(R3[0][:]/scalingfactor)
+
             planet1.locations = R1/scalingfactor
             planet2.locations = R2/scalingfactor
             planet3.locations = R3/scalingfactor
 
-            #vel1 = Arrow(ORIGIN,dR1[0][:]/scalingfactorv).set_color(YELLOW).move_to(R1[0][:]/scalingfactor)
-            vel2 = Arrow(ORIGIN,dR2[0][:]/scalingfactorv).set_color(GREEN).move_to(R2[0][:]/scalingfactor)
-            vel3 = Arrow(ORIGIN,dR3[0][:]/scalingfactorv).set_color(BLACK).move_to(R3[0][:]/scalingfactor)
-
-            #vel1.locations = R1/scalingfactor
             vel2.locations = R2/scalingfactor
             vel3.locations = R3/scalingfactor
 
-            #vel1.velocities = dR1/scalingfactorv
             vel2.velocities = dR2/scalingfactorv
             vel3.velocities = dR3/scalingfactorv
 
-            # Initialize time offset
+            force2.locations = R2/scalingfactor
+            force3.locations = R3/scalingfactor
+
+            force2.forces = F2/scalingfactorf
+            force3.forces = F3/scalingfactorf
+
             planet1.t_offset = 0
             planet2.t_offset = 0
             planet3.t_offset = 0
 
-            # Initialize time offset
-            #vel1.t_offsetv = 0
             vel2.t_offsetv = 0
             vel3.t_offsetv = 0
 
+            force2.t_offsetf = 0
+            force3.t_offsetf = 0
+
             def planet_updater(mob, dt):
-                # Convert to time
                 mob.t_offset += int(dt*n/12)
                 mob.move_to(mob.locations[mob.t_offset % len(mob.locations)])
 
             def velocity_updater(mob, dt):
-                # Convert to time
                 mob.t_offsetv += int(dt*n/12)
                 mob.become(
-                    Arrow(ORIGIN,mob.velocities[mob.t_offsetv % len(mob.velocities)])
-                    ).move_to(
+                    Arrow(ORIGIN, mob.velocities[mob.t_offsetv % len(mob.velocities)])
+                ).move_to(
                     mob.locations[mob.t_offsetv % len(mob.locations)]
                     + mob.velocities[mob.t_offsetv % len(mob.velocities)]/2
-                    ).set_color(BLACK)
+                ).set_color(RED)  # Set arrow color
 
-            # Add updaters to the planets
+            def force_updater(mob, dt):
+                mob.t_offsetf += int(dt*n/12)
+                mob.become(
+                    Arrow(ORIGIN, mob.forces[mob.t_offsetf % len(mob.forces)])
+                ).move_to(
+                    mob.locations[mob.t_offsetf % len(mob.locations)]
+                    + mob.forces[mob.t_offsetf % len(mob.forces)]/2
+                ).set_color(GOLD)
+
             planet1.add_updater(planet_updater)
             planet2.add_updater(planet_updater)
             planet3.add_updater(planet_updater)
 
-            #vel1.add_updater(velocity_updater)
             vel2.add_updater(velocity_updater)
             vel3.add_updater(velocity_updater)
+
+            force2.add_updater(force_updater)
+            force3.add_updater(force_updater)
+
+            trace2 = TracedPath(planet2.get_center, dissipating_time=2).set_color(BLACK)
+            trace3 = TracedPath(planet3.get_center, dissipating_time=2).set_color(BLACK)
 
             example_listing = Code(
                 "/home/jay/manimations/py/euler/example.py",
@@ -203,104 +215,21 @@ class PlanetsForce(ThreeDScene):
                 language="python",
                 font="Monospace",
                 background_stroke_color= WHITE,
-            ).shift(6*UP).scale(1.5)
+            ).shift(9*UP).scale(1.1)
 
 
             # Add planets to the scene
-            self.add(planet1,planet2,planet3,vel2,vel3)
+            self.add(planet1,planet2,planet3,vel2,vel3, trace2, trace3, force2, force3)
             
             self.wait(3)
 
-            self.add_fixed_in_frame_mobjects(example_listing)
-            self.play(Write(example_listing))
+            self.play(Write(example_listing),self.camera.frame.animate.move_to(UP*4))
 
-            self.wait(1)
+            self.wait(2)
 
             # Remove the planets
             self.remove(planet1,planet2,planet3)
 
-            # for i in range(0,int(n/5),10):
-            #     print(str(round((i*100/n),2)) + "%")
-            #     planet1.move_to(R1[i][:]/scalingfactor)
-            #     planet2.move_to(R2[i][:]/scalingfactor)
-            #     planet3.move_to(R3[i][:]/scalingfactor)
-            #     #print(dR3[i][:]/scalingfactorv)
-            #     arrowplanet2=Arrow(start=R2[i][:]/scalingfactor, end=R2[i][:]/scalingfactor+dR2[i][:]/scalingfactorv, buff=0,color=GREY_C)
-            #     arrowplanet3=Arrow(start=R3[i][:]/scalingfactor, end=R3[i][:]/scalingfactor+dR3[i][:]/scalingfactorv, buff=0,color=GREY_C)
-            #     self.add(planet1,planet2)
-            #     self.add(planet3)#,arrowplanet2,arrowplanet3)
-            #     self.wait(1/60)
-            #     self.remove(planet1,planet2,planet3)#,arrowplanet2,arrowplanet3)
-            #     # if i==n/2 :
-            #     #     #ecuacion de Gravitacion de Newton en LaTeX
-            #     #     ecuaciones=MathTex(r"F\left(r\right)=G\frac{mM}{r^{2}}").move_to(UP*2)
-            #     #     ecuaciones.set_color(BLACK)
-            #     #     self.add_fixed_in_frame_mobjects(ecuaciones)
-            
-            # #self.add(Text("hi"))
-            # print(str(time.time()-start) + " seconds")
-
-        def twoDplanets():
-            
-            R1,R2,R3,dR1,dR2,dR3,F1,F2,F3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute()
-            
-            axesss = NumberPlane().set_color(GREY_C).scale(1.5).rotate(PI/2)
-            planetas2=VGroup()
-            posiciones2=VGroup()
-            velocidades2=VGroup()
-            fuerzas2=VGroup()
-            scene_completa = VGroup()
-            
-            planet1=Dot(radius=0.8,fill_opacity=1,stroke_width=0).set_color(YELLOW)
-            planet2=Dot(radius=0.3,fill_opacity=1,stroke_width=0).set_color(GREEN)
-            planet3=Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
-            path = TracedPath(planet2.get_center, stroke_color=RED, dissipating_time=0.5,stroke_opacity=[1, 0])
-
-            self.add(planet1,planet2,planet3)
-            # range (200, 320, 30) para lo normal
-            for i in range(200,1300,1):
-                # DO SOME CALCULATIONS
-                scalingfactor=(8e+11)/4 #distance scaling factor for scene
-                scalingfactorv=13720/1.5 #velocity vector scaling factor for scene
-                scalingfactorf=np.amax(F1)/1.7 #force vector scaling factor for scene
-                scalingfactorf3=np.amax(F3) #the third object varies a lot in force so it is not used
-                pos1=np.array([R1[i][0]/scalingfactor,R1[i][1]/scalingfactor,0])
-                pos2=np.array([R2[i][0]/scalingfactor,R2[i][1]/scalingfactor,0])
-                pos3=np.array([R3[i][0]/scalingfactor,R3[i][1]/scalingfactor,0])
-                v2=np.array([dR2[i][0]/scalingfactorv,dR2[i][1]/scalingfactorv,0])
-                v3=np.array([dR3[i][0]/scalingfactorv,dR3[i][1]/scalingfactorv,0])
-                Fm1=np.array([F1[i][0],F1[i][1],0])*1.5/np.linalg.norm(np.array([F1[i][0],F1[i][1],0]))
-                Fm2=np.array([F2[i][0],F2[i][1],0])*1.5/np.linalg.norm(np.array([F2[i][0],F2[i][1],0]))
-                Fm3=np.array([F3[i][0],F3[i][1],0])*1.5/np.linalg.norm(np.array([F3[i][0],F3[i][1],0]))
-                """             MOBJECTS           """
-                
-                
-                # CREATE ARROWS VGROUP
-                # planetas
-                #planetas2.add(planet2)
-                # velocidades
-                arrowplanet2=Arrow(pos2, pos2+v2, buff=0,color=GOLD)
-                #velocidades2.add(arrowplanet2)
-                # fuerzas
-                planetpos2=Arrow(pos1,pos2,color=BLACK, buff=0)   
-                Fuerza2=Arrow(pos2,pos2+Fm2, buff=0,color=RED)
-                #fuerzas2.add(Fuerza2)
-                # posiciones
-                
-                #posiciones2.add(planetpos2) 
-                #scene_completa.add(velocidades2,fuerzas2,posiciones2,planet1,planet2,planet3)
-                
-                # MOVE PLANETS
-                self.add(arrowplanet2,planetpos2,Fuerza2)
-                self.play(
-                    planet1.animate.move_to(pos1),
-                    planet2.animate.move_to(pos2),
-                    planet3.animate.move_to(pos3),
-                    run_time=1/60
-                )
-                if i == 200:
-                    self.add(path)
-                self.remove(arrowplanet2,planetpos2,Fuerza2)
                 
 
-        threeDplanets()
+        twoDplanets()
