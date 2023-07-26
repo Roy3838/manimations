@@ -551,7 +551,7 @@ class Euler(MovingCameraScene):
             ec_a_despejada_final = MathTex(r" \vec{v}_{f}" , r"=", r"\vec{a}\cdot \Delta t + \vec{v}_{i}").move_to(uni_der_acc.get_center()).scale(1.3)
             
 
-            self.play(FadeOut(ec_v_despejada2),FadeOut(ec_a_despejada2))
+            self.play(FadeOut(ec_v_despejada2),FadeOut(ec_a_despejada2), run_time=0.01)
             
 
             # Maromeada
@@ -563,6 +563,8 @@ class Euler(MovingCameraScene):
                         ec_a_despejada_copia[1].animate.move_to(ec_a_despejada_final[1].get_center()),
                         ec_a_despejada_copia[2].animate.move_to(ec_a_despejada_final[0].get_center()),
                         )
+            
+            self.remove(ec_v_despejada_copia,ec_a_despejada_copia)
 
             
 
@@ -574,15 +576,15 @@ class Euler(MovingCameraScene):
                 language="python",
                 font="Monospace",
                 background_stroke_color= WHITE,
-            ).move_to(ec_v_despejada2.get_center()+ UP*2).scale(0.5)
+            ).move_to(ec_v_despejada_final.get_center()+ UP*2).scale(0.5)
 
             self.play(Write(example_listing))
 
             self.wait()
-            newscale = 2
+            newscale = 2.5
             self.play(self.camera.frame.animate.scale(newscale),
                         example_listing.animate.shift(DOWN*3).scale(newscale),
-                        ec_v_despejada2.animate.shift(DOWN*3.5).scale(newscale),ec_a_despejada2.animate.shift(4*DOWN).scale(newscale),)
+                        ec_v_despejada_final.animate.shift(DOWN*4).scale(newscale),ec_a_despejada_final.animate.shift(4.5*DOWN).scale(newscale),)
 
             self.wait()
 
@@ -594,8 +596,8 @@ class Euler(MovingCameraScene):
             pos_boxes.add(SurroundingRectangle(example_listing[2][2],buff=0).shift(DOWN*0.1+LEFT*0.1))
             vel_boxes.add(SurroundingRectangle(example_listing[2][4],buff=0).shift(DOWN*0.1+LEFT*0.1))
 
-            pos_boxes.add(SurroundingRectangle(ec_v_despejada2,buff=0.2))
-            vel_boxes.add(SurroundingRectangle(ec_a_despejada2,buff=0.2))
+            pos_boxes.add(SurroundingRectangle(ec_v_despejada_final,buff=0.2))
+            vel_boxes.add(SurroundingRectangle(ec_a_despejada_final,buff=0.2))
 
             self.play(Create(pos_boxes))
             #self.play(Create(vel_boxes))
@@ -607,11 +609,110 @@ class Euler(MovingCameraScene):
             #vel to pos
             self.play(ReplacementTransform(vel_boxes[0],pos_boxes[0]),
                         ReplacementTransform(vel_boxes[1],pos_boxes[1]))
+            
+            
 
             self.play(FadeOut(fuerzas2),FadeOut(planetas2),FadeOut(posiciones2),FadeOut(velocidades2),
-                      FadeOut(p_i),FadeOut(p_f),FadeOut(v_i),FadeOut(v_f))
+                      FadeOut(p_i),FadeOut(p_f),FadeOut(v_i),FadeOut(v_f),FadeOut(vel_boxes),FadeOut(pos_boxes),)
+
+
+            # # Linea nuevacambiando todas las variables por algo similar P1,P2,P3, etc
+            P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
+            m1 = 1.989e30,
+            m2 = 1.89819e28,
+            m3 = 0.04784e24,
+            r10 = [0, 0],
+            r20 = [7.40522e11, 0],
+            r30 = [-7.40522e11, 150000],
+            dr10 = [0, 0],
+            dr20 = [0, 13720],
+            dr30 = [0, 10370],
+            n=35,
+            d=2,
+            tf=1.3e+09,
+            G=6.67e-11
+            )
+
+            scalingfactor=(8e+11)/4 #distance scaling factor for scene
+            scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
+            
+            arrowplanets3 = VGroup()
+
+            planet3 = Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
+            
+            i=0
+            pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
+            v3 = np.array([dP3[i][0]/scalingfactorv,dP3[i][1]/scalingfactorv,0])
+            Fm3 = np.array([f3[i][0],f3[i][1],0])*1.5/np.linalg.norm(np.array([f3[i][0],f3[i][1],0]))
 
             
+
+
+            # Code Block lines again lol
+            pos_boxes2 = VGroup()
+            vel_boxes2 = VGroup()
+            pos_boxes2.add(SurroundingRectangle(example_listing[2][2],buff=0).shift(DOWN*0.1+LEFT*0.1))
+            vel_boxes2.add(SurroundingRectangle(example_listing[2][4],buff=0).shift(DOWN*0.1+LEFT*0.1))
+
+            pos_boxes2.add(SurroundingRectangle(ec_v_despejada_final,buff=0.2))
+            vel_boxes2.add(SurroundingRectangle(ec_a_despejada_final,buff=0.2))
+
+
+
+            planet3.move_to(pos3)
+            vel3 = Arrow(pos3, pos3+v3, buff=0,color=GOLD)
+            arrowplanets3.add(vel3)
+            self.play(Write(planet3),Create(vel3),Write(vel_boxes2))
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
+            self.play(ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+                            ReplacementTransform(vel_boxes2[1],pos_boxes2[1]))
+
+            # other way to do for loop
+
+            pos_group = VGroup()
+            vel_group = VGroup()
+
+            pos_box  = pos_boxes2.copy()
+            vel_box = vel_boxes2.copy()
+
+            
+            
+            pos_group.add(pos_box)
+            vel_group.add(vel_box)
+            self.add(pos_group,vel_group)
+
+            for i in range(1,10):
+                pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
+                v3i_1 = v3
+                v3 = np.array([dP3[i][0]/scalingfactorv,dP3[i][1]/scalingfactorv,0])
+                Fm3 = np.array([f3[i][0],f3[i][1],0])*1.5/np.linalg.norm(np.array([f3[i][0],f3[i][1],0]))
+                vel3 = Arrow(pos3, pos3+v3, buff=0.1,color=GOLD)
+                Fuerza3 = Arrow(pos3,pos3+Fm3, buff=0,color=RED)
+                arrowplanets3.add(vel3)
+
+                # >:(
+                pos_box  = pos_boxes2.copy()
+                vel_box = vel_boxes2.copy()
+                
+                pos_group.add(pos_box)
+                vel_group.add(vel_box)
+                
+                self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+                      planet3.animate.move_to(pos3),
+                        ReplacementTransform(pos_group[i-1][0],vel_group[i][0]),
+                        ReplacementTransform(pos_group[i-1][1],vel_group[i][1]),
+                        run_time=0.5)
+                
+                self.play(Write(Fuerza3),
+                            ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
+                            ReplacementTransform(vel_group[i][0],pos_group[i][0]),
+                            ReplacementTransform(vel_group[i][1],pos_group[i][1]),
+                            run_time=0.5)
+                
+
+
+
             self.wait()
 
 

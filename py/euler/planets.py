@@ -86,8 +86,8 @@ class PlanetsForce(MovingCameraScene):
             F1[0][:] = fuerza(G,m1,m2,m3,R1[0][:],R2[0][:],R3[0][:])
             F2[0][:] = fuerza(G,m2,m1,m3,R2[0][:],R1[0][:],R3[0][:])
             F3[0][:] = fuerza(G,m3,m1,m2,R3[0][:],R1[0][:],R2[0][:])
-            mEuler = False
-            LeapFrog=True
+            mEuler = True
+            LeapFrog=False
 
             if mEuler:
                 for t in range(0,n-1):
