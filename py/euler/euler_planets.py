@@ -635,6 +635,7 @@ class Euler(MovingCameraScene):
 
             scalingfactor=(8e+11)/4 #distance scaling factor for scene
             scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
+            #scalingforce=1e+22 #force vector scaling factor for scene
             
             arrowplanets3 = VGroup()
 
@@ -643,6 +644,7 @@ class Euler(MovingCameraScene):
             i=0
             pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
             v3 = np.array([dP3[i][0]/scalingfactorv,dP3[i][1]/scalingfactorv,0])
+            #Fm3 = np.array([f3[i][0]/scalingforce,f3[i][1]/scalingforce,0])
             Fm3 = np.array([f3[i][0],f3[i][1],0])*1.5/np.linalg.norm(np.array([f3[i][0],f3[i][1],0]))
 
             
@@ -665,22 +667,8 @@ class Euler(MovingCameraScene):
             self.play(Write(planet3),Create(vel3),Write(vel_boxes2))
             traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
             self.add(traced)
-            self.play(ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
-                            ReplacementTransform(vel_boxes2[1],pos_boxes2[1]))
-
-            # other way to do for loop
-
-            pos_group = VGroup()
-            vel_group = VGroup()
-
-            pos_box  = pos_boxes2.copy()
-            vel_box = vel_boxes2.copy()
 
             
-            
-            pos_group.add(pos_box)
-            vel_group.add(vel_box)
-            self.add(pos_group,vel_group)
 
             for i in range(1,10):
                 pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
@@ -690,27 +678,66 @@ class Euler(MovingCameraScene):
                 vel3 = Arrow(pos3, pos3+v3, buff=0.1,color=GOLD)
                 Fuerza3 = Arrow(pos3,pos3+Fm3, buff=0,color=RED)
                 arrowplanets3.add(vel3)
-
-                # >:(
-                pos_box  = pos_boxes2.copy()
-                vel_box = vel_boxes2.copy()
-                
-                pos_group.add(pos_box)
-                vel_group.add(vel_box)
+            
+                tempvel = vel_boxes2.copy()
+                temppos = pos_boxes2.copy()
                 
                 self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
                       planet3.animate.move_to(pos3),
-                        ReplacementTransform(pos_group[i-1][0],vel_group[i][0]),
-                        ReplacementTransform(pos_group[i-1][1],vel_group[i][1]),
+                        ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+                        ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
                         run_time=0.5)
+                
+                vel_boxes2 = tempvel.copy()
+                
                 
                 self.play(Write(Fuerza3),
                             ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
-                            ReplacementTransform(vel_group[i][0],pos_group[i][0]),
-                            ReplacementTransform(vel_group[i][1],pos_group[i][1]),
+                            ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
+                            ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
                             run_time=0.5)
                 
+                pos_boxes2 = temppos.copy()
 
+                
+            # Segundo con un dt mas pequeño
+
+
+            # # Linea nuevacambiando todas las variables por algo similar P1,P2,P3, etc
+            P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
+            m1 = 1.989e30,
+            m2 = 1.89819e28,
+            m3 = 0.04784e24,
+            r10 = [0, 0],
+            r20 = [7.40522e11, 0],
+            r30 = [-7.40522e11, 150000],
+            dr10 = [0, 0],
+            dr20 = [0, 13720],
+            dr30 = [0, 10370],
+            n=350,
+            d=2,
+            tf=1.3e+09,
+            G=6.67e-11
+            )
+
+            scalingfactor=(8e+11)/4 #distance scaling factor for scene
+            scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
+            
+            planet3 = Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
+            pos3 = np.array([P3[0][0]/scalingfactor,P3[0][1]/scalingfactor,0])
+            planet3.move_to(pos3)
+            self.play(Write(planet3))
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
+
+            for i in range(1,60):
+                pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
+                
+                self.play(
+                      planet3.animate.move_to(pos3),
+                        run_time=1/30)
+                
+                
 
 
             self.wait()
