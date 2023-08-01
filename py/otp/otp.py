@@ -3,6 +3,12 @@ import numpy as np
 import random as rd
 from hashlib import sha256
 import itertools as it
+
+width=1080
+height=1920
+config.frame_size = [width, height]
+
+
 #imported from cripto 3b1b video
 def sha256_bit_string(message):
     hexdigest = sha256(message.encode('utf-8')).hexdigest()
@@ -140,12 +146,6 @@ class OTP(Scene):
                       FadeOut(sum1),FadeOut(sum2),FadeOut(sum3),FadeOut(sum4),
                       FadeOut(bits),FadeOut(bits2),FadeOut(bits3),FadeOut(bits4),
                       FadeOut(texto1))
-
-
-
-
-
-
 
 
 

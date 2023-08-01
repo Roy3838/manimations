@@ -635,7 +635,7 @@ class Euler(MovingCameraScene):
 
             scalingfactor=(8e+11)/4 #distance scaling factor for scene
             scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
-            #scalingforce=1e+22 #force vector scaling factor for scene
+            scalingforce=4.66e+18 * 2 #force vector scaling factor for scene
             
             arrowplanets3 = VGroup()
 
@@ -662,11 +662,13 @@ class Euler(MovingCameraScene):
 
 
             planet3.move_to(pos3)
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
             vel3 = Arrow(pos3, pos3+v3, buff=0,color=GOLD)
             arrowplanets3.add(vel3)
             self.play(Write(planet3),Create(vel3),Write(vel_boxes2))
-            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
-            self.add(traced)
+            
+            fuerzas3 = VGroup()
 
             
 
@@ -674,19 +676,28 @@ class Euler(MovingCameraScene):
                 pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
                 v3i_1 = v3
                 v3 = np.array([dP3[i][0]/scalingfactorv,dP3[i][1]/scalingfactorv,0])
-                Fm3 = np.array([f3[i][0],f3[i][1],0])*1.5/np.linalg.norm(np.array([f3[i][0],f3[i][1],0]))
+                Fm3 = np.array([f3[i][0]/scalingforce,f3[i][1]/scalingforce,0])
                 vel3 = Arrow(pos3, pos3+v3, buff=0.1,color=GOLD)
                 Fuerza3 = Arrow(pos3,pos3+Fm3, buff=0,color=RED)
                 arrowplanets3.add(vel3)
+                fuerzas3.add(Fuerza3)
             
                 tempvel = vel_boxes2.copy()
                 temppos = pos_boxes2.copy()
                 
-                self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
-                      planet3.animate.move_to(pos3),
-                        ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
-                        ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                        run_time=0.5)
+                if i == 1:
+                    self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+                        planet3.animate.move_to(pos3),
+                            ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+                            ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+                            run_time=0.5)
+                else:
+                    self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+                        FadeOut(fuerzas3[i-2]),
+                        planet3.animate.move_to(pos3),
+                            ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+                            ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+                            run_time=0.5)
                 
                 vel_boxes2 = tempvel.copy()
                 
@@ -697,8 +708,11 @@ class Euler(MovingCameraScene):
                             ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
                             run_time=0.5)
                 
+                
+                
                 pos_boxes2 = temppos.copy()
 
+            self.play(FadeOut(vel3),FadeOut(Fuerza3))
                 
             # Segundo con un dt mas pequeño
 
@@ -730,17 +744,24 @@ class Euler(MovingCameraScene):
             traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
             self.add(traced)
 
-            for i in range(1,60):
-                pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
+
+            planet3.locations = P3/scalingfactor
+            planet3.t_offset = 0
+
+            def planet_updater(mob, dt):
+                mob.t_offset += 1  #dt*30
+                print(mob.t_offset)
+                pos2d = mob.locations[mob.t_offset]
+                #make it 3d with z = 0
+                pos = np.array([pos2d[0],pos2d[1],0])
+                mob.move_to(pos)
                 
-                self.play(
-                      planet3.animate.move_to(pos3),
-                        run_time=1/30)
-                
-                
+            planet3.add_updater(planet_updater)
+            self.add(planet3)
 
 
-            self.wait()
+
+            self.wait(3)
 
 
 
