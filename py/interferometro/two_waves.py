@@ -50,15 +50,17 @@ class TwoWavesDistance(Scene):
             .set_color(RED).align_to(point2,LEFT).shift(DOWN+0.05*RIGHT)
         ))
 
-        #punto que se mueve en la funcion parametrica sound y sound2
-        analysispoint1=Dot(color=GOLD).shift(3*RIGHT+UP)
-        analysispoint2=Dot(color=GOLD).shift(3*RIGHT+DOWN)
-        analysispoint1.add_updater(lambda z: z.move_to(
-            np.array((target1.get_x(), 
-                      amplitud*np.sin(phi.get_value() + periodo * 2 * (target1.get_x() - x1.get_value())) + target2.get_y(), 0))))
-        analysispoint2.add_updater(lambda z: z.move_to(
-            np.array((target2.get_x(), 
-                      amplitud*np.sin(phi.get_value() + periodo * 2 *(target1.get_x() - x1.get_value())) + target2.get_y(), 0))))
+        # #punto que se mueve en la funcion parametrica sound y sound2
+        # analysispoint1=Dot(color=GOLD).shift(3*RIGHT+UP)
+        # analysispoint2=Dot(color=GOLD).shift(3*RIGHT+DOWN)
+        # analysispoint1.add_updater(lambda z: z.move_to(
+        #     np.array((target1.get_x(), 
+        #               amplitud*np.sin(phi.get_value() + periodo * 2 * (target1.get_x() - x1.get_value())) + target2.get_y(), 0))))
+        # analysispoint2.add_updater(lambda z: z.move_to(
+        #     np.array((target2.get_x(), 
+        #               amplitud*np.sin(phi.get_value() + periodo * 2 *(target1.get_x() - x1.get_value())) + target2.get_y(), 0))))
+
+
 
 
         # #vectores en el punto

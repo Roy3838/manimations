@@ -716,7 +716,6 @@ class Euler(MovingCameraScene):
                 
             # Segundo con un dt mas pequeño
 
-
             # # Linea nuevacambiando todas las variables por algo similar P1,P2,P3, etc
             P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
             m1 = 1.989e30,
