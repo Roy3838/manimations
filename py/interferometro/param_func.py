@@ -48,19 +48,19 @@ class ParametricSurface(ThreeDScene):
             surfaces.add(surface)
             params.add(param)
 
-        self.play(Create(params),Create(axes))
+        self.play(Create(params),Create(axes.x_axis),Create(axes.y_axis))
 
         self.wait()
 
-        
+        self.move_camera(phi=15 * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
 
-        self.wait(PI)
+        self.play(Create(axes.z_axis))
 
-        self.stop_3dillusion_camera_rotation()
+        self.move_camera(phi=(15+360) * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
+
 
         self.play(Create(surfaces))
 
-        self.move_camera(phi=180 * DEGREES, run_time =2)
-        self.begin_3dillusion_camera_rotation(rate=2)
+        #self.begin_3dillusion_camera_rotation(rate=2)
         self.wait(3)
-        self.stop_3dillusion_camera_rotation()
+        #self.stop_3dillusion_camera_rotation()
