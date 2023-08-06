@@ -493,11 +493,13 @@ class Euler(MovingCameraScene):
                 self.camera.frame.animate.move_to(4*DOWN).scale(0.5))
 
             #Labels en tiempo P_i y P_f
+            ecuaciones = VGroup()
             p_i = MathTex(r"\vec{p}_i").set_color(BLACK).scale(0.8).next_to(posiciones2[1],DOWN).shift(LEFT*0.7)
             p_f = MathTex(r"\vec{p}_f").set_color(BLACK).scale(0.8).next_to(posiciones2[2],DOWN).shift(RIGHT*0.2)
 
             self.play(Write(p_i),Write(p_f))
-            self.play(Wiggle(posiciones2[1]),Wiggle(posiciones2[2]))
+            self.play(Wiggle(velocidades2[1]), run_time = 1.5)
+            self.play(Wiggle(posiciones2[1]),Wiggle(posiciones2[2]), run_time = 1.5)
 
             # Ecuacion con deltas
             ec_v = MathTex(r"\vec{v}=", r"\frac{\Delta \vec{p}}{\Delta t}").move_to(uni_der_vel.get_center()).scale(1.3)
@@ -505,7 +507,6 @@ class Euler(MovingCameraScene):
 
             ec_v_despejada1 = MathTex(r"\vec{v}\cdot \Delta t =", r" \vec{p}_{f}-\vec{p}_{i}").move_to(uni_der_vel.get_center()).scale(1.3)
             ec_v_despejada2 = MathTex(r"\vec{v}\cdot \Delta t + \vec{p}_{i} =", r" \vec{p}_{f}").move_to(uni_der_vel.get_center()).scale(1.3)
-
             self.play(ReplacementTransform(uni_der_vel[0],ec_v[0]),
                         ReplacementTransform(uni_der_vel[1],ec_v[1]))
             self.play(ReplacementTransform(ec_v[0],ev_v_d[0]),
@@ -521,27 +522,45 @@ class Euler(MovingCameraScene):
 
             ec_a_despejada1 = MathTex(r"\vec{a}\cdot \Delta t =", r" \vec{v}_{f}-\vec{v}_{i}").move_to(uni_der_acc.get_center()).scale(1.3)
             ec_a_despejada2 = MathTex(r"\vec{a}\cdot \Delta t + \vec{v}_{i} =", r" \vec{v}_{f}").move_to(uni_der_acc.get_center()).scale(1.3)
+            
+
+            self.wait(1)
 
             self.play(Write(v_i),Write(v_f))
             
+            self.wait(1)
             
             self.play(ReplacementTransform(uni_der_acc[0],ec_a[0]),
                         ReplacementTransform(uni_der_acc[1],ec_a[1]))
             self.play(ReplacementTransform(ec_a[0],ea_a_d[0]),
                         ReplacementTransform(ec_a[1],ea_a_d[1]))
             
+            # Como queremos saber los vectores finales
+            pf_box = SurroundingRectangle(p_f, buff = 0.1)
+            vf_box = SurroundingRectangle(v_f, buff = 0.1)
+            pf_ec_box = SurroundingRectangle(ea_a_d[1], buff = 0)
+            vf_ec_box = SurroundingRectangle(ev_v_d[1], buff = 0)
+
+            self.play(Create(pf_box),Create(vf_box))
+            self.play(Create(pf_ec_box),Create(vf_ec_box))
+
+
+            self.wait(1)
+            
+            self.play(FadeOut(pf_box),FadeOut(vf_box),FadeOut(pf_ec_box),FadeOut(vf_ec_box))
+
             # Despejando la ecuacion 
             self.play(ReplacementTransform(ev_v_d[0],ec_v_despejada1[0]),
                         ReplacementTransform(ev_v_d[1],ec_v_despejada1[1]),
                         
                         ReplacementTransform(ea_a_d[0],ec_a_despejada1[0]),
-                        ReplacementTransform(ea_a_d[1],ec_a_despejada1[1]))
+                        ReplacementTransform(ea_a_d[1],ec_a_despejada1[1]), run_time = 0.6)
             
             self.play( ReplacementTransform(ec_v_despejada1[0],ec_v_despejada2[0]),
                         ReplacementTransform(ec_v_despejada1[1],ec_v_despejada2[1]),
 
                         ReplacementTransform(ec_a_despejada1[0],ec_a_despejada2[0]),
-                        ReplacementTransform(ec_a_despejada1[1],ec_a_despejada2[1]))
+                        ReplacementTransform(ec_a_despejada1[1],ec_a_despejada2[1]), run_time = 0.6)
 
             # maroma xd
             ec_v_despejada_copia = MathTex(r"\vec{v}\cdot \Delta t + \vec{p}_{i}", r"=", r" \vec{p}_{f}").move_to(uni_der_vel.get_center()).scale(1.3)
@@ -562,11 +581,11 @@ class Euler(MovingCameraScene):
                         ec_a_despejada_copia[0].animate.move_to(ec_a_despejada_final[2].get_center()),
                         ec_a_despejada_copia[1].animate.move_to(ec_a_despejada_final[1].get_center()),
                         ec_a_despejada_copia[2].animate.move_to(ec_a_despejada_final[0].get_center()),
-                        )
+                        run_time = 0.8)
             
-            self.remove(ec_v_despejada_copia,ec_a_despejada_copia)
+            
 
-            
+                    
 
 
             example_listing = Code(
@@ -580,7 +599,18 @@ class Euler(MovingCameraScene):
 
             self.play(Write(example_listing))
 
+            
+
+
+
             self.wait()
+
+            # no funciona self.remove()
+            ecuaciones.add(ec_v_despejada_copia, ec_a_despejada_copia,)
+            self.play(FadeOut(ecuaciones), run_time = 0.001)
+
+
+
             newscale = 2.5
             self.play(self.camera.frame.animate.scale(newscale),
                         example_listing.animate.shift(DOWN*3).scale(newscale),
@@ -749,7 +779,6 @@ class Euler(MovingCameraScene):
 
             def planet_updater(mob, dt):
                 mob.t_offset += 1  #dt*30
-                print(mob.t_offset)
                 pos2d = mob.locations[mob.t_offset]
                 #make it 3d with z = 0
                 pos = np.array([pos2d[0],pos2d[1],0])

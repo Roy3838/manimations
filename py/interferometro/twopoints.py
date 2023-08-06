@@ -6,14 +6,25 @@ class Points(Scene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
-        def Create_wave(fuente):
+            
+
+        def wave_updater(mobject, dt):
             #Create wave
-            radius = ValueTracker(0.01)
-            radiusfinal=5
-            wave=Circle(radius=radius.get_value(),color=BLUE).move_to(fuente.get_center())
-            wave.add_updater(lambda m: m.become(Circle(radius=radius.get_value(),color=BLUE).move_to(fuente.get_center()).set_opacity((1-(1/radiusfinal)*radius.get_value()))))
-            self.add(wave)
-            return radius.animate.set_value(radiusfinal)
+            mobject.radius += 0.01 + 3*dt
+            radius = mobject.radius
+            radiusfinal=5 
+            mobject.become(Circle(radius=radius,color=BLUE)
+                                                .move_to(mobject.get_center())
+                                                .set_opacity(0.5*(1-(1/radiusfinal)*radius)))
+
+        def begin_flashing(mobject, dt):
+            mobject.time += dt
+            if mobject.time > 0.5 and mobject.flashing == True:
+                flash = Circle(radius=0.01).move_to(mobject.get_center())
+                flash.radius = 0.01
+                flash.add_updater(wave_updater)
+                self.add(flash)
+                mobject.time = 0        
 
         #Create two points
         fuente1=Dot(color=BLUE).shift(3*LEFT)
@@ -45,34 +56,26 @@ class Points(Scene):
         dis2label=MathTex(r"d_{2}", color=BLACK).move_to(bracedis2.get_center()+0.5*DOWN)
         dis2label.add_updater(lambda z: z.move_to(bracedis2.get_center()+0.5*DOWN))
 
-
-
+        fuente1.time = 0
+        fuente1.flashing = False
+        fuente1.add_updater(begin_flashing)
 
         ''' ANIMACIONES 1'''
-        self.add(fuente1,fuente2,distance1,distance2,analysispoint)
-        self.play(Create_wave(fuente1),Create_wave(fuente2))
-        self.play(Create_wave(fuente1),Create_wave(fuente2))
-        self.play(Create_wave(fuente1),Create_wave(fuente2))
-        self.play(Create_wave(fuente1),Create_wave(fuente2))
-        self.wait(0.5)
+        self.add(fuente1,fuente2,)#distance1,distance2,analysispoint)
+        
+        self.play(Write(distance1),Write(distance2),Create(analysispoint))
+        
         self.play(analysispoint.animate.move_to(0.5*RIGHT))
+
+        fuente1.flashing = True
         self.play(Write(bracedis1),Write(dis1label),Write(bracedis2),Write(dis2label))
         self.play(analysispoint.animate.shift(LEFT))
         self.play(analysispoint.animate.shift(1.5*RIGHT),run_time=1.5)
         self.play(FadeOut(distance1),FadeOut(distance2))
+        fuente1.flashing = False
+        self.wait(1)
         self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),
                 FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
-        self.wait(0.5)
+        self.wait(4)
 
-
-        # ''' PART 2 PLANO GENERAL'''
-        # self.add(fuente1,fuente2,distance1,distance2,analysispoint)
-        # self.play(analysispoint.animate.move_to(0.5*RIGHT+UP))
-        # self.play(Write(bracedis1),Write(dis1label),Write(bracedis2),Write(dis2label))
-        # self.play(analysispoint.animate.shift(LEFT+2*DOWN))
-        # self.play(analysispoint.animate.shift(1.5*RIGHT+2*UP))
-        # self.play(FadeOut(distance1),FadeOut(distance2))
-        # self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),
-        #         FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
-        # self.wait(0.5)
             
