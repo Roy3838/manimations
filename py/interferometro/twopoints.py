@@ -59,6 +59,9 @@ class Points(Scene):
         fuente1.time = 0
         fuente1.flashing = False
         fuente1.add_updater(begin_flashing)
+        fuente2.time = 0
+        fuente2.flashing = False
+        fuente2.add_updater(begin_flashing)
 
         ''' ANIMACIONES 1'''
         self.add(fuente1,fuente2,)#distance1,distance2,analysispoint)
@@ -68,11 +71,13 @@ class Points(Scene):
         self.play(analysispoint.animate.move_to(0.5*RIGHT))
 
         fuente1.flashing = True
+        fuente2.flashing = True
         self.play(Write(bracedis1),Write(dis1label),Write(bracedis2),Write(dis2label))
         self.play(analysispoint.animate.shift(LEFT))
         self.play(analysispoint.animate.shift(1.5*RIGHT),run_time=1.5)
         self.play(FadeOut(distance1),FadeOut(distance2))
         fuente1.flashing = False
+        fuente2.flashing = False
         self.wait(1)
         self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),
                 FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
