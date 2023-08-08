@@ -88,7 +88,13 @@ class ParametricSurface(ThreeDScene):
 
         self.wait()
                
-        self.move_camera(phi=15 * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
+
+
+
+
+        # MAKE IT 3D
+
+        self.move_camera(phi=10 * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
 
         self.play(Create(axes.z_axis))
 
@@ -101,8 +107,10 @@ class ParametricSurface(ThreeDScene):
         fuente1.flashing = False
         fuente2.flashing = False 
 
+        self.move_camera(phi=0 * DEGREES, theta=0 * DEGREES, gamma = 90 * DEGREES)
+
         self.play(Create(surfaces))
 
-        #self.begin_3dillusion_camera_rotation(rate=2)
-        self.wait()
-        #self.stop_3dillusion_camera_rotation()
+        self.begin_3dillusion_camera_rotation(rate=2)
+        self.wait(3)
+        self.stop_3dillusion_camera_rotation()
