@@ -38,7 +38,7 @@ class ParametricSurface(ThreeDScene):
 
             def wave_function(t):
                 return np.array((t,
-                                 (1/1.54)*np.arctan(4*t)*A*np.sin(P * t - wave1.t_offset),
+                                 (1/1.54)*np.arctan(4*t)*A*np.sin(P * t - mobject.t_offset),
                                  0))
             
             mobject.t_offset += dt * mobject.phi
@@ -76,8 +76,11 @@ class ParametricSurface(ThreeDScene):
         def init_wave(from_origin, to_target):
             wave = ParametricFunction(lambda t: np.array((t,t,0))).set_color(BLACK)
             wave.amplitud = 0.8
+            # Spacial frequency
             wave.periodo = 4
+            # Temporal frequency
             wave.phi = 6
+            # Phase offset
             wave.t_offset = 0
             wave.origin = Dot(color = BLACK).move_to(from_origin)
             wave.target = Dot(color = BLUE).move_to(to_target)
@@ -114,7 +117,9 @@ class ParametricSurface(ThreeDScene):
         # DEFINICION OF THE WAVES
         wave1 = init_wave(fuente1.get_center(), ORIGIN)        
         wave1.add_updater(wave)
+        
         wave2 = init_wave(fuente2.get_center(), ORIGIN)
+        wave2.t_offset = PI
         wave2.add_updater(wave)
 
 
@@ -189,8 +194,10 @@ class ParametricSurface(ThreeDScene):
         self.play(wave1.im_target.animate.move_to(params[1].get_bottom()),
                   wave2.im_target.animate.move_to(params[1].get_bottom()),
         )
+        wave1.phi = 0
+        wave2.phi = 0
 
-        self.play(MoveAlongPath(wave1.im_target, params[1][1]),
+        self.play(MoveAlongPath(wave1.im_target, params[1][1], interpolate_mobject=0.3),
                   MoveAlongPath(wave2.im_target, params[1][1]),
                    run_time = 5)
 
