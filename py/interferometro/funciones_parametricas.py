@@ -122,6 +122,16 @@ class ParametricSurface(ThreeDScene):
 
         surfaces = VGroup()
         params = VGroup()
+
+        negative_surfaces = VGroup()
+        negative_functions = VGroup()
+        positive_surfaces = VGroup()
+        positive_functions = VGroup()
+        
+
+        
+        colors = [RED, BLACK]
+
         for i in range (-3,4):
             t = 1.1
 
@@ -129,7 +139,7 @@ class ParametricSurface(ThreeDScene):
                 lambda u, v: axes.c2p(*func(u, v, a = i)),
                 u_range=[0, t],
                 v_range=[-PI, PI],
-                color=RED,
+                color=colors[i%2],
                 resolution=(4, 4)
             ).set_style(fill_opacity=0.2).set_fill_by_value(axes=axes, colorscale=[(RED, -0.5), (RED, 0), (RED, 0.5)], axis=2)
 
@@ -137,11 +147,18 @@ class ParametricSurface(ThreeDScene):
             param = ParametricFunction(
                 lambda t: axes.c2p(*func(t, 0, a=i)),
                 t_range=[-t, t],
-                color=RED
+                color=colors[i%2]
             )
-            surfaces.add(surface)
-            params.add(param)
-
+            if i%2 == 0:
+                positive_surfaces.add(surface)
+                positive_functions.add(param)
+            else:
+                negative_surfaces.add(surface)
+                negative_functions.add(param)
+                
+            
+        surfaces.add(positive_surfaces,negative_surfaces)
+        params.add(positive_functions,negative_functions)
 
 
 
@@ -173,8 +190,8 @@ class ParametricSurface(ThreeDScene):
                   wave2.im_target.animate.move_to(params[1].get_bottom()),
         )
 
-        self.play(MoveAlongPath(wave1.im_target, params[1]),
-                  MoveAlongPath(wave2.im_target, params[1]),
+        self.play(MoveAlongPath(wave1.im_target, params[1][1]),
+                  MoveAlongPath(wave2.im_target, params[1][1]),
                    run_time = 5)
 
         self.play(wave1.im_target.animate.move_to(ORIGIN),
