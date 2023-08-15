@@ -2,7 +2,7 @@ from manim import *
 
 
 
-class Points(Scene):
+class Points(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
@@ -20,7 +20,7 @@ class Points(Scene):
         def begin_flashing(mobject, dt):
             mobject.time += dt
             if mobject.time > 0.5 and mobject.flashing == True:
-                flash = Circle(radius=0.01).move_to(mobject.get_center())
+                flash = Circle(radius=0.01).move_to(mobject.get_center()).set_color(BLUE)
                 flash.radius = 0.01
                 flash.add_updater(wave_updater)
                 self.add(flash)
@@ -30,32 +30,22 @@ class Points(Scene):
         fuente1=Dot(color=BLUE).shift(3*LEFT)
         fuente2=Dot(color=BLUE).shift(3*RIGHT)
             
+
         analysispoint=Dot(color=BLACK)
-        
-        distance1=Line(fuente1,analysispoint).set_color(GOLD)
-        distance2=Line(fuente2,analysispoint).set_color(GOLD)
+        # Make an arrow pointing to the analysis point
+        tip = analysispoint.get_center()
+        arrow = Arrow(tip + RIGHT + UP, tip, buff=0.1, color=BLACK)
+        # Update arrow to stick to the analysis point
+        arrow.add_updater(lambda x: x.become(
+            Arrow(analysispoint.get_center() + RIGHT + UP, analysispoint.get_center(), buff=0, color=BLACK)
+        ))
+        # Add label to arrow that says YOU
+        label = MathTex(r"\text{you}", color=BLACK).move_to(arrow.get_center() + 0.2*DOWN+ 0.3*RIGHT).scale(0.8)
 
-        distance1.add_updater(lambda x: x.become(
-            Line(fuente1,analysispoint).set_color(GOLD)
-        ))
-        distance2.add_updater(lambda x: x.become(
-            Line(fuente2,analysispoint).set_color(GOLD)
-        ))
-        
-        bracedis1=BraceBetweenPoints(fuente1.get_center(),analysispoint.get_center(),buff=0,color=BLACK)
-        bracedis1.add_updater(lambda z: z.become(
-            BraceBetweenPoints(fuente1.get_center(),analysispoint.get_center(),buff=0,color=BLACK)
-        ))
-        dis1label=MathTex(r"d_{1}", color=BLACK).move_to(bracedis1.get_center()+0.5*DOWN)
-        dis1label.add_updater(lambda z: z.move_to(bracedis1.get_center()+0.5*DOWN))
-        
-        bracedis2=BraceBetweenPoints(analysispoint.get_center(),fuente2.get_center(),buff=0,color=BLACK)
-        bracedis2.add_updater(lambda z: z.become(
-            BraceBetweenPoints(analysispoint.get_center(),fuente2.get_center(),buff=0,color=BLACK)
-        ))
-        dis2label=MathTex(r"d_{2}", color=BLACK).move_to(bracedis2.get_center()+0.5*DOWN)
-        dis2label.add_updater(lambda z: z.move_to(bracedis2.get_center()+0.5*DOWN))
+        # Superposicion de las dos ondas
+        equation = MathTex(r"\psi_{total} = ", r"\psi_1 ",r"+", r"\psi_2").scale(1.5).set_color(BLACK).move_to(UP*2)
 
+        
         fuente1.time = 0
         fuente1.flashing = False
         fuente1.add_updater(begin_flashing)
@@ -64,23 +54,41 @@ class Points(Scene):
         fuente2.add_updater(begin_flashing)
 
         ''' ANIMACIONES 1'''
-        self.add(fuente1,fuente2,)#distance1,distance2,analysispoint)
-        
-        self.play(Write(distance1),Write(distance2),Create(analysispoint))
-        
-        self.play(analysispoint.animate.move_to(0.5*RIGHT))
+        self.play(Create(fuente1),Create(fuente2,))#distance1,distance2,analysispoint)
 
         fuente1.flashing = True
         fuente2.flashing = True
-        self.play(Write(bracedis1),Write(dis1label),Write(bracedis2),Write(dis2label))
-        self.play(analysispoint.animate.shift(LEFT))
-        self.play(analysispoint.animate.shift(1.5*RIGHT),run_time=1.5)
-        self.play(FadeOut(distance1),FadeOut(distance2))
+        self.wait()
+        
+        self.play(Create(analysispoint), Create(arrow), Write(label))
+
+        self.wait()
+        
+        self.play(analysispoint.animate.move_to(0.5*RIGHT),
+                  Unwrite(arrow),
+                  FadeOut(label),
+                   run_time = 0.8)
+        self.play(analysispoint.animate.move_to(1.5*LEFT+0.5*UP),run_time =0.8)
+        self.play(analysispoint.animate.move_to(1.5*RIGHT+1.5*DOWN),run_time =0.8)
+
+        copy1= fuente1.copy()
+        copy2= fuente2.copy()
+
+        copy1.flashing = False
+        copy2.flashing = False
+
+        self.play(analysispoint.animate.shift(UP + RIGHT), 
+                  Write(equation[2]),
+                  Transform(copy1,equation[1]),
+                  Transform(copy2,equation[3]),
+                  Transform(analysispoint,equation[0]),
+                  
+                  run_time = 1)
+
+
         fuente1.flashing = False
         fuente2.flashing = False
         self.wait(1)
-        self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),
-                FadeOut(bracedis1),FadeOut(dis1label),FadeOut(bracedis2),FadeOut(dis2label))
-        self.wait(4)
+        self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),FadeOut(copy1),FadeOut(copy2),FadeOut(equation))
 
             

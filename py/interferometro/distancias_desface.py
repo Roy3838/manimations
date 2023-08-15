@@ -2,7 +2,7 @@ from manim import *
 
 
 
-class TwoWavesDistance(Scene):
+class TwoWavesDistance(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
@@ -14,7 +14,7 @@ class TwoWavesDistance(Scene):
             wave = ParametricFunction(lambda t: np.array((t,t,0))).set_color(BLACK)
             wave.amplitud = 0.8
             wave.periodo = 4
-            wave.phi = 6
+            wave.phi = 8
             wave.t_offset = 0
             wave.origin = Dot(color = BLACK).move_to(LEFT*2)
             wave.target = Dot(color = BLUE).move_to(RIGHT*3)
@@ -101,21 +101,29 @@ class TwoWavesDistance(Scene):
         def curve_updater(mobject):
             last_line = mobject[-1]
             new_line = Line(last_line.get_end(), sum_arrow.get_end(), color=GREY)
-            mobject.shift(RIGHT*0.01)
+            mobject.shift(RIGHT*0.02)
             mobject.add(new_line)
 
         curve.add_updater(curve_updater)
 
+
         # Brace Between Origin points section
-        brace = BraceBetweenPoints(wave1.origin.get_center(), wave2.origin.get_center(), buff=0)
-        brace.text = brace.get_text("d", buff=0.1)
+        brace = BraceBetweenPoints(wave1.origin.get_center(), wave2.origin.get_center(), buff=0).set_color(BLACK)
+        brace.text = Tex("$\lambda/2$").set_color(BLACK).move_to(brace.get_bottom() +  DOWN, )
+
         def brace_updater(mobject):
-            point1 = [wave1.origin.get_x(), 0, 0]
-            point2 = [wave2.origin.get_x(), 0 ,0]
+            point1 = [wave1.origin.get_x(), 0.5, 0]
+            point2 = [wave2.origin.get_x(), 0.5 ,0]
             mobject.become(BraceBetweenPoints(point2, point1, buff=0).set_color(BLACK))
-            mobject.text = mobject.get_text("d", buff=0.1).next_to(mobject, DOWN, buff=0.1).set_color(BLACK)
+
+        def text_updater(mobject):
+            mobject.become(
+                MathTex(mobject.text).set_color(BLACK).move_to(brace.get_bottom() +  DOWN, )
+            )
+
 
         brace.add_updater(brace_updater)
+        brace.text.add_updater(text_updater)
 
         
         self.add(wave1_group, wave2_group)
@@ -130,43 +138,70 @@ class TwoWavesDistance(Scene):
         ogpos1 = wave1.origin.get_center()
         ogpos2 = wave2.origin.get_center()
 
-        self.wait(2)
+        self.wait(5)
 
-        self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4))
+        self.play(wave1.origin.animate.shift(lambda0/4), 
+                  wave2.origin.animate.shift(-lambda0/4),
+                  )
         
-        self.wait(2)
+        self.play(Create(brace))
+        
+        
 
-        self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4))
+        self.wait(6)
 
-        self.wait(2)
-
-        self.play(FadeIn(ax), FadeIn(sum_arrow))
+        self.play(FadeIn(ax), FadeIn(sum_arrow), Uncreate(brace))
         self.add(curve)
-
-        self.wait(2)
-
-        self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4))
-
-        self.wait(2)
-
-        wave1.phi = 0
-        wave2.phi = 0
 
         # return to original position
         self.play(wave1.origin.animate.move_to(ogpos1), wave2.origin.animate.move_to(ogpos2))
 
-        # good animation 
-
-        wave1.phi = 12
-        wave2.phi = 12
-
         self.play(
             wave1.origin.animate.shift(lambda0),
             wave2.origin.animate.shift(-lambda0),
-            run_time=12,
+            run_time=6,
             rate_func=linear
         )
+        self.play(
+            wave1.origin.animate.shift(-lambda0),
+            wave2.origin.animate.shift(lambda0),
+            run_time=6,
+            rate_func=linear
+        )
+        brace.text.text = r"\Delta d = 0"
+        self.play(self.camera.frame.animate.move_to(LEFT*3),
+            Create(brace), Write(brace.text), FadeOut(curve), FadeOut(sum_arrow),FadeOut(ax))
 
+        self.wait()
+
+        brace.text.text = r"\Delta d=\frac{\lambda}{2}"
+        self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4),run_time=0.4)
+        
+        self.wait()
+
+        brace.text.text = r"\Delta d = \frac{3\lambda}{2}"
+        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
+        self.wait()
+
+        brace.text.text = r"\Delta d = \frac{5\lambda}{2}"
+        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
+        self.wait()
+
+
+        # return to original position
+        self.play(wave1.origin.animate.move_to(ogpos1), wave2.origin.animate.move_to(ogpos2),run_time=0.4)
+        self.wait()
+
+        brace.text.text = r"\Delta d = \frac{2\lambda}{2}"
+        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
+        self.wait()
+
+        brace.text.text = r"\Delta d = \frac{4\lambda}{2}"
+        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
+        self.wait()
+
+
+        
         
 
 
