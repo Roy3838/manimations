@@ -1,7 +1,7 @@
 from manim import *
 import numpy as np
 
-class ParametricSurface(ThreeDScene):
+class InterferometerParametricSurface(ThreeDScene):
     
 
     def construct(self):
@@ -113,6 +113,33 @@ class ParametricSurface(ThreeDScene):
         fuente2.flashing = False
         fuente2.add_updater(begin_flashing)
 
+        analysispoint=Dot(color=BLACK)
+        
+        distance1=Line(fuente1,analysispoint).set_color(GOLD)
+        distance2=Line(fuente2,analysispoint).set_color(GOLD)
+
+        distance1.add_updater(lambda x: x.become(
+            Line(fuente1,analysispoint).set_color(GOLD)
+        ))
+        distance2.add_updater(lambda x: x.become(
+            Line(fuente2,analysispoint).set_color(GOLD)
+        ))
+        
+        bracedis1=BraceBetweenPoints(fuente1.get_center(),analysispoint.get_center(),buff=0,color=BLACK)
+        bracedis1.add_updater(lambda z: z.become(
+            BraceBetweenPoints(fuente1.get_center(),analysispoint.get_center(),buff=0,color=BLACK)
+        ))
+        dis1label=MathTex(r"d_{1}", color=BLACK).move_to(bracedis1.get_center()+0.5*DOWN)
+        dis1label.add_updater(lambda z: z.move_to(bracedis1.get_center()+0.5*DOWN))
+        
+        bracedis2=BraceBetweenPoints(analysispoint.get_center(),fuente2.get_center(),buff=0,color=BLACK)
+        bracedis2.add_updater(lambda z: z.become(
+            BraceBetweenPoints(analysispoint.get_center(),fuente2.get_center(),buff=0,color=BLACK)
+        ))
+        dis2label=MathTex(r"d_{2}", color=BLACK).move_to(bracedis2.get_center()+0.5*DOWN)
+        dis2label.add_updater(lambda z: z.move_to(bracedis2.get_center()+0.5*DOWN))
+
+
 
         # DEFINICION OF THE WAVES
         wave1 = init_wave(fuente1.get_center(), ORIGIN)        
@@ -123,6 +150,30 @@ class ParametricSurface(ThreeDScene):
         wave2.add_updater(wave)
 
 
+        formula_final= MathTex(
+            r"\Delta d", r"=" ,r"\sqrt{y^{2}+\left(x_{0}-x\right)^{2}}" 
+            ,r"-" ,r"\sqrt{y^{2}+\left(x_{0}+x\right)^{2}}", color=BLACK
+            ).move_to(UP+LEFT*3).scale(0.5)
+        
+        el_cero = MathTex(r"0").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+        l_2 = MathTex(r"\frac{\lambda}{2}").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+        l = MathTex(r"\lambda").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+        l3_2 = MathTex(r"\frac{3\lambda}{2}").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+        l2 = MathTex(r"2\lambda").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+        l5_2 = MathTex(r"\frac{5\lambda}{2}").move_to(formula_final[0].get_center()).set_color(BLACK).scale(0.5)
+
+        vals = VGroup(el_cero,l_2,l,l3_2,l2,l5_2)
+
+        t0 = MathTable(
+            [[r"\Delta d = 0",r"\Delta d = \frac{\lambda}{2}"],
+             [r"\Delta d = \lambda",r"\Delta d = \frac{3\lambda}{2}"],
+             [r"\Delta d = 2\lambda",r"\Delta d = \frac{5\lambda}{2}"],
+             ["...", "..."]
+            ],
+            col_labels=[Text("+"), Text("-")],
+            include_outer_lines=True,
+            line_config={"stroke_width": 1, "color": BLACK})
+        t0.scale(0.5).set_color(BLACK).move_to(LEFT*3+UP*3.5)
         
 
         surfaces = VGroup()
@@ -135,9 +186,9 @@ class ParametricSurface(ThreeDScene):
         
 
         
-        colors = [RED, BLACK]
+        colors = [BLUE, BLACK]
 
-        for i in range (-3,4):
+        for i in range (-4,5):
             t = 1.1
 
             surface = Surface(
@@ -146,7 +197,7 @@ class ParametricSurface(ThreeDScene):
                 v_range=[-PI, PI],
                 color=colors[i%2],
                 resolution=(4, 4)
-            ).set_style(fill_opacity=0.2).set_fill_by_value(axes=axes, colorscale=[(RED, -0.5), (RED, 0), (RED, 0.5)], axis=2)
+            ).set_style(fill_opacity=0.2).set_fill_by_value(axes=axes, colorscale=[(colors[i%2], -0.5), (colors[i%2], 0), (colors[i%2], 0.5)], axis=2)
 
             # Make a 2d version of the surface
             param = ParametricFunction(
@@ -166,70 +217,140 @@ class ParametricSurface(ThreeDScene):
         params.add(positive_functions,negative_functions)
 
 
-
-        self.add(axes)
-
-
         self.play(Create(fuente1),Create(fuente2))
+        
         fuente1.flashing = True
         fuente2.flashing = True
-
-
-        self.play(Create(params),Create(axes.x_axis),Create(axes.y_axis))
-
         self.wait()
+
+        self.move_camera(frame_center=UP*1.5)
 
         fuente1.flashing = False
         fuente2.flashing = False
 
+        self.play(Create(t0))
+
+        self.play(Write(formula_final))
+
         self.wait()
 
-        self.play(Create(wave1),
-                  Create(wave1.origin),
-                  Create(wave1.im_target),
-                  Create(wave2),
-                  Create(wave2.origin),
-                  Create(wave2.im_target),)
+        self.play(Create(axes.x_axis),Create(axes.y_axis))
 
-        self.play(wave1.im_target.animate.move_to(params[1].get_bottom()),
-                  wave2.im_target.animate.move_to(params[1].get_bottom()),
+        self.wait(2)
+
+
+        
+        self.play(
+            ReplacementTransform(t0[0][2],el_cero),
+            ReplacementTransform(formula_final[0],el_cero),
+            Create(params[0][2]),)
+        
+
+        self.wait(4)
+
+        self.play(Write(analysispoint), Write(distance1), 
+                  Write(distance2), Write(bracedis1), 
+                  Write(dis1label), Write(bracedis2), 
+                  Write(dis2label))
+
+
+        self.play(analysispoint.animate.shift(DOWN*6), run_time=1)
+        self.play(MoveAlongPath(analysispoint, params[0][2]), run_time=3)
+
+        self.play(Unwrite(analysispoint), Unwrite(distance1), 
+                  Unwrite(distance2), Unwrite(bracedis1), 
+                  Unwrite(dis1label), Unwrite(bracedis2), 
+                  Unwrite(dis2label))
+
+        self.remove(formula_final[0])
+        self.play(
+            ReplacementTransform(t0[0][3],l_2),
+            ReplacementTransform(el_cero,l_2),
+            Create(params[1][2],))
+        self.remove(el_cero)
+        
+        self.play(
+            ReplacementTransform(t0[0][4],l),
+            ReplacementTransform(l_2,l),
+            Create(params[0][3]),)
+        self.remove(l_2)
+        
+        self.play(
+            ReplacementTransform(t0[0][5],l3_2),
+            ReplacementTransform(l,l3_2),
+            Create(params[1][3]),)
+        self.remove(l)
+
+
+        self.wait()
+
+        self.play(
+            Unwrite(t0),
+            Unwrite(formula_final[1:]),
+            Unwrite(l3_2),
+
+            Create(params[0][0]),
+            Create(params[0][1]),
+            Create(params[0][4]),
+            Create(params[1][0]),
+            Create(params[1][1]),
+
         )
-        wave1.phi = 0
-        wave2.phi = 0
 
-        self.play(MoveAlongPath(wave1.im_target, params[1][1], interpolate_mobject=0.3),
-                  MoveAlongPath(wave2.im_target, params[1][1]),
-                   run_time = 5)
+        # PLANES
+        #xy plane for young
+        xy_plane = Rectangle(width = 6, height = 4, fill_opacity = 0.2).set_color(GREY_C)
 
-        self.play(wave1.im_target.animate.move_to(ORIGIN),
-                  wave2.im_target.animate.move_to(ORIGIN),
-        )
 
-        self.wait(3)
+        self.move_camera(frame_center=ORIGIN)
+
+        self.play(Create(xy_plane))
+
+        self.wait()
+
+        self.play(FadeOut(xy_plane))
+
+        yz_plane = Rectangle(width = 8, height = 8, fill_opacity=0.2).set_color(GREY_C).rotate(PI/2, axis = UP).move_to(RIGHT*2)
+            
+
+       
                
+
+        
 
 
 
 
         # MAKE IT 3D
 
-        # self.move_camera(phi=10 * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
+        self.move_camera(phi=10 * DEGREES, theta=30 * DEGREES, gamma = 115 * DEGREES)
 
-        # self.play(Create(axes.z_axis))
+        self.play(Create(axes.z_axis))
 
-        # self.play(Rotate(axes, 2*PI, axis=RIGHT, about_point=ORIGIN),
-        #           Rotate(params, 2*PI, axis=RIGHT, about_point=ORIGIN),
-        #            run_time=2)
+        self.play(Rotate(axes, 2*PI, axis=RIGHT, about_point=ORIGIN),
+                  Rotate(params, 2*PI, axis=RIGHT, about_point=ORIGIN),
+                   run_time=2)
         
-        # self.wait()
+        self.wait()
+
+        self.move_camera(phi=0 * DEGREES, theta=0 * DEGREES, gamma = 90 * DEGREES)
+
+        self.play(Create(surfaces))
+
+        self.move_camera(phi=30 * DEGREES, theta=10 * DEGREES, gamma = 90 * DEGREES,rate_func=linear, run_time=2)
+        self.move_camera(phi=0 * DEGREES, theta=0 * DEGREES, gamma = 90 * DEGREES,rate_func=linear)
+
         
-        # fuente1.flashing = False
-        # fuente2.flashing = False 
+        self.move_camera(phi=90 * DEGREES, zoom=0.5)
 
-        # self.move_camera(phi=0 * DEGREES, theta=0 * DEGREES, gamma = 90 * DEGREES)
+        self.play(Create(yz_plane))
 
-        # self.play(Create(surfaces))
+        self.wait(3)
 
-        # self.begin_3dillusion_camera_rotation(rate=2)
-        # self.wait(3)
-        # self.stop_3dillusion_camera_rotation()
+        self.play(Create(xy_plane))
+
+        self.move_camera(phi=30 * DEGREES, theta=10 * DEGREES, gamma = 90 * DEGREES,run_time=4)
+
+        self.wait()
+
+        self.play(FadeOut(yz_plane),FadeOut(xy_plane),FadeOut(surfaces),FadeOut(params),FadeOut(axes.z_axis),FadeOut(axes.y_axis),FadeOut(axes.x_axis),FadeOut(fuente1),FadeOut(fuente2))

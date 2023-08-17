@@ -5,6 +5,8 @@ import numpy as np
 
 class Michelson(MovingCameraScene):
     def construct(self):
+        self.camera.background_color = "#E2E2E2"
+
 
         def Create_wave(fuente):
             #Create wave with circle
@@ -98,24 +100,27 @@ class Michelson(MovingCameraScene):
         onda7=onda_vertabajo(pantalla.get_top(),splitter.get_bottom(),BLUE,onda7tracker,difface=0)
 
         #láser
-        self.add(fuente,splitter,espejoa,espejob,pantalla)
-        self.play(Create_wave(fuente))
-        self.play(Create_wave(fuente))
-        self.play(ReplacementTransform(fuente,laser))
-        self.play(Create(onda1),run_time=1.5,rate_func=linear)
-        self.play(Create(onda2),Create(onda3),onda1tracker.animate.set_value(5.157),run_time=1.5,rate_func=linear)
+        self.add(splitter,espejoa,espejob,pantalla,laser)
+        # self.play(Create_wave(fuente))
+        # self.play(Create_wave(fuente))
+        # self.play(ReplacementTransform(fuente,laser))
+        t=0.5
+        self.play(Create(onda1),run_time=t,rate_func=linear)
+        self.play(Create(onda2),Create(onda3),onda1tracker.animate.set_value(5.157),run_time=t,rate_func=linear)
         self.remove(onda1)
         self.add(onda5)
         self.play(onda2tracker.animate.set_value(3.1),onda3tracker.animate.set_value(3.1)
-                ,Create(onda4),onda5tracker.animate.set_value(0),run_time=1.5,rate_func=linear)
+                ,Create(onda4),onda5tracker.animate.set_value(0),run_time=t,rate_func=linear)
         self.remove(onda2,onda3,onda5)
 
 
-        self.play(onda4tracker.animate.set_value(3.1), Uncreate(onda5),Create(onda6),Create(onda7), run_time=1.5,rate_func=linear)
+        self.play(onda4tracker.animate.set_value(3.1), Uncreate(onda5),Create(onda6),Create(onda7), run_time=t,rate_func=linear)
         self.remove(onda4)
 
-        self.play(onda6tracker.animate.set_value(3.1),onda7tracker.animate.set_value(3.1),run_time=1.5,rate_func=linear)
+        self.play(onda6tracker.animate.set_value(3.1),onda7tracker.animate.set_value(3.1),run_time=t,rate_func=linear)
         self.remove(onda6,onda7)
+
+        
 
         self.wait()
         self.play(FadeOut(laser),FadeOut(splitter),FadeOut(espejoa),FadeOut(espejob),FadeOut(pantalla))

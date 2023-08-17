@@ -45,24 +45,19 @@ class young(MovingCameraScene):
         #pantalla
         pantalla=Rectangle(height=8,width=0.2,color=BLACK).move_to(RIGHT*6)
         
-        #distancias
-        analysispoint=Dot(color=RED).move_to(pantalla.get_center())
-        distance1=Line(fuente2,analysispoint).set_color(GOLD)
-        distance2=Line(fuente3,analysispoint).set_color(GOLD)
+        # #distancias
+        # analysispoint=Dot(color=RED).move_to(pantalla.get_center())
+        # distance1=Line(fuente2,analysispoint).set_color(GOLD)
+        # distance2=Line(fuente3,analysispoint).set_color(GOLD)
 
-        distance1.add_updater(lambda x: x.become(
-            Line(fuente2,analysispoint).set_color(GOLD)
-        ))
-        distance2.add_updater(lambda x: x.become(
-            Line(fuente3,analysispoint3 ).set_color(GOLD)
-        ))
+        # distance1.add_updater(lambda x: x.become(
+        #     Line(fuente2,analysispoint).set_color(GOLD)
+        # ))
+        # distance2.add_updater(lambda x: x.become(
+        #     Line(fuente3,analysispoint).set_color(GOLD)
+        # ))
         
         #animaciones
-        self.play(FadeIn(fuente1),FadeIn(rejilla1),FadeIn(rejilla2),FadeIn(rejilla3),FadeIn(pantalla))
-        self.play(Create_wave(fuente1),run_time=1.5, rate_func=linear)
-        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=1.5)
-        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=1.5)
-        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=1.5)
         
         # Create a sinc function vertical on the wall at pantalla
 
@@ -90,11 +85,17 @@ class young(MovingCameraScene):
         graph.rotate(PI/2, about_point=axes.c2p(0, 0))
 
         # Add the axes and graph to the scene
-        self.play(Create(graph))
 
-        self.wait(7)
-
-
+        self.play(FadeIn(fuente1),FadeIn(rejilla1),FadeIn(rejilla2),FadeIn(rejilla3),FadeIn(pantalla))
+        self.play(Create_wave(fuente1),run_time=0.5, rate_func=linear)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),Create(graph),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
+        self.play(Create_semi(fuente2),Create_semi(fuente3),Create_wave(fuente1),run_time=0.5)
 
 
 

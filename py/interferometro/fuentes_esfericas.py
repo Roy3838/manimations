@@ -31,7 +31,7 @@ class Points(MovingCameraScene):
         fuente2=Dot(color=BLUE).shift(3*RIGHT)
             
 
-        analysispoint=Dot(color=BLACK)
+        analysispoint=Dot(color=BLACK).shift(DOWN+LEFT)
         # Make an arrow pointing to the analysis point
         tip = analysispoint.get_center()
         arrow = Arrow(tip + RIGHT + UP, tip, buff=0.1, color=BLACK)
@@ -62,20 +62,22 @@ class Points(MovingCameraScene):
         
         self.play(Create(analysispoint), Create(arrow), Write(label))
 
-        self.wait()
+        self.wait(2)
         
         self.play(analysispoint.animate.move_to(0.5*RIGHT),
                   Unwrite(arrow),
                   FadeOut(label),
-                   run_time = 0.8)
-        self.play(analysispoint.animate.move_to(1.5*LEFT+0.5*UP),run_time =0.8)
-        self.play(analysispoint.animate.move_to(1.5*RIGHT+1.5*DOWN),run_time =0.8)
+                   run_time = 1.2)
+        self.play(analysispoint.animate.move_to(1.5*LEFT+0.5*UP),run_time =1.2)
+        self.play(analysispoint.animate.move_to(1.5*RIGHT+1.5*DOWN),run_time =1.2)
 
         copy1= fuente1.copy()
         copy2= fuente2.copy()
 
         copy1.flashing = False
         copy2.flashing = False
+
+        self.wait()
 
         self.play(analysispoint.animate.shift(UP + RIGHT), 
                   Write(equation[2]),
@@ -88,7 +90,7 @@ class Points(MovingCameraScene):
 
         fuente1.flashing = False
         fuente2.flashing = False
-        self.wait(1)
+        self.wait(4)
         self.play(FadeOut(fuente1),FadeOut(fuente2),FadeOut(analysispoint),FadeOut(copy1),FadeOut(copy2),FadeOut(equation))
 
             

@@ -2,7 +2,7 @@ from manim import *
 
 
 
-class TwoWavesDistance(MovingCameraScene):
+class InterferometerDistance(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
@@ -112,8 +112,8 @@ class TwoWavesDistance(MovingCameraScene):
         brace.text = Tex("$\lambda/2$").set_color(BLACK).move_to(brace.get_bottom() +  DOWN, )
 
         def brace_updater(mobject):
-            point1 = [wave1.origin.get_x(), 0.5, 0]
-            point2 = [wave2.origin.get_x(), 0.5 ,0]
+            point1 = [wave1.origin.get_x(), -1, 0]
+            point2 = [wave2.origin.get_x(), -1 ,0]
             mobject.become(BraceBetweenPoints(point2, point1, buff=0).set_color(BLACK))
 
         def text_updater(mobject):
@@ -144,13 +144,10 @@ class TwoWavesDistance(MovingCameraScene):
                   wave2.origin.animate.shift(-lambda0/4),
                   )
         
-        self.play(Create(brace))
         
-        
+        self.wait(4)
 
-        self.wait(6)
-
-        self.play(FadeIn(ax), FadeIn(sum_arrow), Uncreate(brace))
+        self.play(FadeIn(ax), FadeIn(sum_arrow))
         self.add(curve)
 
         # return to original position
@@ -159,46 +156,49 @@ class TwoWavesDistance(MovingCameraScene):
         self.play(
             wave1.origin.animate.shift(lambda0),
             wave2.origin.animate.shift(-lambda0),
-            run_time=6,
+            run_time=3,
             rate_func=linear
         )
         self.play(
             wave1.origin.animate.shift(-lambda0),
             wave2.origin.animate.shift(lambda0),
-            run_time=6,
+            run_time=3,
             rate_func=linear
         )
+
+        t0 = MathTable(
+            [[r"\Delta d = 0",r"\Delta d = \frac{\lambda}{2}"],
+             [r"\Delta d = \lambda",r"\Delta d = \frac{3\lambda}{2}"],
+             [r"\Delta d = 2\lambda",r"\Delta d = \frac{5\lambda}{2}"],
+             ["...", "..."]
+            ],
+            col_labels=[Text("+"), Text("-")],
+            include_outer_lines=True,
+            line_config={"stroke_width": 1, "color": BLACK})
+        t0.scale(0.5).set_color(BLACK).move_to(LEFT*9+ UP)
+
+        self.play(Create(t0[0][0]), Create(t0[0][1]), Create(t0.get_vertical_lines()), Create(t0.get_horizontal_lines()))
+
+
         brace.text.text = r"\Delta d = 0"
-        self.play(self.camera.frame.animate.move_to(LEFT*3),
+        self.play(self.camera.frame.animate.move_to(LEFT*4),
+                    wave2.origin.animate.shift(UP*2),
             Create(brace), Write(brace.text), FadeOut(curve), FadeOut(sum_arrow),FadeOut(ax))
 
+        self.play(Write(t0[0][2]))
         self.wait()
 
-        brace.text.text = r"\Delta d=\frac{\lambda}{2}"
-        self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4),run_time=0.4)
+        for i in range(1, 6):
+            brace.text.text = rf"\Delta d = \frac{{{i}\lambda}}{{2}}"
+            self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4), run_time=0.5)
+            self.play(Write(t0[0][i+2]),run_time=0.3)
+            self.wait(0.8)
+        self.play(Write(t0[0][8]), Write(t0[0][9]),run_time=0.3)
+
+
         
-        self.wait()
-
-        brace.text.text = r"\Delta d = \frac{3\lambda}{2}"
-        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
-        self.wait()
-
-        brace.text.text = r"\Delta d = \frac{5\lambda}{2}"
-        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
-        self.wait()
 
 
-        # return to original position
-        self.play(wave1.origin.animate.move_to(ogpos1), wave2.origin.animate.move_to(ogpos2),run_time=0.4)
-        self.wait()
-
-        brace.text.text = r"\Delta d = \frac{2\lambda}{2}"
-        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
-        self.wait()
-
-        brace.text.text = r"\Delta d = \frac{4\lambda}{2}"
-        self.play(wave1.origin.animate.shift(lambda0/2), wave2.origin.animate.shift(-lambda0/2),run_time=0.4)
-        self.wait()
 
 
         
