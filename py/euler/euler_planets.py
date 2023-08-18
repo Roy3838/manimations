@@ -509,6 +509,7 @@ class Euler(MovingCameraScene):
             ec_v_despejada2 = MathTex(r"\vec{v}\cdot \Delta t + \vec{p}_{i} =", r" \vec{p}_{f}").move_to(uni_der_vel.get_center()).scale(1.3)
             self.play(ReplacementTransform(uni_der_vel[0],ec_v[0]),
                         ReplacementTransform(uni_der_vel[1],ec_v[1]))
+            self.wait()
             self.play(ReplacementTransform(ec_v[0],ev_v_d[0]),
                         ReplacementTransform(ec_v[1],ev_v_d[1]))
 
@@ -524,7 +525,7 @@ class Euler(MovingCameraScene):
             ec_a_despejada2 = MathTex(r"\vec{a}\cdot \Delta t + \vec{v}_{i} =", r" \vec{v}_{f}").move_to(uni_der_acc.get_center()).scale(1.3)
             
 
-            self.wait(1)
+            self.wait(3)
 
             self.play(Write(v_i),Write(v_f))
             
@@ -583,9 +584,57 @@ class Euler(MovingCameraScene):
                         ec_a_despejada_copia[2].animate.move_to(ec_a_despejada_final[0].get_center()),
                         run_time = 0.8)
             
+            # no funciona self.remove()
+            ecuaciones.add(ec_v_despejada_copia, ec_a_despejada_copia,)
+            self.play(FadeOut(ecuaciones), run_time = 0.001)
+            self.add(ec_a_despejada_final,ec_v_despejada_final)
             
 
-                    
+            grav_formula2=MathTex(r"F",r"=G\frac{m_{1}m_{2}}{r^{2}}"
+                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP*1.5)
+            grav_formula2_ma=MathTex(r"m_1\vec{a}",r"=G\frac{m_{1}m_{2}}{r^{2}}"
+                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP*1.5)
+            grav_formula2_ma[0].shift(LEFT*0.2)
+
+            box_around_v=SurroundingRectangle(ec_v_despejada_final[2],buff=0.1).scale([0.3,1,1])
+            v_i_box = SurroundingRectangle(v_i, buff = 0.1)
+            p_i_box = SurroundingRectangle(p_i, buff = 0.1)
+            box_around_v.shift(LEFT*1.1)
+
+
+            self.wait()
+            self.play(Write(box_around_v),Write(v_i_box))
+            
+            self.wait()
+
+            self.play(Unwrite(v_i_box),box_around_v.animate.shift(RIGHT*0.9))
+            self.wait()
+            self.play(box_around_v.animate.shift(RIGHT*1.3), Write(p_i_box))
+            self.wait()
+
+            self.play(Unwrite(box_around_v),Unwrite(p_i_box))
+            self.wait()
+
+            self.play(ec_v_despejada_final.animate.shift(DOWN),
+                      ec_a_despejada_final.animate.shift(DOWN*0.8)
+                      , run_time=0.5)
+            
+            box_around_a=SurroundingRectangle(ec_a_despejada_final[2],buff=0.1).scale([0.3,1,1])
+            box_around_a.shift(LEFT*1.1)
+
+            
+            self.play(Write(box_around_a),Write(grav_formula2))
+            self.wait()
+            self.play(ReplacementTransform(grav_formula2[0],grav_formula2_ma[0]),)
+            self.wait(2)
+            self.play(Unwrite(grav_formula2),box_around_a.animate.shift(RIGHT*0.9))
+
+            self.play(box_around_a.animate.shift(RIGHT*1.3), Write(v_i_box))
+
+            self.play(Unwrite(box_around_a),Unwrite(v_i_box))
+
+
+            self.wait()
 
 
             example_listing = Code(
@@ -605,9 +654,7 @@ class Euler(MovingCameraScene):
 
             self.wait()
 
-            # no funciona self.remove()
-            ecuaciones.add(ec_v_despejada_copia, ec_a_despejada_copia,)
-            self.play(FadeOut(ecuaciones), run_time = 0.001)
+            
 
 
 

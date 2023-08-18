@@ -13,7 +13,9 @@ class Logo(Scene):
         LateX3 = MathTex(r"\frac{E}{c}", color=GRAY_D)
 
         Reuler=MathTex(r"\mathbb{R} \{\vec{S}\}", color=GRAY_D).scale(10)
+
+        espacioReuler = MathTex(r"\vec{E} \mathbb{R}", color=GRAY_D).scale(10)
         
         
         #self.play(Write(Reuler), run_time=2)\
-        self.add(Reuler)
+        self.add(espacioReuler)

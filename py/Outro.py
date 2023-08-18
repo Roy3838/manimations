@@ -10,15 +10,20 @@ class Logo(Scene):
         LateX3 = MathTex(r"\frac{E}{c}", color=GRAY_D)
 
         Reuler=MathTex(r"\mathbb{R}euler" , r"\vec{S}",r"pac",r"\hat{e}", color=GRAY_D).scale(4)
+        es_Reuler = MathTex(r"\vec{E}spac \hat{\i} o", r" \mathbb{R}euler", color=GRAY_D).scale(4)
+
         Reuler[0].shift(LEFT*0.2)
         Reuler[1:].shift(RIGHT*0.2)
+
+        es_Reuler[0].shift(LEFT*0.2)
+        es_Reuler[1:].shift(RIGHT*0.2)
         
         #self.play(Write(Reuler), run_time=2)\
-        self.play(Write(Reuler),run_time=2)
+        self.play(Write(es_Reuler),run_time=2)
 
         self.wait()
 
-        self.play(Unwrite(Reuler))
+        self.play(Unwrite(es_Reuler))
 
 
         # LateX.scale(3)
