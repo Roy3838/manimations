@@ -747,6 +747,11 @@ class Euler(MovingCameraScene):
             
             fuerzas3 = VGroup()
 
+            dt = MathTex(r"\Delta t = 1.17 a\tilde{n}os").move_to(example_listing,UP*2+RIGHT)
+            ciclos = MathTex("ciclos = 10").move_to(dt,DOWN)
+
+            self.play(Write(dt),Write(ciclos))
+
             
 
             for i in range(1,10):
@@ -789,8 +794,111 @@ class Euler(MovingCameraScene):
                 
                 pos_boxes2 = temppos.copy()
 
-            self.play(FadeOut(vel3),FadeOut(Fuerza3))
+            self.play(FadeOut(vel3),FadeOut(Fuerza3),Unwrite(dt),Unwrite(ciclos))
                 
+
+            # dt intermedio 
+
+            
+
+            P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
+            m1 = 1.989e30,
+            m2 = 1.89819e28,
+            m3 = 0.04784e24,
+            r10 = [0, 0],
+            r20 = [7.40522e11, 0],
+            r30 = [-7.40522e11, 150000],
+            dr10 = [0, 0],
+            dr20 = [0, 13720],
+            dr30 = [0, 10370],
+            n=35,
+            d=2,
+            tf=1.3e+09,
+            G=6.67e-11
+            )
+
+
+            dt = MathTex(r"\Delta t = 0.117 a\tilde{n}os").move_to(example_listing,UP*2+RIGHT)
+            ciclos = MathTex(r"ciclos = 100").move_to(dt,DOWN)
+
+
+            scalingfactor=(8e+11)/4 #distance scaling factor for scene
+            scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
+
+            planet3 = Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
+            pos3 = np.array([P3[0][0]/scalingfactor,P3[0][1]/scalingfactor,0])
+            planet3.move_to(pos3)
+            self.play(Write(planet3))
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
+
+            planet3.locations = P3/scalingfactor
+            planet3.t_offset = 0
+
+            def planet_updater(mob, dt):
+                mob.t_offset += 1  #dt*30
+                pos2d = mob.locations[mob.t_offset%len(mob.locations)]
+                #make it 3d with z = 0
+                pos = np.array([pos2d[0],pos2d[1],0])
+                mob.move_to(pos)
+                
+            planet3.add_updater(planet_updater)
+            self.add(planet3)
+
+
+
+            self.wait(3)
+
+            # for i in range(1,10):
+            #     pos3 = np.array([P3[i][0]/scalingfactor,P3[i][1]/scalingfactor,0])
+            #     v3i_1 = v3
+            #     v3 = np.array([dP3[i][0]/scalingfactorv,dP3[i][1]/scalingfactorv,0])
+            #     Fm3 = np.array([f3[i][0]/scalingforce,f3[i][1]/scalingforce,0])
+            #     vel3 = Arrow(pos3, pos3+v3, buff=0.1,color=GOLD)
+            #     Fuerza3 = Arrow(pos3,pos3+Fm3, buff=0,color=RED)
+            #     arrowplanets3.add(vel3)
+            #     fuerzas3.add(Fuerza3)
+            
+            #     tempvel = vel_boxes2.copy()
+            #     temppos = pos_boxes2.copy()
+                
+            #     if i == 1:
+            #         self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+            #             planet3.animate.move_to(pos3),
+            #                 ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+            #                 ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+            #                 run_time=0.5)
+            #     else:
+            #         self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+            #             FadeOut(fuerzas3[i-2]),
+            #             planet3.animate.move_to(pos3),
+            #                 ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
+            #                 ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+            #                 run_time=0.5)
+                
+            #     vel_boxes2 = tempvel.copy()
+                
+                
+            #     self.play(Write(Fuerza3),
+            #                 ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
+            #                 ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
+            #                 ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
+            #                 run_time=0.5)
+                
+                
+                
+            #     pos_boxes2 = temppos.copy()
+
+
+
+
+
+
+
+
+
+
+
             # Segundo con un dt mas pequeño
 
             # # Linea nuevacambiando todas las variables por algo similar P1,P2,P3, etc
