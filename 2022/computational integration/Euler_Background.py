@@ -26,6 +26,8 @@ class Euler(Scene):
             x_range=x_range, y_range=[-5, 10, 1], axis_config={"include_tip": True}
             ).set_color(BLACK)
             labels = ax.get_axis_labels(x_label="x", y_label="f(x)").set_color(BLACK)
+            labels[0].scale(0.7)
+            labels[1].scale(0.7)
             graph_integral = ax.plot(func_integral, color=GOLD)
 
 
@@ -62,49 +64,54 @@ class Euler(Scene):
             #self.add(result,lines)
             #self.play(Write(labels),Write(ax),Write(graph_integral))
             self.add(ax,labels)
-            if animacion=='lento':
-                self.play(Write(result[0]))
-                for i in range(len(x)-1):
-                    self.play(Create(real_lines[i]),Create(dot_on_integral[i]),run_time=0.2)
-                    self.play(real_lines[i].animate.move_to(lines[i].get_center()), dot_on_integral[i].animate.move_to(lines[i].get_center()), run_time=0.5)
-                    self.remove(dot_on_integral[i])
-                    self.play(Write(result[i+1]),run_time=0.2)
 
-                    if (i==3):
-                        dx_brace=BraceBetweenPoints(result[i].get_center(),[result[i+1].get_center()[0],result[i].get_center()[1],0],buff=0.1).set_color(BLACK)
-                        dx_brace_text=dx_brace.get_text("dx").set_color(BLACK)
-                        self.play(Write(dx_brace),Write(dx_brace_text))
-                        slope_brace=BraceBetweenPoints([result[i+1].get_center()[0],result[i].get_center()[1],0],result[i+1].get_center(),buff=0.05).set_color(BLACK).scale([0.7,1,1])
-                        slope_brace_text=slope_brace.get_text("slope").set_color(BLACK)
-                        self.play(Write(slope_brace),Write(slope_brace_text))
-                        self.wait()
-                        ecuacion=MathTex(r"y\left(i+1)",r"=",r"y(i)+",r"\frac{d}{dx}f(x)",r"\cdot",r"dx").shift(UP+LEFT*3).set_color(BLACK).scale(0.8)
-                        self.play(Write(ecuacion[0:3]))
-                        self.play(TransformFromCopy(slope_brace_text,ecuacion[3]),TransformFromCopy(dx_brace_text,ecuacion[5]),FadeIn(ecuacion[4]))
-
-                        self.play(FadeOut(dx_brace),FadeOut(dx_brace_text),FadeOut(slope_brace),FadeOut(slope_brace_text))
-
-                    self.play(Uncreate(lines[i]),Uncreate(real_lines[i]),run_time=0.2)
-
-            elif animacion=='rapido':
-                self.play(Write(result[0]))
-                for i in range(len(x)-1):
-                    self.play(Create(lines[i]),run_time=0.1)
-                    self.add(result[i])
+            self.add(result[0])
+            for i in range(len(x)-1):
+                self.add(lines[i])
+                self.add(result[i])
+                #self.wait(0.1)
+                if (i!=30):
+                    
                     self.remove(lines[i])
-            elif animacion=='rapidisimo':
-                self.add(result[0])
-                for i in range(len(x)-1):
-                    self.add(lines[i])
-                    self.add(result[i])
-                    #self.wait(0.1)
-                    if (i!=30):
-                        
-                        self.remove(lines[i])
-                    else:
-                        ecuacion=MathTex(r"y\left(i+1)",r"=",r"y(i)+",r"\frac{d}{dx}f(x)",r"\cdot",r"dx").shift(UP*0.4+LEFT*1.9).set_color(BLACK).scale(0.5)
-                        ecueacion_e_x=MathTex(r"f(x) = e^{x}").shift(UP*0.4+RIGHT*2).set_color(BLACK).scale(0.5)
-                        self.add(ecuacion,ecueacion_e_x )
+                else:
+                    ecuacion=MathTex(r"f\left(i+1)",r"=",r"f(i)+",r"\frac{d}{dx}f'(x)",r"\cdot",r"dx").shift(UP*0.85+RIGHT*2.6).set_color(BLACK).scale(0.37)
+                    ecueacion_e_x=MathTex(r"f(x) = e^{x}").shift(RIGHT*1.8+UP*0.5).set_color(BLACK).scale(0.37)
+                    self.add(ecuacion,ecueacion_e_x )
+
+
+            # not using MathTex
+            Slogan = Tex(r"$\mathbb{R}\{\vec{S}\} = $ $\vec{\mathbf{S}}$implify $\mathbb{C}$omplexit$\hat{y}$", color=GRAY_D).scale(2)
+            Slogan2 = Tex(r"$\mathbf{U}$sing your $\mathbb{I}$maginatio$\bar{n}$", color=GRAY_D).scale(2)
+            Slogan3 = Tex(r"$\mathbf{M}$ake the $\mathbb{R}$eal World Bette$\vec{r}$", color=GRAY_D).scale(2)
+
+            # COMBINING SUM AND CIR \sum of Curiosity Inspiration and Reflection
+            summ = MathTex(r"\sum ",r"\mathbb{C}uriosity", r" \mathbb{I}nspiration",r" \mathbb{R}eflection", color=GRAY_D)
+            summ.arrange(DOWN, buff=0.1)
+            # Align left part
+            summ[1].align_to(summ[0], LEFT)
+            summ[2].align_to(summ[0], LEFT)
+            summ[3].align_to(summ[0], LEFT)
+            summ[0].move_to(summ[2]).shift(LEFT*2)
+            summ[0].scale([1.5,2,1])
+            summ.shift(RIGHT*2.5+DOWN*3.4)
+            summ.scale(1.4)
+
+
+
+            slogan = VGroup(Slogan, Slogan2, Slogan3).arrange(DOWN, buff=0.5)
+            slogan.add(summ)
+            Slogan.shift(LEFT*1.3)
+            Slogan3.shift(LEFT*1.1)
+
+
+            #self.play(Write(Reuler), run_time=2)\
+            #self.add(espacioReuler)
+
+            slogan.scale(0.26)
+            slogan.shift(LEFT*1.3+UP*1.7)
+
+            self.add(slogan)
+            
                     
 
             
