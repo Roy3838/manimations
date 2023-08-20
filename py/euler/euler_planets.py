@@ -3,8 +3,8 @@ import numpy as np
 import time
 #from ticktock import tick
 start=time.time()
-width=int(1080/2)
-height=int(1920/2)
+width=int(1080)
+height=int(1920)
 config.frame_size = [width, height]
 
 class Euler(MovingCameraScene):
@@ -243,7 +243,7 @@ class Euler(MovingCameraScene):
                     # LABEL ARROWS
                     
                     velocity = Tex(r"$\vec{v}$").set_color(BLACK).scale(0.8).next_to(arrowplanet2,LEFT)
-                    force = Tex(r"$\vec{F}$").set_color(BLACK).scale(0.8).next_to(Fuerza2,UP)
+                    force = Tex(r"$\vec{a}$").set_color(BLACK).scale(0.8).next_to(Fuerza2,UP)
                     distance = Tex(r"$\vec{p}$").set_color(BLACK).scale(0.8).next_to(planetpos2,DOWN)
                     distance.shift(UP*0.5)
                     # Se crean los planetas
@@ -256,7 +256,7 @@ class Euler(MovingCameraScene):
                     
 
                     grav_formula=MathTex(r"F=G\frac{m_{1}m_{2}}{r^{2}}").set_color(
-                        BLACK).shift(UP*3+RIGHT)
+                        BLACK).shift(UP*3+RIGHT).scale(2)
                     
 
 
@@ -590,10 +590,13 @@ class Euler(MovingCameraScene):
             
 
             grav_formula2=MathTex(r"F",r"=G\frac{m_{1}m_{2}}{r^{2}}"
-                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP*2)
+                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP)
             grav_formula2_ma=MathTex(r"m_1\vec{a}",r"=G\frac{m_{1}m_{2}}{r^{2}}"
-                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP*2)
+                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP)
             grav_formula2_ma[0].shift(LEFT*0.2)
+
+            grav_formula2.shift(UP*0.5)
+            grav_formula2_ma.shift(UP*0.5)
 
             box_around_v=SurroundingRectangle(ec_v_despejada_final[2],buff=0.1).scale([0.3,1,1])
             v_i_box = SurroundingRectangle(v_i, buff = 0.1)
@@ -747,8 +750,8 @@ class Euler(MovingCameraScene):
             
             fuerzas3 = VGroup()
 
-            dt = MathTex(r"\Delta t =", r" 1.17 a\tilde{n}os").shift(RIGHT*3+ DOWN*5)
-            ciclos = Text(r"ciclos =", r"0").shift(RIGHT*3+ DOWN*4)
+            dt = MathTex(r"\Delta t =", r" 1.17 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
             self.play(Write(dt),Write(ciclos))
 
@@ -772,7 +775,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos[1].animate.become(MathTex(str(i)).shift(RIGHT*3+ DOWN*4)),
+                            ciclos.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.5)
                     
                 else:
@@ -781,6 +784,8 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+                            ciclos.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+
                             run_time=0.5)
                 
                 vel_boxes2 = tempvel.copy()
@@ -796,14 +801,16 @@ class Euler(MovingCameraScene):
                 
                 pos_boxes2 = temppos.copy()
 
-            self.play(FadeOut(vel3),FadeOut(Fuerza3),Unwrite(dt),Unwrite(ciclos))
+            self.play(FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3), FadeOut(traced))
                 
 
-            # dt intermedio 
 
             
 
-            P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,dt,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
+            """ dt intermedio  """
+
+
+            P1,P2,P3,dP1,dP2,dP3,f1,f2,f3,n,xd,t,G,m1,m2,m3,r10,r20,r30,dr10,dr20,dr30 = compute(
             m1 = 1.989e30,
             m2 = 1.89819e28,
             m3 = 0.04784e24,
@@ -820,19 +827,23 @@ class Euler(MovingCameraScene):
             )
 
 
-            dt = MathTex(r"\Delta t = 0.117 a\tilde{n}os").move_to(example_listing,UP*2+RIGHT)
-            ciclos = MathTex(r"ciclos = ",r"100").move_to(dt,DOWN)
+            dt2 = MathTex(r"\Delta t =", r" 0.58 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos2 = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
 
-            self.play(Write(dt),Write(ciclos))
+            self.play(ReplacementTransform(dt,dt2),ReplacementTransform(ciclos,ciclos2))
 
             scalingfactor=(8e+11)/4 #distance scaling factor for scene
-            scalingfactorv=13720/2.4 #velocity vector scaling factor for scene
+            scalingfactorv=13720/2.4 *3 #velocity vector scaling factor for scene
+            scalingforce=4.66e+18 * 2 *3 #force vector scaling factor for scene
+
+
+            
+
 
             planet3 = Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
             pos3 = np.array([P3[0][0]/scalingfactor,P3[0][1]/scalingfactor,0])
             planet3.move_to(pos3)
-            self.play(Write(planet3))
             traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
             self.add(traced)
 
@@ -845,27 +856,16 @@ class Euler(MovingCameraScene):
             vel_boxes2.add(SurroundingRectangle(ec_a_despejada_final,buff=0.2))
 
 
-            
-
-            # planet3.locations = P3/scalingfactor
-            # planet3.t_offset = 0
-
-            # def planet_updater(mob, dt):
-            #     mob.t_offset += 1  #dt*30
-            #     pos2d = mob.locations[mob.t_offset%len(mob.locations)]
-            #     #make it 3d with z = 0
-            #     pos = np.array([pos2d[0],pos2d[1],0])
-            #     mob.move_to(pos)
-                
-            # planet3.add_updater(planet_updater)
-            # self.add(planet3)
-
-
-
             # self.wait(3)
             fuerzas3 = VGroup()
-            arrowplanets3 = VGroup()
-            arrowplanets3.add(vel3)
+            arrow_planets3 = VGroup()
+            v3 = np.array([dP3[0][0]/scalingfactorv,dP3[0][1]/scalingfactorv,0])
+            
+            vel3 = Arrow(pos3, pos3+v3, buff=0,color=GOLD)
+            arrow_planets3.add(vel3)
+            self.play(Write(planet3),Write(vel_boxes2))
+
+            
             
 
 
@@ -876,31 +876,34 @@ class Euler(MovingCameraScene):
                 Fm3 = np.array([f3[i][0]/scalingforce,f3[i][1]/scalingforce,0])
                 vel3 = Arrow(pos3, pos3+v3, buff=0.1,color=GOLD)
                 Fuerza3 = Arrow(pos3,pos3+Fm3, buff=0,color=RED)
-                arrowplanets3.add(vel3)
+                arrow_planets3.add(vel3)
                 fuerzas3.add(Fuerza3)
             
                 tempvel = vel_boxes2.copy()
                 temppos = pos_boxes2.copy()
                 
                 if i == 1:
-                    self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+                    self.play(arrow_planets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+                            ciclos2.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.1)
                 else:
-                    self.play(arrowplanets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
+                    self.play(arrow_planets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
                         FadeOut(fuerzas3[i-2]),
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
+                            ciclos2.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+
                             run_time=0.1)
                 
                 vel_boxes2 = tempvel.copy()
                 
                 
                 self.play(Write(Fuerza3),
-                            ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
+                            ReplacementTransform(arrow_planets3[i-1],arrow_planets3[i]),
                             ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
                             ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
                             run_time=0.1)
@@ -909,13 +912,7 @@ class Euler(MovingCameraScene):
                 
                 pos_boxes2 = temppos.copy()
 
-
-
-
-
-
-
-
+            self.play(FadeOut(traced),FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3))
 
 
 
@@ -952,6 +949,14 @@ class Euler(MovingCameraScene):
             planet3.locations = P3/scalingfactor
             planet3.t_offset = 0
 
+            planet3.dt = MathTex(r"\Delta t =", r" 0.117 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            planet3.ciclos = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            planet3.ciclos.t_offset = 0
+
+
+
+            self.play(ReplacementTransform(dt2,planet3.dt),ReplacementTransform(ciclos2,planet3.ciclos))
+
             def planet_updater(mob, dt):
                 mob.t_offset += 1  #dt*30
                 pos2d = mob.locations[mob.t_offset]
@@ -959,12 +964,17 @@ class Euler(MovingCameraScene):
                 pos = np.array([pos2d[0],pos2d[1],0])
                 mob.move_to(pos)
                 
+            def ciclos_updater(mob,dt):
+                mob.t_offset += 1
+                mob.become(Text("ciclos = {i}".format(i=mob.t_offset)).set_color(BLACK).shift(RIGHT*3+ DOWN*4))
+
             planet3.add_updater(planet_updater)
+            planet3.ciclos.add_updater(ciclos_updater)
             self.add(planet3)
 
 
 
-            self.wait(3)
+            self.wait(10)
 
 
 
