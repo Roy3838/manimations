@@ -742,8 +742,7 @@ class Euler(MovingCameraScene):
 
 
             planet3.move_to(pos3)
-            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
-            self.add(traced)
+            
             vel3 = Arrow(pos3, pos3+v3, buff=0,color=GOLD)
             arrowplanets3.add(vel3)
             self.play(Write(planet3),Create(vel3),Write(vel_boxes2))
@@ -754,6 +753,8 @@ class Euler(MovingCameraScene):
             ciclos = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
             self.play(Write(dt),Write(ciclos))
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
 
             
 
@@ -801,7 +802,7 @@ class Euler(MovingCameraScene):
                 
                 pos_boxes2 = temppos.copy()
 
-            self.play(FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3), FadeOut(traced))
+            self.play(FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3), FadeOut(traced),FadeOut(vel_boxes2))
                 
 
 
@@ -844,8 +845,7 @@ class Euler(MovingCameraScene):
             planet3 = Dot(radius=0.15,fill_opacity=1,stroke_width=0).set_color(GREY_C)
             pos3 = np.array([P3[0][0]/scalingfactor,P3[0][1]/scalingfactor,0])
             planet3.move_to(pos3)
-            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
-            self.add(traced)
+            
 
             pos_boxes2 = VGroup()
             vel_boxes2 = VGroup()
@@ -864,6 +864,8 @@ class Euler(MovingCameraScene):
             vel3 = Arrow(pos3, pos3+v3, buff=0,color=GOLD)
             arrow_planets3.add(vel3)
             self.play(Write(planet3),Write(vel_boxes2))
+            traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
+            self.add(traced)
 
             
             
@@ -912,7 +914,7 @@ class Euler(MovingCameraScene):
                 
                 pos_boxes2 = temppos.copy()
 
-            self.play(FadeOut(traced),FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3))
+            self.play(FadeOut(traced),FadeOut(planet3),FadeOut(vel3),FadeOut(Fuerza3),FadeOut(vel_boxes2))
 
 
 
@@ -958,8 +960,8 @@ class Euler(MovingCameraScene):
             self.play(ReplacementTransform(dt2,planet3.dt),ReplacementTransform(ciclos2,planet3.ciclos))
 
             def planet_updater(mob, dt):
-                mob.t_offset += 1  #dt*30
-                pos2d = mob.locations[mob.t_offset]
+                mob.t_offset += 0.5  #dt*30
+                pos2d = mob.locations[int(mob.t_offset)]
                 #make it 3d with z = 0
                 pos = np.array([pos2d[0],pos2d[1],0])
                 mob.move_to(pos)
@@ -974,7 +976,15 @@ class Euler(MovingCameraScene):
 
 
 
-            self.wait(10)
+            self.wait(5)
+            planet3.ciclos.remove_updater(ciclos_updater)
+            self.remove(ciclos2)
+            self.play(FadeOut(planet3),
+                      FadeOut(planet3.dt),
+                      FadeOut(planet3.ciclos),FadeOut(traced),
+                      FadeOut(example_listing),FadeOut(ec_v_despejada_final),
+                      FadeOut(ec_a_despejada_final),
+                      FadeOut(planet1))
 
 
 
