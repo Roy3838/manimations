@@ -1,6 +1,6 @@
 for t in range(T):
-    # Calcular Posicion con Velocidad
+    # Calculate Position with Velocity
     P[t+1] = V[t]*dt + P[t] 
-    # Calcular Velocidad con Fuerza
+    # Calculate Velocity with Force
     V[t+1] = A(P[t])*dt + V[t] 
     

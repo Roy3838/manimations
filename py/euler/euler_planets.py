@@ -749,8 +749,8 @@ class Euler(MovingCameraScene):
             
             fuerzas3 = VGroup()
 
-            dt = MathTex(r"\Delta t =", r" 1.17 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            ciclos = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            dt = MathTex(r"\Delta t =", r" 1.17 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos = Text(r"cycles = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
             self.play(Write(dt),Write(ciclos))
             traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
@@ -776,7 +776,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.5)
                     
                 else:
@@ -785,7 +785,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
 
                             run_time=0.5)
                 
@@ -828,8 +828,8 @@ class Euler(MovingCameraScene):
             )
 
 
-            dt2 = MathTex(r"\Delta t =", r" 0.58 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            ciclos2 = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            dt2 = MathTex(r"\Delta t =", r" 0.58 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos2 = Text(r"cycles= 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
 
             self.play(ReplacementTransform(dt,dt2),ReplacementTransform(ciclos,ciclos2))
@@ -889,7 +889,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos2.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos2.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.1)
                 else:
                     self.play(arrow_planets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
@@ -897,7 +897,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos2.animate.become(Text("ciclos = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos2.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
 
                             run_time=0.1)
                 
@@ -951,8 +951,8 @@ class Euler(MovingCameraScene):
             planet3.locations = P3/scalingfactor
             planet3.t_offset = 0
 
-            planet3.dt = MathTex(r"\Delta t =", r" 0.117 a\tilde{n}os").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            planet3.ciclos = Text(r"ciclos = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            planet3.dt = MathTex(r"\Delta t =", r" 0.117 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
+            planet3.ciclos = Text(r"cycles = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
             planet3.ciclos.t_offset = 0
 
 
@@ -968,7 +968,7 @@ class Euler(MovingCameraScene):
                 
             def ciclos_updater(mob,dt):
                 mob.t_offset += 1
-                mob.become(Text("ciclos = {i}".format(i=mob.t_offset)).set_color(BLACK).shift(RIGHT*3+ DOWN*4))
+                mob.become(Text("cycles = {i}".format(i=mob.t_offset)).set_color(BLACK).shift(RIGHT*3+ DOWN*4))
 
             planet3.add_updater(planet_updater)
             planet3.ciclos.add_updater(ciclos_updater)
