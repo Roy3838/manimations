@@ -10,7 +10,7 @@
 from manim import *
 
 
-class LightVector(Vector):
+class LightBase(Vector):
     def __init__(
         self,
         axis=UP,
@@ -43,7 +43,7 @@ class LightVector(Vector):
         super().__init__(**kwargs)
         self.add_updater(self.update)
 
-    def update(self, dt):
+    def update(self, dt, **kwargs):
         self.time += dt
         self.become(self.get_vector())  # Keep the vector static
         self.tip_dot.move_to(self.get_vector().get_end())  # Move Dot to vector tip
@@ -56,19 +56,57 @@ class LightVector(Vector):
             buff=0,
         ).set_opacity(self.opacity)
 
+
+class LightVector(Vector):
+    def __init__(
+        self,
+        vector1,
+        vector2,
+        pathcolor=BLUE,
+        opacity=1,
+        propagation_speed=1,
+        **kwargs
+        ):
+        self.vector1 = vector1
+        self.vector2 = vector2
+
+        self.pathcolor = pathcolor
+        self.opacity = opacity
+        self.propagation_speed = propagation_speed
+
+        # Create Dot that will be at the tip of the resultant vector
+        self.tip_dot = Dot(color=pathcolor).set_opacity(self.opacity)
+
+        # Create TracedPath attached to the Dot
+        self.path = TracedPath(self.tip_dot.get_center, 
+                               stroke_color=self.pathcolor, stroke_width=2, 
+                               dissipating_time=5, stroke_opacity=self.opacity)
+        
+
+        super().__init__(**kwargs)
+
+        self.add_updater(self.update)
+        
+
+    def update(self,dt,**kwargs):
+        resultant_vector = self.get_vector()
+        self.become(resultant_vector)  # Keep the vector static
+        self.tip_dot.move_to(resultant_vector.get_end())  # Move Dot to the end of the resultant vector
+        self.path.shift([0, 0, -self.propagation_speed * dt])  # Move the TracedPath backwards in the z-direction
+
+
+    def get_vector(self):
+        v1_end = self.vector1.get_vector().get_end()
+        v2_end = self.vector2.get_vector().get_end()
+        # Resultant vector is the sum of v1 and v2
+        resultant = v1_end + v2_end
+        return Vector(resultant).set_color(self.color).set_opacity(self.opacity)
+
+
+
 class LightVectorScene(ThreeDScene):
     def construct(self):
 
-        e_field = LightVector(
-            pathcolor=BLUE,
-            color=BLUE,
-        )
-
-        b_field = LightVector(
-            axis=RIGHT,
-            pathcolor=RED,
-            color=RED,
-        )
         self.camera.background_color = "#E2E2E2"
 
         axes = ThreeDAxes(
@@ -77,45 +115,78 @@ class LightVectorScene(ThreeDScene):
             z_length=10,
         ).set_color(BLACK)
 
-
-        # Now the good stuff
-        study_field = LightVector(
-            axis=RIGHT+UP,
+        x_field = LightBase(
             pathcolor=BLUE,
             color=BLUE,
         )
 
-        sub_x_field = LightVector(
+        y_field = LightBase(
             axis=RIGHT,
-            pathcolor=BLUE,
-            color=BLUE,
-            opacity = 0.5,
+            pathcolor=RED,
+            color=RED,
         )
 
-        sub_y_field = LightVector(
-            axis=UP,
-            pathcolor=BLUE,
-            color=BLUE,
-            opacity = 0.5,
-        )
 
         self.play(Create(axes))
-        self.add(e_field, b_field)
-        self.add(e_field.path, b_field.path)  # Add traced paths
+        self.add(x_field, y_field)
+        self.add(x_field.path, y_field.path)  # Add traced paths
 
         self.move_camera(phi = 45*DEGREES, theta= (-15+90)* DEGREES,gamma = (270-15/2)* DEGREES, distance = 10, run_time = 2)
 
-        
-        
-        self.wait(2)  # Wait for 10 seconds
-        self.remove(e_field, e_field.path, b_field, b_field.path)
+        self.wait(2)
+        self.play(FadeOut(y_field), FadeOut(y_field.path), FadeOut(x_field.path))
 
-        self.add(sub_x_field, sub_y_field)
+        self.wait()
+
+        y_field.set_color(BLUE)
+        x_field.opacity = 0.5
+        y_field.opacity = 0.5
+
+        self.play(Create(y_field))
+
         self.wait(2)
 
-        self.add(study_field)
+        diagonal_vector = LightVector(x_field, y_field, color=BLUE) 
 
-        self.wait(2)  # Wait for 10 seconds
+        self.play(FadeIn(diagonal_vector), FadeIn(diagonal_vector.path))
+
+        self.wait(3)
+
+        # Now we make a vector that has PI/2 phase
+        y_field_shift = LightBase(
+            axis=RIGHT,
+            pathcolor=BLUE,
+            color=BLUE,
+            phase=PI,
+        )
+
+        self.play(Transform(y_field, y_field_shift))
+
+        self.wait(4)
+
+
+        
+        
+        # self.wait(2) 
+        # self.remove(x_field, x_field.path, y_field, y_field.path)
+
+        # self.add(sub_x_field, sub_y_field)
+        # self.wait(4)
+
+        # self.add(diagonal_vector, diagonal_vector.path)
+
+        # self.wait(4) 
+
+        # self.remove(diagonal_vector, diagonal_vector.path, sub_x_field, sub_y_field)
+
+        # self.add(sub_x_fieldshifted, y_field_shift)
+
+        # self.wait(4)
+
+        # self.add(omg_sumshifted, omg_sumshifted.path)
+
+        # self.wait(4) 
+
 
 
 
