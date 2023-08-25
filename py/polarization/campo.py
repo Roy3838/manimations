@@ -6,9 +6,62 @@
 
 """
 
-
 from manim import *
 
+
+DISSIPATING_TIME = 5
+DEFAULT_VECTOR_COLOR = BLUE
+DEFAULT_PATH_COLOR = BLUE
+DEFAULT_OPACITY = 1
+
+
+"""Final Class Merging together LightBase and Light Vector, when given a base, it oscilates
+in that base, when given two vectors, it gives the resulting vector"""
+
+
+class OscillatingVector(Vector):
+    def __init__(self, vectors=None,
+        amplitude=2,
+        frequency=0.5,
+        phase=0,
+        propagation_speed=1,
+        pathcolor=BLUE,
+        opacity=1, **kwargs):
+        super().__init__(**kwargs)
+
+        self.vectors = vectors if vectors else []
+        self.amplitude = amplitude
+        self.frequency = frequency
+        self.phase = phase
+        self.propagation_speed = propagation_speed
+        self.pathcolor = pathcolor
+        self.opacity = opacity
+
+        self.create_tip_and_path()
+        self.add_updater(self.update)
+
+    def create_tip_and_path(self):
+        self.tip_dot = Dot(color=DEFAULT_VECTOR_COLOR).set_opacity(DEFAULT_OPACITY)
+        self.path = TracedPath(self.tip_dot.get_center, 
+                               stroke_color=DEFAULT_PATH_COLOR, 
+                               stroke_width=2, 
+                               dissipating_time=DISSIPATING_TIME, 
+                               stroke_opacity=DEFAULT_OPACITY)
+
+    def update(self, dt, **kwargs):
+        resultant_vector = self.get_vector()
+        self.become(resultant_vector)
+        self.tip_dot.move_to(resultant_vector.get_end())
+        if len(self.vectors) > 0:
+            self.path.shift([0, 0, -self.vectors[0].propagation_speed * dt])  # Using the first vector's speed as the reference.
+
+    def get_vector(self):
+        resultant = np.array([0.0, 0.0, 0.0])
+
+        for vector in self.vectors:
+            resultant += vector.get_vector().get_end()
+
+        return Vector(resultant).set_color(self.color).set_opacity(self.opacity)
 
 class LightBase(Vector):
     def __init__(
@@ -126,6 +179,14 @@ class LightVectorScene(ThreeDScene):
             color=RED,
         )
 
+        # Now we make a vector that has PI/2 phase
+        y_field_shift = LightBase(
+            axis=RIGHT,
+            pathcolor=BLUE,
+            color=BLUE,
+            phase=PI,
+        )
+
 
         self.play(Create(axes))
         self.add(x_field, y_field)
@@ -146,21 +207,18 @@ class LightVectorScene(ThreeDScene):
 
         self.wait(2)
 
-        diagonal_vector = LightVector(x_field, y_field, color=BLUE) 
+        diagonal_vector = OscillatingVector(vectors=[x_field, y_field], color=BLUE) 
 
         self.play(FadeIn(diagonal_vector), FadeIn(diagonal_vector.path))
 
+        circular_vector = OscillatingVector(vectors=[x_field, y_field_shift], color=BLUE)
+
         self.wait(3)
 
-        # Now we make a vector that has PI/2 phase
-        y_field_shift = LightBase(
-            axis=RIGHT,
-            pathcolor=BLUE,
-            color=BLUE,
-            phase=PI,
-        )
+        
 
-        self.play(Transform(y_field, y_field_shift))
+        self.remove(y_field,diagonal_vector, diagonal_vector.path)
+        self.add(y_field_shift, circular_vector, circular_vector.path)
 
         self.wait(4)
 
