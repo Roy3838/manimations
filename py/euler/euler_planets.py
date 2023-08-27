@@ -591,12 +591,15 @@ class Euler(MovingCameraScene):
 
             grav_formula2=MathTex(r"F",r"=G\frac{m_{1}m_{2}}{r^{2}}"
                                   ).set_color(BLACK).move_to(ec_v_despejada1,UP)
-            grav_formula2_ma=MathTex(r"m_1\vec{a}",r"=G\frac{m_{1}m_{2}}{r^{2}}"
+            grav_formula2_ma=MathTex(r"m_1a",r"=",r"G\frac{m_{1}m_{2}}{r^{2}}"
+                                  ).set_color(BLACK).move_to(ec_v_despejada1,UP)
+            grav_formula2_vec = MathTex(r"\vec{a}",r"=",r"-G\frac{m_{2}}{\left|r\right|^{2}}\hat{r}"
                                   ).set_color(BLACK).move_to(ec_v_despejada1,UP)
             grav_formula2_ma[0].shift(LEFT*0.2)
 
             grav_formula2.shift(UP*0.5)
             grav_formula2_ma.shift(UP*0.5)
+            grav_formula2_vec.shift(UP*0.5)
 
             box_around_v=SurroundingRectangle(ec_v_despejada_final[2],buff=0.1).scale([0.3,1,1])
             v_i_box = SurroundingRectangle(v_i, buff = 0.1)
@@ -629,8 +632,13 @@ class Euler(MovingCameraScene):
             self.play(Write(box_around_a),Write(grav_formula2))
             self.wait()
             self.play(ReplacementTransform(grav_formula2[0],grav_formula2_ma[0]),)
-            self.wait(2)
-            self.play(Unwrite(grav_formula2),box_around_a.animate.shift(RIGHT*0.9))
+            
+            self.remove(grav_formula2_ma[1],grav_formula2_ma[2])
+            self.play(ReplacementTransform(grav_formula2_ma[0],grav_formula2_vec[0]),
+                        ReplacementTransform(grav_formula2_ma[1],grav_formula2_vec[1]),
+                        ReplacementTransform(grav_formula2[1],grav_formula2_vec[2]),)
+            self.wait()
+            self.play(Unwrite(grav_formula2_vec),box_around_a.animate.shift(RIGHT*0.9))
 
             self.play(box_around_a.animate.shift(RIGHT*1.3), Write(v_i_box2))
 
@@ -639,15 +647,26 @@ class Euler(MovingCameraScene):
 
             self.wait()
 
+            english = False
 
-            example_listing = Code(
-                "/home/jay/manimations/py/euler/example.py",
-                tab_width=4,
-                background="window",
-                language="python",
-                font="Monospace",
-                background_stroke_color= WHITE,
-            ).move_to(ec_v_despejada_final.get_center()+ UP*2).scale(0.5)
+            if english:
+                example_listing = Code(
+                    "/home/jay/manimations/py/euler/example.py",
+                    tab_width=4,
+                    background="window",
+                    language="python",
+                    font="Monospace",
+                    background_stroke_color= WHITE,
+                ).move_to(ec_v_despejada_final.get_center()+ UP*2).scale(0.5)
+            else:
+                example_listing = Code(
+                    "/home/jay/manimations/py/euler/examplespanish.py",
+                    tab_width=4,
+                    background="window",
+                    language="python",
+                    font="Monospace",
+                    background_stroke_color= WHITE,
+                ).move_to(ec_v_despejada_final.get_center()+ UP*2).scale(0.5)
 
             self.play(Write(example_listing))
 
@@ -748,9 +767,15 @@ class Euler(MovingCameraScene):
             self.play(Write(planet3),Create(vel3),Write(vel_boxes2))
             
             fuerzas3 = VGroup()
+            if english:
+                years_str = r"years"
+                ciclos_str = r"cycles"
+            else:
+                years_str = r"a\tilde{n}os"
+                ciclos_str = r"ciclos"
 
-            dt = MathTex(r"\Delta t =", r" 1.17 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            ciclos = Text(r"cycles = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            dt = MathTex(r"\Delta t =", " 1.17 {str}".format(str=years_str)).shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos = Text("{str} = 0".format(str=ciclos_str)).shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
             self.play(Write(dt),Write(ciclos))
             traced = TracedPath(planet3.get_center, stroke_color=GREY_C, stroke_width=1.5)
@@ -776,7 +801,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos.animate.become(Text("{str} = {i}".format(i=i, str=ciclos_str)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.5)
                     
                 else:
@@ -785,18 +810,32 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos.animate.become(Text("{str} = {i}".format(i=i, str=ciclos_str)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
 
                             run_time=0.5)
                 
                 vel_boxes2 = tempvel.copy()
                 
-                
-                self.play(Write(Fuerza3),
-                            ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
-                            ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
-                            ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
-                            run_time=0.5)
+                if i < 4:
+                    # Move the force to the tip of the velocity arrow
+                    force_position = (arrowplanets3[i].get_end() + arrowplanets3[i-1].get_end())*0.5
+
+                    self.play(Write(Fuerza3),
+                              ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
+                              ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
+                                run_time=0.5)
+                    
+                    self.play(Fuerza3.animate.move_to(force_position), run_time=0.5)
+
+                    self.play(ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
+                               run_time=0.5)
+
+                else:
+                    self.play(Write(Fuerza3),
+                                ReplacementTransform(arrowplanets3[i-1],arrowplanets3[i]),
+                                ReplacementTransform(pos_boxes2[0],vel_boxes2[0]),
+                                ReplacementTransform(pos_boxes2[1],vel_boxes2[1]),
+                                run_time=0.5)
                 
                 
                 
@@ -828,8 +867,8 @@ class Euler(MovingCameraScene):
             )
 
 
-            dt2 = MathTex(r"\Delta t =", r" 0.58 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            ciclos2 = Text(r"cycles= 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            dt2 = MathTex(r"\Delta t =", " 0.58 {str}".format(str=years_str)).shift(RIGHT*3+ DOWN*5).scale(1.5)
+            ciclos2 = Text("{str} = 0".format(str=ciclos_str)).shift(RIGHT*3+ DOWN*4).set_color(BLACK)
 
 
             self.play(ReplacementTransform(dt,dt2),ReplacementTransform(ciclos,ciclos2))
@@ -889,7 +928,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos2.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos2.animate.become(Text("{str} = {i}".format(i=i, str=ciclos_str)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
                             run_time=0.1)
                 else:
                     self.play(arrow_planets3[i-1].animate.move_to(pos3 + (v3i_1)/2),
@@ -897,7 +936,7 @@ class Euler(MovingCameraScene):
                         planet3.animate.move_to(pos3),
                             ReplacementTransform(vel_boxes2[0],pos_boxes2[0]),
                             ReplacementTransform(vel_boxes2[1],pos_boxes2[1]),
-                            ciclos2.animate.become(Text("cycles = {i}".format(i=i)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
+                            ciclos2.animate.become(Text("{str} = {i}".format(i=i, str=ciclos_str)).set_color(BLACK).shift(RIGHT*3+ DOWN*4)),
 
                             run_time=0.1)
                 
@@ -951,8 +990,8 @@ class Euler(MovingCameraScene):
             planet3.locations = P3/scalingfactor
             planet3.t_offset = 0
 
-            planet3.dt = MathTex(r"\Delta t =", r" 0.117 years").shift(RIGHT*3+ DOWN*5).scale(1.5)
-            planet3.ciclos = Text(r"cycles = 0").shift(RIGHT*3+ DOWN*4).set_color(BLACK)
+            planet3.dt = MathTex(r"\Delta t =", " 0.117 {str}".format(str=years_str)).shift(RIGHT*3+ DOWN*5).scale(1.5)
+            planet3.ciclos = Text("{str} = 0".format(str=ciclos_str)).shift(RIGHT*3+ DOWN*4).set_color(BLACK)
             planet3.ciclos.t_offset = 0
 
 
@@ -968,7 +1007,7 @@ class Euler(MovingCameraScene):
                 
             def ciclos_updater(mob,dt):
                 mob.t_offset += 1
-                mob.become(Text("cycles = {i}".format(i=mob.t_offset)).set_color(BLACK).shift(RIGHT*3+ DOWN*4))
+                mob.become(Text("{str} = {i}".format(i=mob.t_offset, str=ciclos_str)).set_color(BLACK).shift(RIGHT*3+ DOWN*4))
 
             planet3.add_updater(planet_updater)
             planet3.ciclos.add_updater(ciclos_updater)
