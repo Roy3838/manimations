@@ -8,6 +8,10 @@
 
 from manim import *
 
+DISSIPATING_TIME = 5
+DEFAULT_VECTOR_COLOR = BLUE
+DEFAULT_PATH_COLOR = BLUE
+DEFAULT_OPACITY = 1
 
 DISSIPATING_TIME = 5
 DEFAULT_VECTOR_COLOR = BLUE
@@ -110,50 +114,71 @@ class LightBase(Vector):
         ).set_opacity(self.opacity)
 
 
-class LightVector(Vector):
+class Combination(Vector):
     def __init__(
         self,
-        vector1,
-        vector2,
+        vectors,
         pathcolor=BLUE,
         opacity=1,
         propagation_speed=1,
+        phases = None,
         **kwargs
-        ):
-        self.vector1 = vector1
-        self.vector2 = vector2
+    ):
+        super().__init__(**kwargs)
+
 
         self.pathcolor = pathcolor
         self.opacity = opacity
         self.propagation_speed = propagation_speed
 
+        self.vectors = vectors if vectors else []
+        
+        # Initialize the phase trackers for each vector
+        if phases is None:
+            phases = [0] * len(self.vectors)
+        
+        self.phase_trackers = [ValueTracker(phase) for phase in phases]
+
+        self.create_tip_and_path()
+        self.add_updater(self.update)
+
+    def create_tip_and_path(self):
+        # Assuming the first vector is representative for settings like color
+        first_vector = self.vectors[0] if self.vectors else None
+
+        if not first_vector:
+            raise ValueError("No vectors provided for creating tip and path.")
+
         # Create Dot that will be at the tip of the resultant vector
-        self.tip_dot = Dot(color=pathcolor).set_opacity(self.opacity)
+        self.tip_dot = Dot(color=first_vector.color).set_opacity(self.opacity)
 
         # Create TracedPath attached to the Dot
-        self.path = TracedPath(self.tip_dot.get_center, 
-                               stroke_color=self.pathcolor, stroke_width=2, 
-                               dissipating_time=5, stroke_opacity=self.opacity)
+        self.path = TracedPath(
+            self.tip_dot.get_center,
+            stroke_color=self.pathcolor, 
+            stroke_width=2,
+            dissipating_time=5,
+            stroke_opacity=self.opacity
+        )
         
+    def get_vector(self):
+        resultant = np.array([0.0, 0.0, 0.0])
 
-        super().__init__(**kwargs)
+        for idx, vector in enumerate(self.vectors):
+            # Update the phase of each vector using its phase tracker
+            if hasattr(vector, 'phase'):
+                vector.phase = self.phase_trackers[idx].get_value()
+            resultant += vector.get_end()  # Use get_end directly since vector is of type Vector.
 
-        self.add_updater(self.update)
-        
+        return Vector(resultant).set_color(self.color).set_opacity(self.opacity)
 
-    def update(self,dt,**kwargs):
+    def update(self, dt, **kwargs):
         resultant_vector = self.get_vector()
         self.become(resultant_vector)  # Keep the vector static
         self.tip_dot.move_to(resultant_vector.get_end())  # Move Dot to the end of the resultant vector
-        self.path.shift([0, 0, -self.propagation_speed * dt])  # Move the TracedPath backwards in the z-direction
+        # Assuming a propagation speed; you can modify this as needed
+        self.path.shift([0, 0, -self.propagation_speed * dt])  # Use propagation_speed from Combination directly.
 
-
-    def get_vector(self):
-        v1_end = self.vector1.get_vector().get_end()
-        v2_end = self.vector2.get_vector().get_end()
-        # Resultant vector is the sum of v1 and v2
-        resultant = v1_end + v2_end
-        return Vector(resultant).set_color(self.color).set_opacity(self.opacity)
 
 
 
@@ -169,6 +194,7 @@ class LightVectorScene(ThreeDScene):
         ).set_color(BLACK)
 
         x_field = LightBase(
+            axis=UP,
             pathcolor=BLUE,
             color=BLUE,
         )
@@ -215,10 +241,15 @@ class LightVectorScene(ThreeDScene):
 
         self.wait(3)
 
-        
+        # Now we make a vector that has PI/2 phase
+        y_field_shift = LightBase(
+            axis=RIGHT,
+            pathcolor=BLUE,
+            color=BLUE,
+            phase=PI,
+        )
 
-        self.remove(y_field,diagonal_vector, diagonal_vector.path)
-        self.add(y_field_shift, circular_vector, circular_vector.path)
+        self.play(Transform(y_field, y_field_shift))
 
         self.wait(4)
 
