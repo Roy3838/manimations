@@ -18,10 +18,8 @@ DEFAULT_VECTOR_COLOR = BLUE
 DEFAULT_PATH_COLOR = BLUE
 DEFAULT_OPACITY = 1
 
-
 """Final Class Merging together LightBase and Light Vector, when given a base, it oscilates
 in that base, when given two vectors, it gives the resulting vector"""
-
 
 class OscillatingVector(Vector):
     def __init__(self, vectors=None,
@@ -221,7 +219,7 @@ class LightVectorScene(ThreeDScene):
         self.move_camera(phi = 45*DEGREES, theta= (-15+90)* DEGREES,gamma = (270-15/2)* DEGREES, distance = 10, run_time = 2)
 
         self.wait(2)
-        self.play(FadeOut(y_field), FadeOut(y_field.path), FadeOut(x_field.path))
+        self.remove(y_field, y_field.path, x_field.path)
 
         self.wait()
 
@@ -249,7 +247,15 @@ class LightVectorScene(ThreeDScene):
             phase=PI,
         )
 
+        
+
+        self.move_camera(phi = 0*DEGREES, theta= (0)* DEGREES,gamma = (0)* DEGREES, distance = 10, run_time = 2)
+
+
         self.play(Transform(y_field, y_field_shift))
+
+        self.add(circular_vector, circular_vector.path)
+        
 
         self.wait(4)
 
