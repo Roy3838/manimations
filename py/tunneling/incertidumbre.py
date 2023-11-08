@@ -6,6 +6,9 @@ height=1920
 config.frame_size = [width, height]
 
 
+BOX_WIDTH = 10
+BOX_HEIGHT = 14
+
 
 
 
@@ -17,9 +20,9 @@ class Uncertainty(ZoomedScene):
         # Updater that tells the particle where to go and to bounce off the walls
         def bounce(particle, dt):
             particle.shift(particle.velocity * dt)
-            if particle.get_bottom()[1] <= -4 or particle.get_top()[1] >= 4:
+            if particle.get_bottom()[1] <= -BOX_HEIGHT/2 or particle.get_top()[1] >= BOX_HEIGHT/2:
                 particle.velocity[1] = -particle.velocity[1]
-            if particle.get_left()[0] <= -4 or particle.get_right()[0] >= 4:
+            if particle.get_left()[0] <= -BOX_WIDTH/2 or particle.get_right()[0] >= BOX_WIDTH/2:
                 particle.velocity[0] = -particle.velocity[0]
 
             # Updater that creates a trail behind the particle
@@ -35,16 +38,24 @@ class Uncertainty(ZoomedScene):
             # Set the particle to be photographed
             particle.photographed = True
             # Wait n frames
+            first_pos = particle.get_center()
+
             self.wait(seconds)
+            
+            second_pos = particle.get_center()
             # Set the particle to not be photographed
             particle.photographed = False
 
-        
+            return first_pos, second_pos
+            
+            
+
+         
 
 
 
         # Box
-        box = Rectangle(width=8, height=8, color=GREY_B, stroke_width=3)
+        box = Rectangle(width=BOX_WIDTH, height=BOX_HEIGHT, color=GREY_B, stroke_width=3)
 
 
         # Particle 
@@ -55,8 +66,12 @@ class Uncertainty(ZoomedScene):
 
         self.add(box, particle)
         self.wait(3)
-        take_photograph(1/60)
+        first_pos, second_pos = take_photograph(1/60)
         self.wait(3)
-
+        first_pos, second_pos = take_photograph(0.6)
+        self.wait(3)
+        
+        arrow = BraceBetweenPoints(first_pos, second_pos, color=GREY_D)
+        self.play(Create(arrow))
 
 

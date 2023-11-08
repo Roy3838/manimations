@@ -56,7 +56,7 @@ class BlochSphere(ThreeDScene):
         label_computing = Tex(r"$\ket{Computing}$",tex_template=myTemplate, color=GREY_B).scale(0.5)
         # Add label_roy to fixed_in_frame_mobjects
         self.add_fixed_in_frame_mobjects(label_roy, label_quantum, label_computing)
-        label_roy.shift(RIGHT*2.5+DOWN*0.8)
+        label_roy.shift(RIGHT*2.5+DOWN*1.55)
         label_quantum.shift(UP*0.5+RIGHT*1.8)
         label_computing.shift(DOWN*3.5+RIGHT*1.8)
 
