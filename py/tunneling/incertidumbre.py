@@ -71,7 +71,11 @@ class Uncertainty(ZoomedScene):
         first_pos, second_pos = take_photograph(0.6)
         self.wait(3)
         
-        arrow = BraceBetweenPoints(first_pos, second_pos, color=GREY_D)
-        self.play(Create(arrow))
+        arrow = BraceBetweenPoints(first_pos, second_pos, color=GREY_D, buff = 0.5)
+        arrow_text = MathTex(r"\Delta x", color=GREY_D).scale(1.5)
 
+        
+        self.play(Create(arrow))
+        self.play(Create(arrow_text))
+        self.wait(3)
 
