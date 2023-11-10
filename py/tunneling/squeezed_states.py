@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from qutip import plot_wigner , wigner, fock, displace, squeeze, coherent, basis 
+from qutip import plot_wigner , wigner, fock, displace, squeeze, coherent, basis, ket2dm, qfunc 
 from matplotlib import transforms
 from manim import *
 from qutip.states import ket2dm
@@ -67,7 +67,8 @@ def plot_wigner_modded(rho, fig=None, ax=None, figsize=(6, 6),
         rho = ket2dm(rho)
 
     xvec = np.linspace(-alpha_max, alpha_max, 200)
-    W0 = wigner(rho, xvec, xvec, method=method)
+    #W0 = wigner(rho, xvec, xvec, method=method)
+    W0 = qfunc(rho, xvec, xvec, g=2)
 
     W, yvec = W0 if isinstance(W0, tuple) else (W0, xvec)
 
@@ -88,15 +89,15 @@ def plot_wigner_modded(rho, fig=None, ax=None, figsize=(6, 6),
 
 
 N = 30
-w = 1/4 
+w = 1/6 
 
 def W_q_p(t=0):
-    psi =  displace(N,2) * squeeze(N, 1.0) * coherent(N,3*np.exp(1j * w * t))#* np.exp(-1j * w * t)
+    psi =   coherent(N,3*np.exp(1j * w * t))#* np.exp(-1j * w * t) squeeze(N, 1.0) *
 
     
     #psi = displace(N,3) * squeeze(N, 1) * fock(N,0) * np.exp(-1j * w * t)
-    psi_t = squeeze(1, 1 ) * coherent(N,3*np.exp(1j * w * t))
-    xvec, yvec, W , wlim = plot_wigner_modded(psi)
+    psi_t = squeeze(N, 1 )* displace(N,3) * fock(N,0)
+    xvec, yvec, W , wlim = plot_wigner_modded(psi_t)
     return xvec, yvec, W , wlim
 
 fig, ax = plt.subplots()
@@ -106,6 +107,6 @@ def update(i):
     xvec, yvec, W , wlim = W_q_p(t=i)
     ax.contourf(xvec, yvec, W, 100)
 
-ani = FuncAnimation(fig, update, frames=range(0,10), interval=200)
+ani = FuncAnimation(fig, update, frames=range(0,100), interval=200)
 
 plt.show()
