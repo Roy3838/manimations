@@ -16,6 +16,24 @@ p = -1j * (a - a.dag())/np.sqrt(2)
 H = w * a.dag() * a
 c_ops = []
 
+def plot_wigner_modded(rho, fig=None, ax=None, figsize=(6, 6),
+                cmap=None, alpha_max=7.5, colorbar=False,
+                method='clenshaw', projection='2d'):
+    if isket(rho):
+        rho = ket2dm(rho)
+
+    xvec = np.linspace(-alpha_max, alpha_max, 200)
+    #W0 = wigner(rho, xvec, xvec, method=method)
+    W0 = qfunc(rho, xvec, xvec, g=2)
+
+    W, yvec = W0 if isinstance(W0, tuple) else (W0, xvec)
+
+    wlim = abs(W).max()
+
+
+    return xvec, yvec, W , wlim
+
+
 # uncomment to see how things change when disspation is included
 # c_ops = [np.sqrt(0.25) * a]
 def plot_expect_with_variance(N, op_list, op_title, states):
@@ -37,25 +55,33 @@ def plot_expect_with_variance(N, op_list, op_title, states):
         axes[idx].set_title(op_title[idx])
 
     return fig, axes
-from base64 import b64encode
 
-def display_embedded_video(filename):
-    video = open(filename, "rb").read()
-    video_encoded = b64encode(video).decode("ascii")
-    video_tag = '<video controls alt="test" src="data:video/x-m4v;base64,{0}">'.format(video_encoded)
-    return HTML(video_tag)
-psi0 = coherent(N, 2.0)
+
+
+psi0 = squeeze(N,1) * coherent(N, 2.0)
 result = mesolve(H, psi0, tlist, c_ops, [])
-plot_expect_with_variance(N, [n, x, p], [r'$n$', r'$x$', r'$p$'], result.states);
-fig, axes = plt.subplots(1, 2, figsize=(10,5))
-
-def update(n):
-    axes[0].cla()
-    plot_wigner_fock_distribution(result.states[n], fig=fig, axes=axes)
-
-anim = FuncAnimation(fig, update, frames=len(result.states), blit=True)
-
+# plot_expect_with_variance(N, [n, x, p], [r'$n$', r'$x$', r'$p$'], result.states)
+# xvec, yvec, W , wlim=plot_wigner_modded(result.states)
+xvec = np.linspace(-7.5, 7.5, 200)
+ 
+W = qfunc(ket2dm(result.states[9]),xvec,xvec)
+plt.contourf(W,10)
 plt.show()
+print(W)
+# print(W.shape)
+# plt.contourf(xvec, yvec, W[0], 100)
+# plt.show()
+
+
+
+# fig, axes = plt.subplots(1, 2, figsize=(10,5))
+# def update(n):
+#     axes[0].cla()
+#     plot_wigner_fock_distribution(result.states[n], fig=fig, axes=axes)
+
+# anim = FuncAnimation(fig, update, frames=len(result.states), blit=True)
+
+# plt.show()
 
 #anim.save('/tmp/animation-coherent-state.mp4', fps=20, writer="avconv", codec="libx264")
 
