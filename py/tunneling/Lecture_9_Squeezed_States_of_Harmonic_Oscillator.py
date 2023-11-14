@@ -5,7 +5,7 @@ from IPython.display import HTML
 from matplotlib.animation import FuncAnimation
 from qutip import *
 N = 35
-w = 1 * 2 * np.pi              # oscillator frequency
+w = 0.75 * np.pi               # oscillator frequency
 tlist = np.linspace(0, 4, 101) # periods
 # operators
 a = destroy(N)
@@ -49,7 +49,7 @@ def plot_expect_with_variance(N, op_list, op_title, states):
         e_op = expect(op, states)
         v_op = variance(op, states)
 
-        axes[idx].fill_between(tlist, e_op - np.sqrt(v_op), e_op + np.sqrt(v_op), color="green", alpha=0.5);
+        axes[idx].fill_between(tlist, e_op - np.sqrt(v_op), e_op + np.sqrt(v_op), color="green", alpha=0.5)
         axes[idx].plot(tlist, e_op, label="expectation")
         axes[idx].set_xlabel('Time')
         axes[idx].set_title(op_title[idx])
@@ -58,16 +58,43 @@ def plot_expect_with_variance(N, op_list, op_title, states):
 
 
 
-psi0 = squeeze(N,1) * coherent(N, 2.0)
+psi0 =  squeeze(N,1) * displace(N,1) * coherent(N, 1.0)
 result = mesolve(H, psi0, tlist, c_ops, [])
 # plot_expect_with_variance(N, [n, x, p], [r'$n$', r'$x$', r'$p$'], result.states)
 # xvec, yvec, W , wlim=plot_wigner_modded(result.states)
-xvec = np.linspace(-7.5, 7.5, 200)
- 
-W = qfunc(ket2dm(result.states[9]),xvec,xvec)
-plt.contourf(W,10)
+# Define your parameters
+N = 30
+w = 1/6
+
+def W_q_p(i=0):
+    # Assuming result.states[i] gives you the state for the ith value
+    xvec, yvec, W, wlim = plot_wigner_modded(result.states[i])
+    return xvec, yvec, W, wlim
+
+# Create the figure and axes for the animation
+fig, ax = plt.subplots()
+
+# Update function for the animation
+def update(i):
+    ax.clear()
+    xvec, yvec, W, wlim = W_q_p(i)
+    contour = ax.contourf(xvec, yvec, W, 100)
+    return contour,
+
+# Create the animation
+ani = FuncAnimation(fig, update, frames=range(101), interval=200)
+
+# To display the animation inline (for example in a Jupyter notebook)
+# from IPython.display import HTML
+# HTML(ani.to_jshtml())
+
+# To save the animation as a file (uncomment and modify the below line)
+# ani.save('wigner_function_animation.mp4', writer='ffmpeg')
+
 plt.show()
-print(W)
+
+
+
 # print(W.shape)
 # plt.contourf(xvec, yvec, W[0], 100)
 # plt.show()
