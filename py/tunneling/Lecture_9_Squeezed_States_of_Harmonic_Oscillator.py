@@ -58,7 +58,7 @@ def plot_expect_with_variance(N, op_list, op_title, states):
 
 
 
-psi0 =  squeeze(N,1) * displace(N,1) * coherent(N, 1.0)
+psi0 =  squeeze(N,1) * displace(N,1) * coherent(N, 3.0)
 result = mesolve(H, psi0, tlist, c_ops, [])
 # plot_expect_with_variance(N, [n, x, p], [r'$n$', r'$x$', r'$p$'], result.states)
 # xvec, yvec, W , wlim=plot_wigner_modded(result.states)

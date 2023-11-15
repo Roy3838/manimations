@@ -60,6 +60,7 @@ class HarmonicOscillator(Scene):
             W = W/wlim
             W = W*255
             img.funcs.append(W)
+            print(i)
         self.add(img)
         img.add_updater(function_updater)
         self.wait(1)
