@@ -9,8 +9,8 @@ class HarmonicOscillator(Scene):
     def construct(self):
          
         N = 35
-        w = 0.75 * np.pi               # oscillator frequency
-        tlist = np.linspace(0, 4, 101)  # periods
+        w = 1.75 * np.pi               # oscillator frequency
+        tlist = np.linspace(0, 9, 1000)  # periods
         # operators
         a = destroy(N)
         n = num(N)
@@ -47,12 +47,12 @@ class HarmonicOscillator(Scene):
             return xvec, yvec, W, wlim
 
         def function_updater(image, dt):
-            density = image.funcs[int(dt*30)]
+            density = image.funcs[int(dt*60)]
             image.become(ImageMobject(density))
 
 
 
-        img = ImageMobject([0]).scale(5)
+        img = ImageMobject(np.zeros((200,200))).scale(5)
         img.funcs = []
 
         for i in range(len(result.states)):
