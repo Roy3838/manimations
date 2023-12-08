@@ -41,18 +41,27 @@ class EnergyGraph(ThreeDScene):
 
 
         # Label for y-axis
-        y_label = axes.get_y_axis_label("w_i").set_color(BLACK).rotate(-PI/2)
-        x_label = axes.get_x_axis_label("w_s").set_color(BLACK)
+        y_label = axes.get_y_axis_label(r"\Delta_{s,i}").set_color(BLACK).rotate(-PI/2)
+        x_label = axes.get_x_axis_label("w_p").set_color(BLACK)
 
         func1p = ParametricFunction(func1, t_range=[-2.8, 3], color=RED)
         func2p = ParametricFunction(func2, t_range=[-2.8, 3], color=RED)
         func1p.shift(LEFT*3+ 2*DOWN + OUT)
         func2p.shift(LEFT*3+ 2*DOWN + OUT)
 
+        # Label the func1p and func2p as DK = 0
+        dk1 = MathTex(r"\Delta_{s,i} = 0").set_color(BLACK)
+        dk1.next_to(func1p, RIGHT*2)
+
+
         func3d = Surface(func, u_range=[0, 1.1], v_range=[-PI, PI], stroke_color=BLACK)
         func3d.set_fill_by_checkerboard(RED_A, RED_A, opacity=0.5)
         func3d.shift(LEFT*2)
         func3d.scale(3)
+        z_label = axes.get_z_axis_label(r"\Delta_{r,s,i}").set_color(BLACK).shift(OUT)
+
+        # Label func3d as DK = 0
+        dk2 = MathTex(r"\Delta_{r,s,i} = 0").set_color(BLACK).next_to(func3d, OUT*2)
 
 
 
@@ -67,10 +76,16 @@ class EnergyGraph(ThreeDScene):
         self.wait()
         self.play(Create(func1p))
         self.play(Create(func2p))
+        self.wait()
+        self.play(Create(dk1))
+        self.wait()
 
         self.move_camera(phi=PI/4, theta=-PI/2)
         self.play(Create(axes.z_axis))
+        self.play(ReplacementTransform(y_label, z_label))
         self.wait()
 
         self.play(Create(func3d), FadeOut(func1p), FadeOut(func2p))
-        self.wait()
+        self.play(ReplacementTransform(dk1, dk2))
+        self.begin_3dillusion_camera_rotation(rate=0.1)
+        self.wait(3)
