@@ -3,7 +3,10 @@ import numpy as np
 
 class HarmonicOscillator(Scene):
     def construct(self):
-        img = ImageMobject(np.zeros((200, 200))).scale(5)
+        # Set background color
+        self.camera.background_color ="#E2E2E2"
+        img_size = 5
+        img = ImageMobject(np.zeros((200, 200))).scale(img_size)
 
         # Load W matrices from the binary file
         W_matrices = np.load('tunneling/W_matrices.npy')
@@ -16,7 +19,7 @@ class HarmonicOscillator(Scene):
         def function_updater(image, dt):
             image.t_offset += dt
             density = image.funcs[int(image.t_offset*60) % len(image.funcs)]
-            image.become(ImageMobject(density))
+            image.become(ImageMobject(density).scale(img_size))
 
         img.add_updater(function_updater)
         self.add(img)
