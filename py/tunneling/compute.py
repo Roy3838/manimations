@@ -2,7 +2,7 @@ import numpy as np
 from qutip import destroy, num, ket2dm, squeeze, displace, coherent, mesolve, qfunc, isket
 
 N = 35
-w = 1.75 * np.pi  # oscillator frequency
+w = 1 * np.pi  # oscillator frequency
 tlist = np.linspace(0, 9, 101)  # periods
 a = destroy(N)
 H = w * a.dag() * a

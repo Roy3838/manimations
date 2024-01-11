@@ -13,7 +13,7 @@ alpha_max = 7.5  # This should be consistent with compute.py
 xvec = np.linspace(-alpha_max, alpha_max, W_matrices.shape[1])
 yvec = np.linspace(-alpha_max, alpha_max, W_matrices.shape[2])
 
-def select_random_points(W):
+def select_random_points_deprecated(W):
     # Normalize W to make it a probability distribution
     W_normalized = W / np.sum(W)
 
@@ -29,6 +29,38 @@ def select_random_points(W):
 
     return x_index, y_index
 
+def select_random_points(W):
+    # Normalize W to make it a probability distribution
+    W_normalized = W / np.sum(W)
+
+    # Sum over y-axis to get a 1D probability distribution for x
+    prob_x = np.sum(W_normalized, axis=0)
+    x_index = np.random.choice(range(len(prob_x)), p=prob_x)
+
+    # Plot using matplotlib, plot the W matrix and the x_index as a line
+    # plt.imshow(W_normalized, cmap='hot', interpolation='nearest')
+    # plt.axvline(x=x_index, color='blue')
+    # plt.title('Probability Density Matrix with Selected X')
+    # plt.show()
+
+    # Given the x_index chosen, make sum probability of y in that line
+    prob_y_given_x = W_normalized[:, x_index]
+    prob_y_given_x /= np.sum(prob_y_given_x)
+
+    # Choose y index given the probability sum of y
+    y_index = np.random.choice(range(len(prob_y_given_x)), p=prob_y_given_x)
+
+    # Plot now the probability distribution of y in the x line, then the y point chosen
+    # plt.plot(prob_y_given_x)
+    # plt.axvline(x=y_index, color='red')
+    # plt.title('Probability Distribution of Y given X')
+    # plt.show()
+
+    return x_index, y_index
+
+
+
+
 # Update function for the animation
 def update(i):
     ax.clear()
@@ -38,13 +70,58 @@ def update(i):
     # select 5 indices 
     for _ in range(400):
         x_index, y_index = select_random_points(W)
-        ax.scatter(xvec[x_index], yvec[y_index], color='red')
+        P = xvec[x_index]
+        Q = yvec[y_index]
+        ax.scatter(P, Q, color='red')
+        
     return contour,
 
 # Create the animation
 ani = FuncAnimation(fig, update, frames=range(len(W_matrices)), interval=200)
 
-# To display the animation, uncomment the following line
+# Select random points from the first distribution
+#fig, ax = plt.subplots()
+
+# Call the update function for the first frame
+#update(0)
+
+# Show the plot
+#plt.show()
+
+
+# Plot the Electric Field given the squeezed state
+def create_electrical_field_plot(W_matrices):
+    
+
+    res = 5
+    # Prelocate E_field with size len(W_matrices)*res
+    total_cycles = len(W_matrices)*res + 1
+    E_field = [0.0 for i in range(total_cycles)]
+    E_field_quantum = E_field
+    E_field_theoretical = E_field
+
+    count = 0
+    time = np.linspace(0,10,total_cycles)
+    for i in range (len(W_matrices)):
+        W = W_matrices[i, :, :] / W_matrices[i, :, :].max()
+        
+        
+        # As a for loop
+        for m in range(res):
+            count+=1
+            x_index, y_index = select_random_points(W)
+            Q = xvec[x_index]
+            P = yvec[y_index]
+            plt.scatter(Q,P)
+            E_field[count] =  E_field[count-1] + Q + P
+            E_field_quantum[count] = Q* np.cos(time[count]) - P* np.sin(time[count])
+            E_field_theoretical[count] = np.cos(time[count]) - np.sin(time[count])
+
+    # plot E_field
+    # plt.plot(E_field)
+    #plt.plot(E_field_theoretical)
+#create_electrical_field_plot(W_matrices)
+
 plt.show()
 
 # To save the animation, uncomment the following line
