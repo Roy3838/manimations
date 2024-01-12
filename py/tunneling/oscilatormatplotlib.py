@@ -68,7 +68,7 @@ def update(i):
     contour = ax.contourf(xvec, yvec, W, 100)
     
     # select 5 indices 
-    for _ in range(400):
+    for _ in range(40):
         x_index, y_index = select_random_points(W)
         P = xvec[x_index]
         Q = yvec[y_index]
@@ -77,7 +77,7 @@ def update(i):
     return contour,
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=range(len(W_matrices)), interval=200)
+# ani = FuncAnimation(fig, update, frames=range(len(W_matrices)), interval=200)
 
 # Select random points from the first distribution
 #fig, ax = plt.subplots()
@@ -93,18 +93,18 @@ ani = FuncAnimation(fig, update, frames=range(len(W_matrices)), interval=200)
 def create_electrical_field_plot(W_matrices):
     
 
-    res = 5
+    res = 10
     # Prelocate E_field with size len(W_matrices)*res
     total_cycles = len(W_matrices)*res + 1
     E_field = [0.0 for i in range(total_cycles)]
-    E_field_quantum = E_field
-    E_field_theoretical = E_field
+    quantum = [0.0 for i in range(total_cycles)]
+    theoretical = [0.0 for i in range(total_cycles)]
 
     count = 0
-    time = np.linspace(0,10,total_cycles)
+    time = np.linspace(0,2,total_cycles)
     for i in range (len(W_matrices)):
         W = W_matrices[i, :, :] / W_matrices[i, :, :].max()
-        
+        # plt.contourf(xvec,yvec,W,100) 
         
         # As a for loop
         for m in range(res):
@@ -112,15 +112,16 @@ def create_electrical_field_plot(W_matrices):
             x_index, y_index = select_random_points(W)
             Q = xvec[x_index]
             P = yvec[y_index]
-            plt.scatter(Q,P)
-            E_field[count] =  E_field[count-1] + Q + P
-            E_field_quantum[count] = Q* np.cos(time[count]) - P* np.sin(time[count])
-            E_field_theoretical[count] = np.cos(time[count]) - np.sin(time[count])
-
+            # plt.scatter(Q,P)
+            E_field[count] =  P
+            # quantum[count] = Q* np.cos(time[count]/np.pi) - P* np.sin(time[count]/np.pi)
+            theoretical[count] = np.cos(time[count]*20) - np.sin(time[count]*20)
+        # plt.show()
     # plot E_field
-    # plt.plot(E_field)
+    plt.plot(time,E_field)
+    plt.plot(time,theoretical)
     #plt.plot(E_field_theoretical)
-#create_electrical_field_plot(W_matrices)
+create_electrical_field_plot(W_matrices)
 
 plt.show()
 
