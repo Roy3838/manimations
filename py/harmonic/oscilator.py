@@ -1,5 +1,17 @@
 from manim import *
 import numpy as np
+import termplotlib as tp
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def terminalplot(x,y=None):
+    if y is None:
+        y = x
+        x = np.arange(len(y))
+    fig = tp.figure()
+    fig.plot(x,y)
+    fig.show()
 
 class OscillatingSquare(VGroup):
     def __init__(self, phi, w=np.pi, opacity = 0.1, A=2, scale =0.5 , **kwargs):
@@ -21,12 +33,14 @@ class Oscilator(Scene):
         self.camera.background_color = "#E2E2E2"
 
         num_squares = 50  # Number of squares
-        phis = np.random.normal(0, 1, num_squares)  # Normally distributed phi values
-        print(phis)
+        phis = np.random.normal(0, 0.5, num_squares)  # Normally distributed phi values
         for phi in phis:
-            square = OscillatingSquare(phi, scale = np.abs( np.sig( 1/phi )))
+            square = OscillatingSquare(phi, scale =sigmoid(0.3*np.abs(1/phi)))
             self.add(square)
 
-        self.wait(3)
+
+        #plot in order from low to high
+        terminalplot(np.sort(phis))
+        self.wait(10)
 
             
