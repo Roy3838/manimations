@@ -35,7 +35,7 @@ class Oscilator(Scene):
         num_squares = 50  # Number of squares
         phis = np.random.normal(0, 0.5, num_squares)  # Normally distributed phi values
         for phi in phis:
-            square = OscillatingSquare(phi, scale =sigmoid(0.3*np.abs(1/phi)))
+            square = OscillatingSquare(phi, scale =sigmoid(0.3*np.abs(1/phi))-0.4)
             self.add(square)
 
 
