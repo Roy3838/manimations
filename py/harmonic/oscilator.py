@@ -15,6 +15,16 @@ def terminalplot(x,y=None):
 
 class Spring(VMobject):
     def __init__(self, start=LEFT, end=RIGHT, num_coils=5, width=2, **kwargs):
+        """
+        Creates a spring object.
+
+        Parameters:
+        - start (np.ndarray): The starting point of the spring. Default is LEFT.
+        - end (np.ndarray): The ending point of the spring. Default is RIGHT.
+        - num_coils (int): The number of coils in the spring. Default is 5.
+        - width (float): The width of the spring. Default is 2.
+        - kwargs: Additional keyword arguments to be passed to the VMobject constructor.
+        """
         super().__init__(**kwargs)
         self.start = start
         self.end = end
@@ -23,6 +33,9 @@ class Spring(VMobject):
         self.draw_spring()
 
     def draw_spring(self):
+        """
+        Draws the spring based on the current start, end, num_coils, and width values.
+        """
         self.clear_points()
         direction = self.end - self.start
         length = np.linalg.norm(direction)
@@ -42,6 +55,13 @@ class Spring(VMobject):
         self.set_points_as_corners(points)
 
     def put_start_and_end_on(self, start, end):
+        """
+        Updates the start and end points of the spring and redraws it.
+
+        Parameters:
+        - start (np.ndarray): The new starting point of the spring.
+        - end (np.ndarray): The new ending point of the spring.
+        """
         self.start = start
         self.end = end
         self.draw_spring()
