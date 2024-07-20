@@ -88,7 +88,9 @@ class Bases(ThreeDScene):
         self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
 
         # Align before removing updaters
-        self.play(FadeOut(Dot1),FadeOut(Dot2), FadeOut(Dot_suma), FadeOut(self.path1), FadeOut(self.path2), FadeOut(self.path_suma), FadeOut(Line1), FadeOut(Line2), run_time = 0.8)
+        self.play(FadeOut(Dot1),FadeOut(Dot2), FadeOut(Dot_suma), 
+                  FadeOut(self.path1), FadeOut(self.path2), 
+                  FadeOut(self.path_suma), FadeOut(Line1), FadeOut(Line2), run_time = 0.8)
 
         # Remove updaters
         Dot1.clear_updaters()
@@ -120,7 +122,10 @@ class Bases(ThreeDScene):
         time += 4*PI
         self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
 
-        self.play(FadeOut(Dot1),FadeOut(Dot2), FadeOut(Dot_suma), FadeOut(self.path1), FadeOut(self.path2), FadeOut(self.path_suma), FadeOut(Line1), FadeOut(Line2),run_time = 0.8)
+        self.play(FadeOut(Dot1),FadeOut(Dot2), 
+                  FadeOut(Dot_suma), FadeOut(self.path1), 
+                  FadeOut(self.path2), FadeOut(self.path_suma), 
+                  FadeOut(Line1), FadeOut(Line2),run_time = 0.8)
 
 
         # Remove updaters
@@ -143,7 +148,10 @@ class Bases(ThreeDScene):
         self.path2 = TracedPath(Dot2.get_center, stroke_color=BLUE, stroke_width=2,dissipating_time=2)
         self.path_suma = TracedPath(Dot_suma.get_center, stroke_color=GREEN, stroke_width=2,dissipating_time=2)
 
-        self.play(FadeIn(Dot1),FadeIn(Dot2), FadeIn(Dot_suma), FadeIn(self.path1), FadeIn(self.path2), FadeIn(self.path_suma), FadeIn(Line1), FadeIn(Line2), run_time = 0.8)
+        self.play(FadeIn(Dot1),FadeIn(Dot2), 
+                  FadeIn(Dot_suma), FadeIn(self.path1), 
+                  FadeIn(self.path2), FadeIn(self.path_suma), 
+                  FadeIn(Line1), FadeIn(Line2), run_time = 0.8)
 
         time += 4*PI
         self.play(param1.animate.set_value(time), param2.animate.set_value(time), rate_func=linear, run_time=5)
