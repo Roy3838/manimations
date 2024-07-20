@@ -59,7 +59,7 @@ class OpeningManim(Scene):
         inveigenmatrix = np.linalg.inv(np.matrix(eigenmatrix))
             
 
-        two_identity = [[2,0],[0,2]]
+        identity = np.matrix([[1,0],[0,1]])
         eigengrid = NumberPlane()
         
 
@@ -72,7 +72,7 @@ class OpeningManim(Scene):
         self.wait(3)
         
 
-        self.play(ApplyMatrix(two_identity,eigengrid),run_time=2)
+        self.play(ApplyMatrix(2*identity,eigengrid),run_time=2)
 
         self.play(ApplyMatrix(inveigenmatrix,eigengrid),run_time=3)
         
