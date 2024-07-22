@@ -35,8 +35,8 @@ class BlochSphere(ThreeDScene):
 
         # Quantum State |ψ⟩ vector
         vector = [1.1,1.4,1]
-        quantum_vector = Arrow3D(ORIGIN, vector, color=GREY_B,thickness=0.005).set_opacity(0.4)
-        quantum_vector.cone.scale(0.5).set_opacity(0.4)
+        quantum_vector = Arrow3D(ORIGIN, vector, color=GREY_A,thickness=0.005).set_opacity(0.2)
+        quantum_vector.cone.scale(0.5).set_opacity(0.2)
 
         # Dotted projection to z=0 plane
         projection_end = [vector[0], vector[1], 0]
@@ -54,6 +54,7 @@ class BlochSphere(ThreeDScene):
         label_quantum = Tex(r"$\ket{Quantum}$",tex_template=myTemplate, color=GREY_B).scale(0.5)
         # Label \ket{Computing}
         label_computing = Tex(r"$\ket{Computing}$",tex_template=myTemplate, color=GREY_B).scale(0.5)
+
         # Add label_roy to fixed_in_frame_mobjects
         self.add_fixed_in_frame_mobjects(label_roy, label_quantum, label_computing)
         label_roy.shift(RIGHT*2.5+DOWN*1.55)
