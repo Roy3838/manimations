@@ -88,23 +88,23 @@ class OTP(Scene):
 
             # xor operation equations LaTeX
 
-            texto1=Text("operacion XOR").scale(0.7).to_edge(UL).set_color(BLACK)
-            bits=MathTex('0 \\oplus 0 = 0').scale(0.7).shift(UP).set_color(BLACK)
-            bits2=MathTex("0 \\oplus 1 = 1").scale(0.7).next_to(bits,DOWN).set_color(BLACK)
-            bits3=MathTex("1 \\oplus 0 = 1").scale(0.7).next_to(bits2,DOWN).set_color(BLACK)
-            bits4=MathTex("1 \\oplus 1 = 0").scale(0.7).next_to(bits3,DOWN).set_color(BLACK)
+            texto1=Text("XOR").scale(3).shift(UP*7+LEFT*2).set_color(BLACK)
+            bits =MathTex('0 \\oplus 0 = 0').scale(3).shift(   2*UP+2*LEFT).set_color(BLACK)
+            bits2=MathTex("0 \\oplus 1 = 1").scale(3).next_to(bits ,2*DOWN).set_color(BLACK)
+            bits3=MathTex("1 \\oplus 0 = 1").scale(3).next_to(bits2,2*DOWN).set_color(BLACK)
+            bits4=MathTex("1 \\oplus 1 = 0").scale(3).next_to(bits3,2*DOWN).set_color(BLACK)
 
             # boxes around xor operations
-            boxbits=SurroundingRectangle(bits, buff=0.1).set_color(GOLD)
+            boxbits =SurroundingRectangle(bits , buff=0.1).set_color(GOLD)
             boxbits2=SurroundingRectangle(bits2, buff=0.1).set_color(GOLD)
             boxbits3=SurroundingRectangle(bits3, buff=0.1).set_color(GOLD)
             boxbits4=SurroundingRectangle(bits4, buff=0.1).set_color(GOLD)
 
             # show that it is like a sum
-            sum1=MathTex("0 + 0 = 0").scale(0.7).next_to(bits,2*RIGHT).set_color(BLACK)
-            sum2=MathTex("0 + 1 = 1").scale(0.7).next_to(bits2,2*RIGHT).set_color(BLACK)
-            sum3=MathTex("1 + 0 = 1").scale(0.7).next_to(bits3,2*RIGHT).set_color(BLACK)
-            sum4=MathTex("1 + 1 = 2").scale(0.7).next_to(bits4,2*RIGHT).set_color(BLACK)
+            sum1=MathTex("0 + 0 = 0").scale(3).next_to(bits ,2.5*RIGHT).set_color(BLACK)
+            sum2=MathTex("0 + 1 = 1").scale(3).next_to(bits2,2.5*RIGHT).set_color(BLACK)
+            sum3=MathTex("1 + 0 = 1").scale(3).next_to(bits3,2.5*RIGHT).set_color(BLACK)
+            sum4=MathTex("1 + 1 = 2").scale(3).next_to(bits4,2.5*RIGHT).set_color(BLACK)
 
             #boxes around the sum
             box1=SurroundingRectangle(sum1, buff=0.1).set_color(GOLD)
@@ -127,6 +127,9 @@ class OTP(Scene):
 
             self.play(Write(texto1))
             self.play(Write(bits),Write(bits2),Write(bits3),Write(bits4))
+            self.play(Write(xor))
+            self.play(Transform(xor,xor2.shift(RIGHT)))
+            self.play(ReplacementTransform(xor2, xor3))
             self.wait(1)
             self.play(Write(sum1),Write(sum2),Write(sum3),Write(sum4))
             self.wait(1)
@@ -242,4 +245,4 @@ class OTP(Scene):
 
         intro()
         xor_is_reversible_animation()
-        message_send_animation()
+        # message_send_animation()
