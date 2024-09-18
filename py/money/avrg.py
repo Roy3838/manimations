@@ -4,7 +4,7 @@ height=1920
 config.frame_size = [width, height]
 class CompareCreditCardInterestAnimation(Scene):
     def construct(self):
-        spending_data1 = [1, 1, 1, 2, 2, 2, 3, 4, 6, 8, 10, 10, 10, 13, 13]
+        spending_data1 = [1, 3, 0, 4, 1, 3, 5, 5, 2, 8, 0, 0, 10, 0, 7]
         spending_data2 = [1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 11, 12, 13, 13]
 
         animation1 = self.create_animation(spending_data1, "Scenario 1: Gradual Increase")
