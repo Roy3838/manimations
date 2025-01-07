@@ -89,10 +89,10 @@ class OTP(Scene):
             # xor operation equations LaTeX
 
             texto1=Text("XOR").scale(3).shift(UP*7+LEFT*2).set_color(BLACK)
-            bits =MathTex('0 \\oplus 0 = 0').scale(3).shift(   2*UP+2*LEFT).set_color(BLACK)
-            bits2=MathTex("0 \\oplus 1 = 1").scale(3).next_to(bits ,2*DOWN).set_color(BLACK)
-            bits3=MathTex("1 \\oplus 0 = 1").scale(3).next_to(bits2,2*DOWN).set_color(BLACK)
-            bits4=MathTex("1 \\oplus 1 = 0").scale(3).next_to(bits3,2*DOWN).set_color(BLACK)
+            bits =MathTex('0 \\oplus 0 = 0').scale(3).shift(   2*UP+3*LEFT).set_color(BLACK)
+            bits2=MathTex("0 \\oplus 1 = 1").scale(3).next_to(bits ,2.2*DOWN).set_color(BLACK)
+            bits3=MathTex("1 \\oplus 0 = 1").scale(3).next_to(bits2,2.2*DOWN).set_color(BLACK)
+            bits4=MathTex("1 \\oplus 1 = 0").scale(3).next_to(bits3,2.2*DOWN).set_color(BLACK)
 
             # boxes around xor operations
             boxbits =SurroundingRectangle(bits , buff=0.1).set_color(GOLD)
@@ -113,28 +113,28 @@ class OTP(Scene):
             box4=SurroundingRectangle(sum4, buff=0.1).set_color(GOLD)
 
             # xor operation equation general
-            xor=MathTex("a \\oplus b = c").scale(0.7).shift(UP).set_color(BLACK)
+            xor=MathTex("a \\oplus b = c").scale(2).shift(DOWN*5).set_color(BLACK)
 
             # xor operation equation with mod
-            xor2=MathTex("(a+b)\\mod 2 \\equiv c ").scale(0.7).shift(UP).set_color(BLACK)
+            xor2=MathTex("(a+b)\\mod2 \\equiv c ").scale(2).shift(DOWN*6).set_color(BLACK)
 
             # xor operation showing 2 mod 2 = 0
-            xor3=MathTex("2\\mod 2 = 0").scale(0.7).shift(UP).set_color(BLACK)
-
-
-
+            xor3=MathTex("2\\mod 2 = 0").scale(2).shift(4*UP).set_color(BLACK)
 
 
             self.play(Write(texto1))
             self.play(Write(bits),Write(bits2),Write(bits3),Write(bits4))
+
             self.play(Write(xor))
-            self.play(Transform(xor,xor2.shift(RIGHT)))
-            self.play(ReplacementTransform(xor2, xor3))
-            self.wait(1)
+
+            self.play(Write(xor2))
+
             self.play(Write(sum1),Write(sum2),Write(sum3),Write(sum4))
             self.wait(1)
+
             self.play(Write(boxbits),Write(boxbits2),Write(boxbits3),Write(boxbits4))
             self.wait(1)
+
             self.play(
                 ReplacementTransform(boxbits,box1),
                 ReplacementTransform(boxbits2,box2),
@@ -142,6 +142,8 @@ class OTP(Scene):
                 ReplacementTransform(boxbits4,box4)
             )
             self.play(box4.animate.set_color(RED))
+
+            self.play(Write(xor3))
 
             self.wait(1)
 
@@ -243,6 +245,6 @@ class OTP(Scene):
 
             self.wait()
 
-        intro()
+        # intro()
         xor_is_reversible_animation()
         # message_send_animation()

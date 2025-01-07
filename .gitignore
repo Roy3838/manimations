@@ -1,3 +1,6 @@
 # Numpy Matrix too big for GitHub
 py/tunneling/W_matrices.npy
 media/
+# New things in the move to docker
+.bash_history
+.cache/
