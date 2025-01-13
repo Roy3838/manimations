@@ -147,10 +147,16 @@ class OTP(Scene):
 
             self.wait(1)
 
+            self.play(ReplacementTransform(xor3,bits4), ReplacementTransform(sum4,bits4))
+
             self.play(FadeOut(box1),FadeOut(box2),FadeOut(box3),FadeOut(box4),
                       FadeOut(sum1),FadeOut(sum2),FadeOut(sum3),FadeOut(sum4),
-                      FadeOut(bits),FadeOut(bits2),FadeOut(bits3),FadeOut(bits4),
-                      FadeOut(texto1))
+                      FadeOut(texto1),
+
+                      bits.animate.shift(RIGHT),bits2.animate.shift(RIGHT),bits3.animate.shift(RIGHT),bits4.animate.shift(RIGHT)
+            )
+
+            self.wait(1)
 
 
 
