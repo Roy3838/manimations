@@ -6,6 +6,12 @@ import numpy as np
 from itertools import combinations_with_replacement
 
 
+# Set vertical aspect ratio
+width = 1080
+height = 1920
+config.frame_size = [width, height]
+
+
 class SmoothWiggle(Animation):
     def __init__(self, mobject, amplitude=0.05, angular_frequency=0.1, **kwargs):
         self.amplitude = amplitude
@@ -24,9 +30,12 @@ class SmoothWiggle(Animation):
             particle.move_to(center + UP*0.2 + offset + particle.last_offset)
             particle.last_offset = offset
 
-class BoseHubbardModel(Scene):
+class BoseHubbardModel(MovingCameraScene):
+
     def construct(self):
         self.camera.background_color = "#E2E2E2"
+
+        self.camera.frame.scale(0.5)
         self.boxes_animation()
 
     def generate_combinations(self, M, N):
@@ -114,13 +123,17 @@ class BoseHubbardModel(Scene):
             self.play(SmoothWiggle(particles, run_time=2, ))
             self.remove(particles)
 
-        # Animate all combinations
         for combination in combinations:
             particles = create_particles(combination)
-            basis_vector = Tex(self.combination_to_dirac(combination), color=BLACK).scale(2)
+            # Use the template and MathTex
+            basis_vector = Tex(
+                self.combination_to_dirac(combination),
+                color=BLACK,
+            ).scale(2)
             basis_vector.move_to(DOWN+LEFT*0.35)
+
             self.add(particles, basis_vector)
-            self.play(SmoothWiggle(particles, run_time=0.8))
+            self.play(SmoothWiggle(particles, run_time=0.4))
             self.remove(particles, basis_vector)
 
         self.wait()
