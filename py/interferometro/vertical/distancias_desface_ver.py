@@ -81,13 +81,39 @@ class InterferometerDistance(MovingCameraScene):
             tips=False,
         ).move_to(DOWN*7)
 
+        halfpoint_waves = (wave1.get_center() + wave2.get_center())/2
+
+        plussign = Tex("+", color=BLACK).move_to(halfpoint_waves).scale(3)
+
+        halfpoint_waves_graph = (wave2.get_center() + ax.get_center())/2
+
+        equals = Tex("=", color=BLACK).move_to(halfpoint_waves_graph).scale(3).rotate(PI/2)
+
+        # align better
+        plussign.shift(DOWN*0.5 + LEFT*0.3)
+        equals.shift(DOWN)
+
+        # def sum_arrow_updater(mobject):
+        #     # Calculate the magnitudes of the arrows for wave1 and wave2
+        #     magnitude1 = wave1.arrow.get_end() - wave1.arrow.get_start()
+        #     magnitude2 = wave2.arrow.get_end() - wave2.arrow.get_start()
+        #
+        #     # Determine the start and end points of the sum arrow
+        #     start_point = mobject.start
+        #     end_point = start_point + magnitude1 + magnitude2 
+        #
+        #     # Update the sum arrow
+        #     mobject.become(Arrow(start_point, end_point, buff=0).set_color(BLACK))
+
+
         def sum_arrow_updater(mobject):
             # Calculate the magnitudes of the arrows for wave1 and wave2
             magnitude1 = wave1.arrow.get_end() - wave1.arrow.get_start()
             magnitude2 = wave2.arrow.get_end() - wave2.arrow.get_start()
 
-            # Determine the start and end points of the sum arrow
-            start_point = mobject.start
+            # Update start and end points considering the current transformation
+            start_point = LEFT*2 + ax.get_center()
+
             end_point = start_point + magnitude1 + magnitude2 
 
             # Update the sum arrow
@@ -97,6 +123,21 @@ class InterferometerDistance(MovingCameraScene):
         sum_arrow = Arrow()
         sum_arrow.start = LEFT*2 + ax.get_center()
         sum_arrow.add_updater(sum_arrow_updater)
+
+        # First, modify how the boxes are created and add updaters
+        box_wave1 = SurroundingRectangle(wave1.arrow)
+        box_wave2 = SurroundingRectangle(wave2.arrow)
+
+        def box_wave1_updater(mob):
+            mob.become(SurroundingRectangle(wave1.arrow))
+
+        def box_wave2_updater(mob):
+            mob.become(SurroundingRectangle(wave2.arrow))
+
+
+        box_wave1.add_updater(box_wave1_updater)
+        box_wave2.add_updater(box_wave2_updater)
+
 
         curve = VGroup()
         curve.add(Line(sum_arrow.start, sum_arrow.start))
@@ -146,6 +187,8 @@ class InterferometerDistance(MovingCameraScene):
         self.play(wave1.origin.animate.shift(lambda0/4), 
                   wave2.origin.animate.shift(-lambda0/4),
                   )
+
+        self.play(FadeIn(box_wave1), FadeIn(box_wave2))
         
         
         self.wait(4)
@@ -155,7 +198,9 @@ class InterferometerDistance(MovingCameraScene):
 
         self.play(self.camera.frame.animate.move_to(DOWN*4),)
 
-        self.play(FadeIn(ax), FadeIn(sum_arrow))
+        self.play(FadeIn(ax), FadeIn(sum_arrow),
+                  FadeOut(box_wave1), FadeOut(box_wave2))  
+        self.play(Write(plussign), Write(equals))
         self.add(curve)
 
         # return to original position
@@ -183,15 +228,24 @@ class InterferometerDistance(MovingCameraScene):
             col_labels=[Text("+"), Text("-")],
             include_outer_lines=True,
             line_config={"stroke_width": 1, "color": BLACK})
-        t0.scale(0.5).set_color(BLACK).move_to(UP*5)
+        t0.scale(0.7).set_color(BLACK).move_to(UP*6)
 
         self.play(Create(t0[0][0]), Create(t0[0][1]), Create(t0.get_vertical_lines()), Create(t0.get_horizontal_lines()))
 
-
         brace.text.text = r"\Delta d = 0"
-        self.play(self.camera.frame.animate.move_to(LEFT*4),
-                    wave2.origin.animate.shift(UP*2),
-            Create(brace), Write(brace.text), FadeOut(curve), FadeOut(sum_arrow),FadeOut(ax))
+
+        self.play(self.camera.frame.animate.move_to(UP*2),
+                    
+                  wave2.origin.animate.shift(UP*2),
+
+                  Create(brace), Write(brace.text),
+
+                  FadeOut(equals), FadeOut(plussign),
+
+                  curve.animate.shift(UP*3.5+RIGHT*2),
+                  ax.animate.shift(UP*3.5+RIGHT*2),
+
+                  )
 
         self.play(Write(t0[0][2]))
         self.wait()
@@ -199,9 +253,14 @@ class InterferometerDistance(MovingCameraScene):
         for i in range(1, 6):
             brace.text.text = rf"\Delta d = \frac{{{i}\lambda}}{{2}}"
             self.play(wave1.origin.animate.shift(lambda0/4), wave2.origin.animate.shift(-lambda0/4), run_time=0.5)
-            self.play(Write(t0[0][i+2]),run_time=0.3)
+            self.play(Transform(wave1.arrow.copy(), t0[0][i+2]),
+                      Transform(wave2.arrow.copy(), t0[0][i+2]),
+
+                      run_time=0.8)
             self.wait(0.8)
-        self.play(Write(t0[0][8]), Write(t0[0][9]),run_time=0.3)
+        self.play(Write(t0[0][8]), Write(t0[0][9]),run_time=0.8)
+
+        self.wait(2)
 
 
         

@@ -10,8 +10,8 @@ class Michelson(MovingCameraScene):
     def construct(self):
 
         self.camera.background_color = "#E2E2E2"
-        self.camera.frame.scale(0.6)
 
+        self.camera.frame.scale(0.6)
 
         def Create_wave(fuente):
             #Create wave with circle
