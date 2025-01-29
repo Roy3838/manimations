@@ -2,11 +2,9 @@ from manim import *
 import numpy as np
 
 class InterferometerParametricSurface(ThreeDScene):
-    
 
     def construct(self):
         self.camera.background_color = "#E2E2E2"
-
 
         """ BEGINING OF DECLARING FUNCTIONS AND UPDATERS """
 
@@ -60,7 +58,6 @@ class InterferometerParametricSurface(ThreeDScene):
             angle = np.arctan2(target_coordinate[1] - origin_coordinate[1],
                                  target_coordinate[0] - origin_coordinate[0])
 
-
             mobject.become(
                 ParametricFunction(
                     wave_function,
@@ -87,7 +84,6 @@ class InterferometerParametricSurface(ThreeDScene):
             wave.im_target = Dot(color = BLUE).move_to(to_target)
             return wave
 
-
         """ BEGINING OF DECLARING MOBJECTS """
 
         axes = ThreeDAxes(
@@ -101,7 +97,6 @@ class InterferometerParametricSurface(ThreeDScene):
             y_axis_config={"include_tip": False},
             z_axis_config={"include_tip": False},
             ).set_color(BLACK)
-
 
         # DEFINICION OF THE TWO SOURCES
         fuente1=Dot(color=BLUE).shift(5*LEFT)
@@ -140,7 +135,6 @@ class InterferometerParametricSurface(ThreeDScene):
         dis2label.add_updater(lambda z: z.move_to(bracedis2.get_center()+0.5*DOWN))
 
 
-
         # DEFINICION OF THE WAVES
         wave1 = init_wave(fuente1.get_center(), ORIGIN)        
         wave1.add_updater(wave)
@@ -148,7 +142,6 @@ class InterferometerParametricSurface(ThreeDScene):
         wave2 = init_wave(fuente2.get_center(), ORIGIN)
         wave2.t_offset = PI
         wave2.add_updater(wave)
-
 
         formula_final= MathTex(
             r"\Delta d", r"=" ,r"\sqrt{y^{2}+\left(x_{0}-x\right)^{2}}" 
@@ -175,7 +168,6 @@ class InterferometerParametricSurface(ThreeDScene):
             line_config={"stroke_width": 1, "color": BLACK})
         t0.scale(0.5).set_color(BLACK).move_to(LEFT*3+UP*3.5)
         
-
         surfaces = VGroup()
         params = VGroup()
 
@@ -183,8 +175,6 @@ class InterferometerParametricSurface(ThreeDScene):
         negative_functions = VGroup()
         positive_surfaces = VGroup()
         positive_functions = VGroup()
-        
-
         
         colors = [BLUE, BLACK]
 
@@ -197,7 +187,8 @@ class InterferometerParametricSurface(ThreeDScene):
                 v_range=[-PI, PI],
                 color=colors[i%2],
                 resolution=(4, 4)
-            ).set_style(fill_opacity=0.2).set_fill_by_value(axes=axes, colorscale=[(colors[i%2], -0.5), (colors[i%2], 0), (colors[i%2], 0.5)], axis=2)
+            ).set_style(fill_opacity=0.2)
+            .set_fill_by_value(axes=axes, colorscale=[(colors[i%2], -0.5), (colors[i%2], 0), (colors[i%2], 0.5)], axis=2)
 
             # Make a 2d version of the surface
             param = ParametricFunction(
@@ -211,11 +202,9 @@ class InterferometerParametricSurface(ThreeDScene):
             else:
                 negative_surfaces.add(surface)
                 negative_functions.add(param)
-                
             
         surfaces.add(positive_surfaces,negative_surfaces)
         params.add(positive_functions,negative_functions)
-
 
         self.play(Create(fuente1),Create(fuente2))
         
@@ -237,14 +226,11 @@ class InterferometerParametricSurface(ThreeDScene):
         self.play(Create(axes.x_axis),Create(axes.y_axis))
 
         self.wait(2)
-
-
         
         self.play(
             ReplacementTransform(t0[0][2],el_cero),
             ReplacementTransform(formula_final[0],el_cero),
             Create(params[0][2]),)
-        
 
         self.wait(4)
 
@@ -252,7 +238,6 @@ class InterferometerParametricSurface(ThreeDScene):
                   Write(distance2), Write(bracedis1), 
                   Write(dis1label), Write(bracedis2), 
                   Write(dis2label))
-
 
         self.play(analysispoint.animate.shift(DOWN*6), run_time=1)
         self.play(MoveAlongPath(analysispoint, params[0][2]), run_time=3)
@@ -280,7 +265,6 @@ class InterferometerParametricSurface(ThreeDScene):
             ReplacementTransform(l,l3_2),
             Create(params[1][3]),)
         self.remove(l)
-
 
         self.wait()
 
@@ -312,14 +296,11 @@ class InterferometerParametricSurface(ThreeDScene):
 
         yz_plane = Rectangle(width = 8, height = 8, fill_opacity=0.2).set_color(GREY_C).rotate(PI/2, axis = UP).move_to(RIGHT*2)
             
-
-       
-               
-
+        """
         
+        3D SECTION
 
-
-
+        """
 
         # MAKE IT 3D
 
@@ -339,7 +320,6 @@ class InterferometerParametricSurface(ThreeDScene):
 
         self.move_camera(phi=30 * DEGREES, theta=10 * DEGREES, gamma = 90 * DEGREES,rate_func=linear, run_time=2)
         self.move_camera(phi=0 * DEGREES, theta=0 * DEGREES, gamma = 90 * DEGREES,rate_func=linear)
-
         
         self.move_camera(phi=90 * DEGREES, zoom=0.5)
 
