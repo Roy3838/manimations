@@ -4,3 +4,8 @@ media/
 # New things in the move to docker
 .bash_history
 .cache/
+.local/
+.git/ 
+.cache/
+.config/
+.vscode/

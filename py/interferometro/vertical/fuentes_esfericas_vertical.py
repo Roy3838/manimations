@@ -1,12 +1,17 @@
 from manim import *
 
 
+width=int(1080)
+height=int(1920)
+config.frame_size = [width, height]
+
+
 
 class Points(MovingCameraScene):
     def construct(self):
         self.camera.background_color = "#E2E2E2"
 
-            
+        self.camera.frame.scale(0.7)
 
         def wave_updater(mobject, dt):
             #Create wave
@@ -40,10 +45,10 @@ class Points(MovingCameraScene):
             Arrow(analysispoint.get_center() + RIGHT + UP, analysispoint.get_center(), buff=0, color=BLACK)
         ))
         # Add label to arrow that says YOU
-        label = MathTex(r"\text{you}", color=BLACK).move_to(arrow.get_center() + 0.2*DOWN+ 0.3*RIGHT).scale(0.8)
+        label = MathTex(r"\text{Observador}", color=BLACK).move_to(arrow.get_center() + 1*DOWN+ 0.3*RIGHT).scale(1)
 
         # Superposicion de las dos ondas
-        equation = MathTex(r"\psi_{total} = ", r"\psi_1 ",r"+", r"\psi_2").scale(1.5).set_color(BLACK).move_to(UP*2)
+        equation = MathTex(r"\psi_{total} = ", r"\psi_1 ",r"+", r"\psi_2").scale(2).set_color(BLACK).move_to(UP*5)
 
         
         fuente1.time = 0
