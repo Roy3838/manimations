@@ -22,6 +22,8 @@ class InterferometerDistance(MovingCameraScene):
             wave.origin = Dot(color = BLACK).move_to(LEFT*2)
             wave.target = Dot(color = BLUE).move_to(RIGHT*3)
             wave.arrow = Arrow()
+            wave.distance = Line(wave.origin, wave.target)
+            wave.target_base = Dot(color=GREY_C)
             return wave
 
         wave1 = init_wave()
@@ -60,12 +62,14 @@ class InterferometerDistance(MovingCameraScene):
                 Arrow(arrow_base, mobject.target.get_center(),buff=0)
                 .set_color(BLACK)
                 .shift(RIGHT))
+            mobject.distance.become(Line(mobject.origin.get_center(), arrow_base, color=GOLD))
+            mobject.target_base.move_to(arrow_base)
             
 
         wave1.add_updater(wave_updater)
         wave2.add_updater(wave_updater)
-        wave1_group = VGroup(wave1,wave1.origin,wave1.target,wave1.arrow)
-        wave2_group = VGroup(wave2,wave2.origin,wave2.target,wave2.arrow)  
+        wave1_group = VGroup(wave1, wave1.origin, wave1.target, wave1.arrow, wave1.distance, wave1.target_base)
+        wave2_group = VGroup(wave2, wave2.origin, wave2.target, wave2.arrow, wave2.distance, wave2.target_base)  
         
         # GRAPH SECTION
         ax= Axes(
