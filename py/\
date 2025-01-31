@@ -114,24 +114,9 @@ class Interferometer_Pythagoras(MovingCameraScene):
         rd_label_1.add_updater(line1_label_updater)
         rd_label_2.add_updater(line2_label_updater)
 
-        # Brace for delta d
-        delta_brace = BraceBetweenPoints(ORIGIN, UP) # placeholding for initialization
-        delta_brace.label = MathTex(r"\Delta d", color=BLACK)
+        self.add(r_point1, r_point2, d_point1, d_point2, rdLine1, rdLine2, rd_label_1, rd_label_2)
 
-        def update_delta_brace(mobject):
-            point1 = [d_point1.get_x(), 0, 0] + DOWN*3.5
-            point2 = [d_point2.get_x(), 0 ,0] + DOWN*3.5
-
-            # keep brace pointing up
-            if point1[0]>point2[0]:
-                point1[0], point2[0] = point2[0], point1[0]
-
-            mobject.become(BraceBetweenPoints(point1, point2 , color=GREY_D))
-            mobject.label.move_to(mobject.get_center() + DOWN*0.5)
-
-        delta_brace.add_updater(update_delta_brace)
-
-        equation = MathTex(r"\Delta d", r"=" ,r"d_{2}" ,r"-" ,r"d_{1}", color=BLACK).move_to(5*UP)
+        equation = MathTex(r"\Delta d", r"=" ,r"d_{2}" ,r"-" ,r"d_{1}", color=BLACK).move_to(5.5*UP)
 
         ax = NumberPlane(x_range=(-5, 5, 1),
             y_range=(-1, 3, 1),
@@ -164,25 +149,6 @@ class Interferometer_Pythagoras(MovingCameraScene):
         self.play(analysispoint.animate.shift(UP*2+LEFT))
 
         self.play(analysispoint.animate.shift(2*RIGHT))
-
-        # self.add(r_point1, r_point2, d_point1, d_point2, rdLine1, rdLine2, rd_label_1, rd_label_2)
-
-        self.play(
-                ReplacementTransform(fuente1.copy(), r_point1),
-                ReplacementTransform(fuente2.copy(), r_point2),
-                
-                ReplacementTransform(analysispoint.copy(), d_point1),
-                ReplacementTransform(analysispoint.copy(), d_point2),
-
-                ReplacementTransform(distance1.copy(),rdLine1),
-                ReplacementTransform(distance2.copy(),rdLine2),
-
-                Write(rd_label_1),
-                Write(rd_label_2),
-                Write(delta_brace),
-                )
-
-        self.play(Write(delta_brace.label))
 
         self.play(analysispoint.animate(path_arc=PI/4).shift(2*LEFT+ DOWN))
 
@@ -221,7 +187,7 @@ class Interferometer_Pythagoras(MovingCameraScene):
         y1_brace_text = y1_brace.get_text(r"y").set_color(BLACK)
 
         x_0_brace = BraceBetweenPoints(fuente1.get_center(),ORIGIN,)
-        x_0_brace_text = x_0_brace.get_text(r"$f_1$").set_color(BLACK)
+        x_0_brace_text = x_0_brace.get_text(r"x0").set_color(BLACK)
 
         x_brace = BraceBetweenPoints(ORIGIN,[analysispoint.get_x(),0,0])
         x_brace_text = x_brace.get_text(r"x").set_color(BLACK)
@@ -234,15 +200,12 @@ class Interferometer_Pythagoras(MovingCameraScene):
 
         self.play(Write(x_brace),Write(x_brace_text))
 
-        formulaso1 = MathTex(r"d_1^2",r"=",r"y^2", r"+", r"(f_1+x)^2").shift(UP*5+LEFT).set_color(BLACK)
+        formulaso1 = MathTex(r"d_1^2",r"=",r"y^2", r"+", r"(x_0+x)^2").shift(UP*4+LEFT).set_color(BLACK)
 
         self.wait(2)
 
-        # Pause rdLine1 label updater
-        rd_label_1.remove_updater(line1_label_updater)
 
-        self.play(ReplacementTransform(d1_label,formulaso1[0]),
-                  ReplacementTransform(rdLine1.copy(),distance1))
+        self.play(ReplacementTransform(d1_label,formulaso1[0]))
 
         self.play(Write(formulaso1[1]),run_time=0.5)
 
@@ -264,9 +227,9 @@ class Interferometer_Pythagoras(MovingCameraScene):
         y2_brace_text = y2_brace.get_text(r"y").set_color(BLACK)
 
         x_0_brace = BraceBetweenPoints(ORIGIN,fuente2.get_center())
-        x_0_brace_text = x_0_brace.get_text(r"$f_2$").set_color(BLACK)
+        x_0_brace_text = x_0_brace.get_text(r"x0").set_color(BLACK)
 
-        x_brace = BraceBetweenPoints(ORIGIN,[analysispoint.get_x(),0,0]).shift(DOWN*0.6).set_color(RED)
+        x_brace = BraceBetweenPoints(ORIGIN,[analysispoint.get_x(),0,0]).shift(DOWN).set_color(RED)
         x_brace_text = x_brace.get_text(r"x").set_color(BLACK)
 
         self.play(Write(y2_brace),Write(y2_brace_text))
@@ -275,13 +238,11 @@ class Interferometer_Pythagoras(MovingCameraScene):
 
         self.play(Write(x_brace),Write(x_brace_text))
 
-        formulaso2 = MathTex(r"d_2^2",r"=",r"y^2", r"+", r"(f_2-x)^2").shift(UP*4+LEFT).set_color(BLACK)
+        formulaso2 = MathTex(r"d_2^2",r"=",r"y^2", r"+", r"(x_0-x)^2").shift(UP*3+LEFT).set_color(BLACK)
 
-        # Pause the updater of the label
-        rd_label_2.remove_updater(line1_label_updater)
 
         self.play(ReplacementTransform(d2_label,formulaso2[0]),
-                  ReplacementTransform(rdLine2.copy(), distance2))
+                  Transform(distance1, rdLine1)
 
         self.play(Write(formulaso2[1]),run_time=0.5)
 
@@ -294,8 +255,8 @@ class Interferometer_Pythagoras(MovingCameraScene):
 
         self.play(FadeOut(y2_brace),FadeOut(x_0_brace),FadeOut(x_brace),FadeOut(triangle2))
 
-        formulaso1_despejado = MathTex(r"d_1",r"=",r"\sqrt{y^{2}+\left(f_{1}+x\right)^{2}}").shift(UP*4+LEFT).set_color(BLACK)
-        formulaso2_despejado = MathTex(r"d_2",r"=",r"\sqrt{y^{2}+\left(f_{2}-x\right)^{2}}").shift(UP*3+LEFT).set_color(BLACK)
+        formulaso1_despejado = MathTex(r"d_1",r"=",r"\sqrt{y^{2}+\left(x_{0}+x\right)^{2}}").shift(UP*4+LEFT).set_color(BLACK)
+        formulaso2_despejado = MathTex(r"d_2",r"=",r"\sqrt{y^{2}+\left(x_{0}-x\right)^{2}}").shift(UP*3+LEFT).set_color(BLACK)
 
         #self.remove(x_0_brace_text,x_brace_text)
         self.play(ReplacementTransform(formulaso1,formulaso1_despejado),
@@ -305,7 +266,7 @@ class Interferometer_Pythagoras(MovingCameraScene):
         self.play(ReplacementTransform(formulaso1_despejado[0],equation[4]),
                     ReplacementTransform(formulaso2_despejado[0],equation[2]),)
 
-        formula_final= MathTex(r"\Delta d", r"=" ,r"\sqrt{y^{2}+\left(f_{1}-x\right)^{2}}" ,r"-" ,r"\sqrt{y^{2}+\left(f_{2}+x\right)^{2}}", color=BLACK).move_to(5.5*UP).scale(0.75)
+        formula_final= MathTex(r"\Delta d", r"=" ,r"\sqrt{y^{2}+\left(x_{0}-x\right)^{2}}" ,r"-" ,r"\sqrt{y^{2}+\left(x_{0}+x\right)^{2}}", color=BLACK).move_to(5.5*UP).scale(0.75)
 
         self.play(FadeOut(formulaso1_despejado[1:]),FadeOut(formulaso2_despejado[1:]),
             *[ReplacementTransform(eq_elem, final_elem) for eq_elem, final_elem in zip(equation, formula_final)])
@@ -318,12 +279,5 @@ class Interferometer_Pythagoras(MovingCameraScene):
         self.play(analysispoint.animate(path_arc=PI/2).shift(DOWN*2+RIGHT*2))
 
 
-        self.wait()
+        self.wait(3)
 
-        self.play(analysispoint.animate.shift(UP*3+ LEFT*1.5))
-
-        self.play(analysispoint.animate(path_arc=PI/4).shift(UP*2))
-
-        self.play(analysispoint.animate(path_arc=PI/2).shift(DOWN*2+RIGHT*2))
-
-        self.wait(2)
