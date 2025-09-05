@@ -1,6 +1,5 @@
 from manim import *
 
-<<<<<<< Updated upstream
 class EyeLogoScene(MovingCameraScene):
     def construct(self):
 
@@ -11,15 +10,6 @@ class EyeLogoScene(MovingCameraScene):
         
         # Create the pupil mobject
         pupil = Circle(radius=0.8, color=WHITE, fill_opacity=1)
-=======
-class EyeLogoScene(Scene):
-    def construct(self):
-        # Create the eye outline mobject
-        eye_outline = Circle(radius=2.6, color=BLACK, stroke_width=20)
-        
-        # Create the pupil mobject
-        pupil = Circle(radius=0.8, color=BLACK, fill_opacity=1)
->>>>>>> Stashed changes
         
         # Position both at the center
         eye_outline.move_to(ORIGIN)
@@ -27,7 +17,6 @@ class EyeLogoScene(Scene):
         
         # Group them for the complete eye
         eye_logo = VGroup(eye_outline, pupil)
-<<<<<<< Updated upstream
 
         self.add(eye_logo)
 
@@ -58,24 +47,7 @@ class EyeLogoScene(Scene):
 
             self.play(Write(bserver))
 
-=======
-        
-        # Animate the creation of the eye logo
-        self.play(
-            Create(eye_outline),
-            run_time=1.5
-        )
-        self.play(
-            GrowFromCenter(pupil),
-            run_time=1
-        )
->>>>>>> Stashed changes
         
         # Hold the final state
         self.wait(2)
 
-<<<<<<< Updated upstream
-=======
-# To render this scene, run:
-# manim -pql eye_logo_manim.py EyeLogoScene
->>>>>>> Stashed changes
